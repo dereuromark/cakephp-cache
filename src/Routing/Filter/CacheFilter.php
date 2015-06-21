@@ -23,7 +23,7 @@ class CacheFilter extends DispatcherFilter {
 	protected $_priority = 9;
 
 	/**
-	 * The amount of time to cache the file.
+	 * The amount of time to browser cache files (which are unlimited).
 	 *
 	 * @var string
 	 */
@@ -56,21 +56,10 @@ class CacheFilter extends DispatcherFilter {
 
 		$request = $event->data['request'];
 
-		$path = $request->here();
-		if ($path === '/') {
-			$path = 'home';
-		}
-		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$path = $prefix . '_' . $path;
-		}
+		$url = $request->here();
+		$file = $this->getFile($url);
 
-		$path = Inflector::slug($path);
-
-		$folder = CACHE . 'views' . DS;
-		$file = $folder . $path . '.html';
-
-		if ($file === null || !file_exists($file)) {
+		if ($file === null) {
 			return;
 		}
 
@@ -89,6 +78,51 @@ class CacheFilter extends DispatcherFilter {
 	}
 
 	/**
+	 * @param string $url
+	 * @param bool $mustExist
+	 * @return string
+	 */
+	public function getFile($url, $mustExist = true) {
+		if ($url === '/') {
+			$url = 'home';
+		}
+
+		$path = $url;
+		$prefix = Configure::read('Cache.prefix');
+		if ($prefix) {
+			$path = $prefix . '_' . $path;
+		}
+
+		$path = Inflector::slug($path);
+
+		$folder = CACHE . 'views' . DS;
+		$file = $folder . $path . '.html';
+		if ($mustExist && !file_exists($file)) {
+			return null;
+		}
+		return $file;
+	}
+
+	/**
+	 * @param string &$content
+	 * @return array Time/Ext
+	 */
+	public function extractCacheInfo(&$content) {
+		$cacheTime = 0;
+		$cacheExt = 'html';
+		$content = preg_replace_callback('/^\<\!--cachetime\:(\d+);ext\:(\w+)--\>/', function ($matches) use (&$cacheTime, &$cacheExt) {
+			$cacheTime = $matches[1];
+			$cacheExt = $matches[2];
+			return '';
+		}, $content);
+
+		return [
+			'time' => (int)$cacheTime,
+			'ext' => $cacheExt
+		];
+	}
+
+	/**
 	 * Sends an asset file to the client
 	 *
 	 * @param \Cake\Network\Request $request The request object to use.
@@ -97,8 +131,7 @@ class CacheFilter extends DispatcherFilter {
 	 * @param string $ext The extension of the file to determine its mime type
 	 * @return void
 	 */
-	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext)
-	{
+	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
 		$compressionEnabled = $response->compress();
 		if ($response->type($ext) === $ext) {
 			$contentType = 'application/octet-stream';
@@ -111,17 +144,21 @@ class CacheFilter extends DispatcherFilter {
 		if (!$compressionEnabled) {
 			$response->header('Content-Length', filesize($file));
 		}
-		$modifiedTime = filemtime($file);
-		$response->cache($modifiedTime, $this->_cacheTime);
 
 		$content = file_get_contents($file);
+		$cacheInfo = $this->extractCacheInfo($content);
+
+		$modifiedTime = filemtime($file);
+		$cacheTime = $cacheInfo['time'];
+		if (!$cacheTime) {
+			$cacheTime = $this->_cacheTime;
+		}
+		$response->cache($modifiedTime, $cacheTime);
+		$response->type($cacheInfo['ext']);
 
 		if (Configure::read('debug') || $this->config('debug')) {
-			$type = $response->mapType($response->type());
-			if ($type === 'html') {
-				$content = '<!--cachetime:' . $modifiedTime . '-->' . $content;
-			} else {
-				$response->header('X-Cachetime', $modifiedTime);
+			if ($cacheInfo['ext'] === 'html') {
+				$content = '<!--created:' . $modifiedTime . '-->' . $content;
 			}
 		}
 		$response->body($content);

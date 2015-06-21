@@ -34,13 +34,15 @@ class CacheComponent extends Component {
 	 * @param Event $event
 	 */
 	public function shutdown(Event $event) {
-		$content = $event->subject->response->body();
+		$this->response = $event->subject->response;
+
+		$content = $this->response->body();
 		if (!$content) {
 			return;
 		}
 
 		$duration = $this->config('duration');
-		$isActionCached = $this->_isActionCached($event);
+		$isActionCached = $this->_isActionCached();
 		if ($isActionCached === false) {
 			return;
 		}
@@ -55,13 +57,13 @@ class CacheComponent extends Component {
 	 * @param Event $event
 	 * @return bool|int|string
 	 */
-	protected function _isActionCached(Event $event) {
+	protected function _isActionCached() {
 		$actions = $this->config('actions');
 		if (!$actions) {
 			return true;
 		}
 
-		$action = $event->subject->request->params['action'];
+		$action = $this->request->params['action'];
 
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];
@@ -82,7 +84,9 @@ class CacheComponent extends Component {
 	protected function _writeFile($content, $duration) {
 		//$cacheTime = date('Y-m-d H:i:s', $timestamp);
 		$now = time();
-		if (is_numeric($duration)) {
+		if (!$duration) {
+			$cacheTime = 0;
+		} elseif (is_numeric($duration)) {
 			$cacheTime = $now + $duration;
 		} else {
 			$cacheTime = strtotime($duration, $now);
@@ -100,15 +104,18 @@ class CacheComponent extends Component {
 		if (empty($cache)) {
 			return;
 		}
+
+		$ext = $this->response->mapType($this->response->type());
+
 		$cache = $cache . '.html';
-		$content = '<!--cachetime:' . $cacheTime . '-->' . $content;
+		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;
 
 		$folder = CACHE . 'views' . DS;
 		if (Configure::read('debug') && !is_dir($folder)) {
 			mkdir($folder, 0770, true);
 		}
 		$file = $folder . $cache;
-		die(debug($file));
+
 		return file_put_contents($file, $content);
 	}
 

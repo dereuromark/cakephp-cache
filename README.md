@@ -57,12 +57,27 @@ The default `cacheTime` can be set as global value, but if you want certain acti
 
 ### Filter Configuration
 In case you need to run this before other high priority filters to avoid those to be invoked, you can raise the `priority` config.
+You can also adjust the `cacheTime` value for how long the browser should cache the unlimited cache files, defaults to `+1 day`.
 
-### Clear the cache
+### Clear the Cache
 The Cache shell shipped with this plugin should make it easy to clear the cache manually:
 ```
-cake cache clear [optional/url/beginning]
+cake cache clear [optional/url]
 ```
+
+### Further Cache Shell Goodies
+Using
+```
+cake cache info [optional/url/]
+```
+you get the amount of currently cached files.
+
+Using
+```
+cake cache info /some-controller/some-action/?maybe=querystrings
+```
+You can get information on the cache of this particular URL, e.g. how long it is still cached.
+
 
 ### Debugging
 In debug mode or with config `debug` enabled, you will see a timestamp added as comment to the beginning of the cache file.
