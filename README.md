@@ -1,4 +1,9 @@
 # Cache plugin for CakePHP
+[![Build Status](https://api.travis-ci.org/dereuromark/cakephp-cache.svg)](https://travis-ci.org/dereuromark/cakephp-cache)
+[![Coverage Status](https://coveralls.io/repos/dereuromark/cakephp-cache/badge.png)](https://coveralls.io/r/dereuromark/cakephp-cache)
+[![License](https://poser.pugx.org/dereuromark/cakephp-cache/license.svg)](https://packagist.org/packages/dereuromark/cakephp-cache)
+[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)](https://php.net/)
+[![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
 ## What is it for?
 It is the successor of the 2.x CacheHelper and allows you to cache your complete views as HTML.

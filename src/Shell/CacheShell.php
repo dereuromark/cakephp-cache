@@ -16,6 +16,9 @@ class CacheShell extends Shell {
 	 */
 	public function info($url = null) {
 		$folder = CACHE . 'views' . DS;
+		if (!is_dir($folder)) {
+			mkdir($folder, 0770, true);
+		}
 
 		if (!$url) {
 			$fi = new \FilesystemIterator($folder, \FilesystemIterator::SKIP_DOTS);
