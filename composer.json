@@ -2,6 +2,7 @@
 	"name": "dereuromark/cakephp-cache",
 	"description": "Cache plugin for CakePHP",
 	"type": "cakephp-plugin",
+	"license": "MIT",
 	"require": {
 		"php": ">=5.4.16",
 		"cakephp/cakephp": "~3.0"
