@@ -1,0 +1,20 @@
+{
+    "name": "dereuromark/cakephp-cache",
+    "description": "Cache plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cache\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cache\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}
