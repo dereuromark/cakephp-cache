@@ -20,7 +20,6 @@ not be able to cache serialized views, e.g. JSON, CSV, RSS content which have be
 You can install this plugin into your CakePHP application using [composer](http://getcomposer.org).
 
 The recommended way to install composer packages is:
-
 ```
 composer require dereuromark/cakephp-cache
 ```
@@ -88,7 +87,7 @@ You can get information on the cache of this particular URL, e.g. how long it is
 In debug mode or with config `debug` enabled, you will see a timestamp added as comment to the beginning of the cache file.
 
 ## TODOS
-- Limit filename length to 200 (as it includes query strings) and add md5 hashsum instead as suffix
+- Limit filename length to around 200 (as it includes query strings) and add md5 hashsum instead as suffix
 - Allow other caching approaches than just file cache
 - Allow usage of subfolders for File cache to avoid the folder to have millions of files as a flat list
 - What happens with custom headers set in the original request? How can we pass those to the final cached response?
