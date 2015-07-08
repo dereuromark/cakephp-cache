@@ -1,0 +1,176 @@
+<?php
+namespace Cache\Test\TestCase\Controller\Component;
+
+use Cake\Controller\ComponentRegistry;
+use Shim\Controller\Component\Component;
+use Cake\Controller\Controller;
+use Cake\Core\Configure;
+use Cake\Network\Request;
+use Cake\Network\Session;
+use Cake\Routing\DispatcherFactory;
+use Cake\TestSuite\TestCase;
+use Cake\Event\Event;
+
+/**
+ */
+class CacheComponentTest extends TestCase {
+
+	public function setUp() {
+		parent::setUp();
+
+		Configure::write('App.namespace', 'TestApp');
+
+		$this->Controller = new CacheComponentTestController();
+		$this->Controller->startupProcess();
+
+		$this->Controller->request->session()->delete('CacheMessage');
+
+		$this->Controller->Cache->config('debug', true);
+	}
+
+	public function tearDown() {
+		parent::tearDown();
+
+		unset($this->Controller->Cache);
+		unset($this->Controller);
+	}
+
+	/**
+	 * CacheComponentTest::testAction()
+	 *
+	 * @return void
+	 */
+	public function testAction() {
+		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . 'home.html';
+		$result = file_get_contents($file);
+		$expected = '<!--cachetime:0;ext:html-->Foo bar';
+		$this->assertEquals($expected, $result);
+
+		unlink($file);
+	}
+
+	/**
+	 * CacheComponentTest::testAction()
+	 *
+	 * @return void
+	 */
+	public function testActionWithCacheTime() {
+		$this->Controller->Cache->config('duration', DAY);
+		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . 'home.html';
+		$result = file_get_contents($file);
+		$expectedTime = time() + DAY;
+		$expected = '<!--cachetime:' . substr($expectedTime, 0, -1);
+		$this->assertTextStartsWith($expected, $result);
+
+		unlink($file);
+	}
+
+	/**
+	 * CacheComponentTest::testAction()
+	 *
+	 * @return void
+	 */
+	public function testActionWithExt() {
+		//$this->Controller->request->params['action'] = 'bar';
+		$this->Controller->request->here = '/foo/bar/baz.json?x=y';
+
+		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body', 'type']);
+
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar'));
+		$this->Controller->response->expects($this->once())
+			->method('type')
+			->will($this->returnValue('application/json'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . 'foo-bar-baz-json-x-y.html';
+		$result = file_get_contents($file);
+		$expected = '<!--cachetime:0;ext:json-->Foo bar';
+		$this->assertEquals($expected, $result);
+
+		unlink($file);
+	}
+
+	/**
+	 * CacheComponentTest::testAction()
+	 *
+	 * @return void
+	 */
+	public function testActionWithWhitelist() {
+		$this->Controller->Cache->config('actions', ['baz']);
+
+		$this->Controller->request->params['action'] = 'bar';
+		$this->Controller->request->here = '/foo/bar';
+		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . 'foo-bar.html';
+		$this->assertFalse(file_exists($file));
+
+		$this->Controller->request->params['action'] = 'baz';
+		$this->Controller->request->here = '/foo/baz';
+		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . 'foo-baz.html';
+		$this->assertTrue(file_exists($file));
+
+		unlink($file);
+	}
+
+}
+
+/**
+ * Use Controller instead of AppController to avoid conflicts
+ */
+class CacheComponentTestController extends Controller {
+
+	public $components = ['Cache.Cache'];
+
+	public $failed = false;
+
+	public $testHeaders = [];
+
+	public function fail() {
+		$this->failed = true;
+	}
+
+	public function redirect($url, $status = null, $exit = true) {
+		return $status;
+	}
+
+	public function header($status) {
+		$this->testHeaders[] = $status;
+	}
+}
