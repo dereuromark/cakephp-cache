@@ -42,6 +42,8 @@ class CacheFilterTest extends TestCase {
 
 		$result = $response->header();
 		$this->assertNotEmpty($result['Expires']); // + 1 day
+
+		unlink($file);
     }
 
     /**
@@ -79,6 +81,8 @@ class CacheFilterTest extends TestCase {
 
 		$result = $response->header();
 		$this->assertNotEmpty($result['Expires']); // + 1 week
+
+		unlink($file);
     }
 
 }
