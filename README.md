@@ -98,11 +98,10 @@ You can get information on the cache of this particular URL, e.g. how long it is
 In debug mode or with config `debug` enabled, you will see a timestamp added as comment to the beginning of the cache file.
 
 ## TODOS
-- Limit filename length to around 200 (as it includes query strings) and add md5 hashsum instead as suffix
-- Allow other caching approaches than just file cache
-- Allow usage of subfolders for File cache to avoid the folder to have millions of files as a flat list
+- Limit filename length to around 200 (as it includes query strings) and add md5 hashsum instead as suffix.
+- Extract the common file name part into a trait for both component and filter to use.
+- Allow other caching approaches than just file cache?
+- Allow usage of subfolders for File cache to avoid the folder to have millions of files as a flat list?
 - What happens with custom headers set in the original request? How can we pass those to the final cached response?
 - Re-implement the removed CacheHelper with its nocache parts?
 - Backport to 2.x?
-- Extract the common file name part into a trait for both component and filter to use.
-- Evaluate combining the filter with https://github.com/WyriHaximus/MinifyHtml to further compress the output.
