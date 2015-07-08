@@ -28,6 +28,7 @@ class CacheComponent extends Component {
 		'duration' => null,
 		'actions' => [],
 		'debug' => false,
+		'compress' => false,
 	];
 
 	/**
@@ -107,6 +108,15 @@ class CacheComponent extends Component {
 
 		$ext = $this->response->mapType($this->response->type());
 
+		$compress = $this->config('compress');
+		if ($compress === true) {
+			$content = $this->_compress($content, $ext);
+		} elseif (is_callable($compress)) {
+			$content = $compress($content, $ext);
+		} elseif ($compress) {
+			$content = call_user_func($compress, $content, $ext);
+		}
+
 		$cache = $cache . '.html';
 		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;
 
@@ -117,6 +127,30 @@ class CacheComponent extends Component {
 		$file = $folder . $cache;
 
 		return file_put_contents($file, $content);
+	}
+
+	/**
+	 * Compress HTML
+	 *
+	 * @param strig $content
+	 * @return string Content
+	 */
+	protected function _compress($content, $ext) {
+		if ($ext !== 'html') {
+			return $content;
+		}
+
+		// Removes HTML comments (not containing IE conditional comments).
+		$content = preg_replace_callback('/<!--([\\s\\S]*?)-->/', [$this, '_commentIgnore'], $content);
+
+		// Trim each line.
+		$content = preg_replace('/^\\s+|\\s+$/m', '', $content);
+
+		return $content;
+	}
+
+	protected function _commentIgnore($m) {
+		return (strpos($m[1], '[') === 0 || strpos($m[1], '<![') !== false) ? $m[0] : '';
 	}
 
 }

@@ -59,6 +59,17 @@ The default `cacheTime` can be set as global value, but if you want certain acti
 'actions' => ['report', 'view' => DAY, 'index' => HOUR]
 ```
 
+In case you want to further compress the output, you can either use the basic built in compressor:
+```php
+'compress' => true
+```
+or you can use any custom compressor using a callable:
+```php
+'compress' => function ($content, $ext) { ... }
+```
+The latter is useful if you want to control the compression per extension.
+
+
 ### Filter Configuration
 In case you need to run this before other high priority filters to avoid those to be invoked, you can raise the `priority` config.
 You can also adjust the `cacheTime` value for how long the browser should cache the unlimited cache files, defaults to `+1 day`.
@@ -93,3 +104,5 @@ In debug mode or with config `debug` enabled, you will see a timestamp added as 
 - What happens with custom headers set in the original request? How can we pass those to the final cached response?
 - Re-implement the removed CacheHelper with its nocache parts?
 - Backport to 2.x?
+- Extract the common file name part into a trait for both component and filter to use.
+- Evaluate combining the filter with https://github.com/WyriHaximus/MinifyHtml to further compress the output.

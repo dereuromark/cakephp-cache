@@ -149,6 +149,61 @@ class CacheComponentTest extends TestCase {
 		unlink($file);
 	}
 
+	/**
+	 * CacheComponentTest::testAction()
+	 *
+	 * @return void
+	 */
+	public function testActionWithCompress() {
+		$this->Controller->Cache->config('compress', true);
+
+		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar <!-- Some comment --> and
+
+			more text.'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . 'home.html';
+		$result = file_get_contents($file);
+		$expected = '<!--cachetime:0;ext:html-->Foo bar  andmore text.';
+		$this->assertEquals($expected, $result);
+
+		unlink($file);
+	}
+
+	/**
+	 * CacheComponentTest::testAction()
+	 *
+	 * @return void
+	 */
+	public function testActionWithCompressCallback() {
+		$this->Controller->Cache->config('compress', function ($content) {
+			$content = str_replace('bar', 'b', $content);
+			return $content;
+		});
+
+		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar.'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . 'home.html';
+		$result = file_get_contents($file);
+		$expected = '<!--cachetime:0;ext:html-->Foo b.';
+		$this->assertEquals($expected, $result);
+
+		unlink($file);
+	}
+
 }
 
 /**
