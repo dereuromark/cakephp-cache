@@ -97,6 +97,12 @@ You can get information on the cache of this particular URL, e.g. how long it is
 ### Debugging
 In debug mode or with config `debug` enabled, you will see a timestamp added as comment to the beginning of the cache file.
 
+## Limitations
+- It cannot provide partially dynamic parts as the 2.x CacheHelper could. The pages need to be completely cached.
+So this is most likely a useful caching strategy for non-HTML caches like JSON, XML, CSV, ...
+- Make sure you only cache public and non-personalized actions.
+The dispatcher cannot know if cache files of some non-public actions are requested by an authorized user.
+
 ## TODOS
 - Limit filename length to around 200 (as it includes query strings) and add md5 hashsum instead as suffix.
 - Extract the common file name part into a trait for both component and filter to use.
