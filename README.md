@@ -39,7 +39,11 @@ public $components = ['Cache.Cache'];
 
 And your bootstrap needs to enable the dispatcher filter:
 ```php
-DispatcherFactory::add('Cache.Cache');
+DispatcherFactory::add('Cache.Cache', [
+    'when' => function ($request, $response) {
+        return $request->is('get');
+    }
+]);
 ```
 
 The component creates the cache file, the dispatcher on the next request will discover it and deliver this static file instead as long
