@@ -40,20 +40,16 @@ class CacheShellTest extends TestCase {
 	}
 
 	/**
-	 * test that the startup method supresses the shell header
-	 *
 	 * @return void
 	 */
-	public function testMain() {
-		$this->Shell->runCommand(['info']);
+	public function testStatus() {
+		$this->Shell->runCommand(['status']);
 		$output = $this->out->output();
 		$expected = '0 cache files found';
 		$this->assertContains($expected, $output);
 	}
 
 	/**
-	 * test that the startup method supresses the shell header
-	 *
 	 * @return void
 	 */
 	public function testClear() {
