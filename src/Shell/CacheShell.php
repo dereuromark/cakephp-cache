@@ -11,10 +11,10 @@ use Cache\Routing\Filter\CacheFilter;
 class CacheShell extends Shell {
 
 	/**
-	 * @param strin|null $url
+	 * @param string|null $url
 	 * @return void
 	 */
-	public function info($url = null) {
+	public function status($url = null) {
 		$folder = CACHE . 'views' . DS;
 		if (!is_dir($folder)) {
 			mkdir($folder, 0770, true);
@@ -97,8 +97,8 @@ class CacheShell extends Shell {
 		];
 
 		$parser->description('Cache Shell to cleanup caching of view files.')
-				->addSubcommand('info', [
-					'help' => 'Infos about the files',
+				->addSubcommand('status', [
+					'help' => 'Status information about the files',
 					'parser' => $infoParser,
 				])
 				->addSubcommand('clear', [
