@@ -87,13 +87,13 @@ cake cache clear [optional/url]
 ### Further Cache Shell Goodies
 Using
 ```
-cake cache info [optional/url/]
+cake cache status [optional/url/]
 ```
 you get the amount of currently cached files.
 
 Using
 ```
-cake cache info /some-controller/some-action/?maybe=querystrings
+cake cache status /some-controller/some-action/?maybe=querystrings
 ```
 You can get information on the cache of this particular URL, e.g. how long it is still cached.
 
