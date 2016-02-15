@@ -228,4 +228,5 @@ class CacheComponentTestController extends Controller {
 	public function header($status) {
 		$this->testHeaders[] = $status;
 	}
+
 }

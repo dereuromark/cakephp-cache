@@ -15,7 +15,6 @@ use Cake\Utility\Inflector;
 use Cake\Core\Configure;
 
 /**
- *
  */
 class CacheComponent extends Component {
 
@@ -32,7 +31,7 @@ class CacheComponent extends Component {
 	];
 
 	/**
-	 * @param Event $event
+	 * @param \Cake\Event\Event $event
 	 */
 	public function shutdown(Event $event) {
 		$this->response = $event->subject->response;
@@ -55,7 +54,7 @@ class CacheComponent extends Component {
 	}
 
 	/**
-	 * @param Event $event
+	 * @param \Cake\Event\Event $event
 	 * @return bool|int|string
 	 */
 	protected function _isActionCached() {
@@ -103,7 +102,7 @@ class CacheComponent extends Component {
 		}
 		$cache = Inflector::slug($path);
 		if (empty($cache)) {
-			return;
+			return false;
 		}
 
 		$ext = $this->response->mapType($this->response->type());
@@ -132,7 +131,8 @@ class CacheComponent extends Component {
 	/**
 	 * Compress HTML
 	 *
-	 * @param strig $content
+	 * @param string $content
+	 * @param string $ext
 	 * @return string Content
 	 */
 	protected function _compress($content, $ext) {
@@ -149,6 +149,10 @@ class CacheComponent extends Component {
 		return $content;
 	}
 
+	/**
+	 * @param array $m
+	 * @return string
+	 */
 	protected function _commentIgnore($m) {
 		return (strpos($m[1], '[') === 0 || strpos($m[1], '<![') !== false) ? $m[0] : '';
 	}

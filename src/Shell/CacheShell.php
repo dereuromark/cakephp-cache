@@ -6,7 +6,6 @@ use Cache\Routing\Filter\CacheFilter;
 
 /**
  * Shell for tasks related to plugins.
- *
  */
 class CacheShell extends Shell {
 

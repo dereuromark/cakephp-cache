@@ -30,13 +30,11 @@ class CacheFilter extends DispatcherFilter {
 	protected $_cacheTime = '+1 day';
 
 	/**
-	 *
 	 * Constructor.
 	 *
 	 * @param array $config Array of config.
 	 */
-	public function __construct($config = [])
-	{
+	public function __construct($config = []) {
 		if (!empty($config['cacheTime'])) {
 			$this->_cacheTime = $config['cacheTime'];
 		}
@@ -163,4 +161,5 @@ class CacheFilter extends DispatcherFilter {
 		}
 		$response->body($content);
 	}
+
 }

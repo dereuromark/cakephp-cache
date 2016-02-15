@@ -14,23 +14,23 @@ use Cake\TestSuite\TestCase;
  */
 class CacheFilterTest extends TestCase {
 
-    /**
-     * test setting parameters in beforeDispatch method
-     *
-     * @return void
-     */
-    public function testBasicUrlWithExt() {
+	/**
+	 * test setting parameters in beforeDispatch method
+	 *
+	 * @return void
+	 */
+	public function testBasicUrlWithExt() {
 		$folder = CACHE . 'views' . DS;
 		$file = $folder . 'testcontroller-testaction-params1-params2-json.html';
 		$content = '<!--cachetime:0;ext:json-->Foo bar';
 		file_put_contents($file, $content);
 
-        $filter = new CacheFilter();
+		$filter = new CacheFilter();
 
-        $request = new Request("/testcontroller/testaction/params1/params2.json");
+		$request = new Request("/testcontroller/testaction/params1/params2.json");
 		$response = new Response();
-        $event = new Event(__CLASS__, $this, compact('request', 'response'));
-        $filter->beforeDispatch($event);
+		$event = new Event(__CLASS__, $this, compact('request', 'response'));
+		$filter->beforeDispatch($event);
 
 		$result = $response->body();
 		$expected = 'Foo bar';
@@ -44,30 +44,30 @@ class CacheFilterTest extends TestCase {
 		$this->assertNotEmpty($result['Expires']); // + 1 day
 
 		unlink($file);
-    }
+	}
 
-    /**
-     * test setting parameters in beforeDispatch method
-     *
-     * @return void
-     */
-    public function testQueryStringAndCustomTime() {
+	/**
+	 * test setting parameters in beforeDispatch method
+	 *
+	 * @return void
+	 */
+	public function testQueryStringAndCustomTime() {
 		$folder = CACHE . 'views' . DS;
 		$file = $folder . 'posts-home-coffee-life-sleep-sissies-coffee-life-sleep-sissies.html';
 		$content = '<!--cachetime:' . (time() + WEEK) . ';ext:html-->Foo bar';
 		file_put_contents($file, $content);
 
-        Router::reload();
-        Router::connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
-        Router::connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
-        Router::connect('/:controller/:action/*');
+		Router::reload();
+		Router::connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+		Router::connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+		Router::connect('/:controller/:action/*');
 
-        $_GET = ['coffee' => 'life', 'sleep' => 'sissies'];
-        $filter = new CacheFilter();
-        $request = new Request('posts/home/?coffee=life&sleep=sissies');
+		$_GET = ['coffee' => 'life', 'sleep' => 'sissies'];
+		$filter = new CacheFilter();
+		$request = new Request('posts/home/?coffee=life&sleep=sissies');
 		$response = new Response();
 		$event = new Event(__CLASS__, $this, compact('request', 'response'));
-        $filter->beforeDispatch($event);
+		$filter->beforeDispatch($event);
 
 		$result = $response->body();
 		$expected = '<!--created:';
@@ -83,6 +83,6 @@ class CacheFilterTest extends TestCase {
 		$this->assertNotEmpty($result['Expires']); // + 1 week
 
 		unlink($file);
-    }
+	}
 
 }
