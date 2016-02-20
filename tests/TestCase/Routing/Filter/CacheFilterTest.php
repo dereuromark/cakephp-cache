@@ -2,10 +2,10 @@
 
 namespace Cache\Test\TestCase\Routing\Filter;
 
+use Cache\Routing\Filter\CacheFilter;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cache\Routing\Filter\CacheFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 

@@ -1,13 +1,13 @@
 <?php
 namespace Cache\Routing\Filter;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
-use Cake\Core\Configure;
 
 /**
  *

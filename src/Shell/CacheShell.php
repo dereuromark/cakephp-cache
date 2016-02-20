@@ -1,8 +1,8 @@
 <?php
 namespace Cache\Shell;
 
-use Cake\Console\Shell;
 use Cache\Routing\Filter\CacheFilter;
+use Cake\Console\Shell;
 
 /**
  * Shell for tasks related to plugins.
