@@ -36,7 +36,7 @@ class CacheShell extends Shell {
 		$cacheInfo = $cache->extractCacheInfo($content);
 		$time = $cacheInfo['time'];
 		if ($time) {
-			$time = date(FORMAT_DB_DATETIME, $time);
+			$time = date('Y-m-d H:i:s', $time);
 		} else {
 			$time = '(unlimited)';
 		}
