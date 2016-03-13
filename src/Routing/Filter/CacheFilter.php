@@ -61,6 +61,15 @@ class CacheFilter extends DispatcherFilter {
 			return;
 		}
 
+		$content = file_get_contents($file);
+		$cacheInfo = $this->extractCacheInfo($content);
+		$cacheTime = $cacheInfo['time'];
+		
+		if ($cacheTime < time() && $cacheTime != 0) {
+			unlink($file);
+			return;
+		}
+
 		$response = $event->data['response'];
 		$event->stopPropagation();
 
