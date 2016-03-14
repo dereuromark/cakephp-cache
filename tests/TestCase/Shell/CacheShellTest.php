@@ -2,7 +2,6 @@
 namespace Cache\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Tools\Shell\CacheShell;
 use Tools\TestSuite\ConsoleOutput;
 use Tools\TestSuite\TestCase;
 

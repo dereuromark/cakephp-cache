@@ -3,6 +3,7 @@ namespace Cache\Shell;
 
 use Cache\Routing\Filter\CacheFilter;
 use Cake\Console\Shell;
+use FilesystemIterator;
 
 /**
  * Shell for tasks related to plugins.
@@ -20,7 +21,7 @@ class CacheShell extends Shell {
 		}
 
 		if (!$url) {
-			$fi = new \FilesystemIterator($folder, \FilesystemIterator::SKIP_DOTS);
+			$fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
 			$count = iterator_count($fi);
 			$this->out($count . ' cache files found.');
 			return;
@@ -70,7 +71,7 @@ class CacheShell extends Shell {
 			return $this->error('Aborted!');
 		}
 
-		$fi = new \FilesystemIterator($folder, \FilesystemIterator::SKIP_DOTS);
+		$fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
 		foreach ($fi as $file) {
 			$path = $file->getPathname();
 			if ($this->params['verbose']) {

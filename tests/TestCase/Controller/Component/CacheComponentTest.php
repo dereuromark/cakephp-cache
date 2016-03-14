@@ -1,20 +1,18 @@
 <?php
 namespace Cache\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Session;
-use Cake\Routing\DispatcherFactory;
 use Cake\TestSuite\TestCase;
-use Shim\Controller\Component\Component;
 
 /**
  */
 class CacheComponentTest extends TestCase {
 
+	/**
+	 * @return void
+	 */
 	public function setUp() {
 		parent::setUp();
 
@@ -28,6 +26,9 @@ class CacheComponentTest extends TestCase {
 		$this->Controller->Cache->config('debug', true);
 	}
 
+	/**
+	 * @return void
+	 */
 	public function tearDown() {
 		parent::tearDown();
 
@@ -36,8 +37,6 @@ class CacheComponentTest extends TestCase {
 	}
 
 	/**
-	 * CacheComponentTest::testAction()
-	 *
 	 * @return void
 	 */
 	public function testAction() {
@@ -59,8 +58,6 @@ class CacheComponentTest extends TestCase {
 	}
 
 	/**
-	 * CacheComponentTest::testAction()
-	 *
 	 * @return void
 	 */
 	public function testActionWithCacheTime() {
@@ -84,8 +81,6 @@ class CacheComponentTest extends TestCase {
 	}
 
 	/**
-	 * CacheComponentTest::testAction()
-	 *
 	 * @return void
 	 */
 	public function testActionWithExt() {
@@ -113,8 +108,6 @@ class CacheComponentTest extends TestCase {
 	}
 
 	/**
-	 * CacheComponentTest::testAction()
-	 *
 	 * @return void
 	 */
 	public function testActionWithWhitelist() {
@@ -150,8 +143,6 @@ class CacheComponentTest extends TestCase {
 	}
 
 	/**
-	 * CacheComponentTest::testAction()
-	 *
 	 * @return void
 	 */
 	public function testActionWithCompress() {
@@ -177,8 +168,6 @@ class CacheComponentTest extends TestCase {
 	}
 
 	/**
-	 * CacheComponentTest::testAction()
-	 *
 	 * @return void
 	 */
 	public function testActionWithCompressCallback() {
@@ -211,20 +200,39 @@ class CacheComponentTest extends TestCase {
  */
 class CacheComponentTestController extends Controller {
 
+	/**
+	 * @var array
+	 */
 	public $components = ['Cache.Cache'];
 
+	/**
+	 * @var bool
+	 */
 	public $failed = false;
 
+	/**
+	 * @var array
+	 */
 	public $testHeaders = [];
 
 	public function fail() {
 		$this->failed = true;
 	}
 
-	public function redirect($url, $status = null, $exit = true) {
+	/**
+	 * @param array|string $url
+	 * @param int|null $status
+	 *
+	 * @return null
+	 */
+	public function redirect($url, $status = null) {
 		return $status;
 	}
 
+	/**
+	 * @param int $status
+	 * @return void
+	 */
 	public function header($status) {
 		$this->testHeaders[] = $status;
 	}

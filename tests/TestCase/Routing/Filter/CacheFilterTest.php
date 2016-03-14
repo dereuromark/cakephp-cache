@@ -27,7 +27,7 @@ class CacheFilterTest extends TestCase {
 
 		$filter = new CacheFilter();
 
-		$request = new Request("/testcontroller/testaction/params1/params2.json");
+		$request = new Request('/testcontroller/testaction/params1/params2.json');
 		$response = new Response();
 		$event = new Event(__CLASS__, $this, compact('request', 'response'));
 		$filter->beforeDispatch($event);

@@ -2,16 +2,8 @@
 namespace Cache\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
-use Cake\Event\EventManagerTrait;
-use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Request;
-use Cake\Network\Response;
-use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 
 /**
@@ -32,6 +24,7 @@ class CacheComponent extends Component {
 
 	/**
 	 * @param \Cake\Event\Event $event
+	 * @return void
 	 */
 	public function shutdown(Event $event) {
 		$this->response = $event->subject->response;
