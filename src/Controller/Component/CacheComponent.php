@@ -86,6 +86,7 @@ class CacheComponent extends Component {
 		}
 
 		$path = $this->request->here();
+        $path = str_replace($this->request->base, '', $path);
 		if ($path === '/') {
 			$path = 'home';
 		}
