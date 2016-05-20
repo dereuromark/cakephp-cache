@@ -87,7 +87,7 @@ class CacheComponent extends Component {
 
 		$path = $this->request->here();
 		if ($path === '/') {
-			$path = 'home';
+			$path = 'root';
 		}
 		$prefix = Configure::read('Cache.prefix');
 		if ($prefix) {
