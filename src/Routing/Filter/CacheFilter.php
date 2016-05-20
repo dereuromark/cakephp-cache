@@ -81,7 +81,7 @@ class CacheFilter extends DispatcherFilter {
 	 */
 	public function getFile($url, $mustExist = true) {
 		if ($url === '/') {
-			$url = 'home';
+			$url = '__root__';
 		}
 
 		$path = $url;
