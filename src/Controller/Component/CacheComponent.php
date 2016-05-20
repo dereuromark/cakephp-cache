@@ -89,7 +89,7 @@ class CacheComponent extends Component {
 		if ($url === '/') {
 			$url = '_root';
 		}
-        $cache = $url;
+		$cache = $url;
 		$prefix = Configure::read('Cache.prefix');
 		if ($prefix) {
 			$cache = $prefix . '_' . $url;
