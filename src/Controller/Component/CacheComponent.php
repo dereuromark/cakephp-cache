@@ -89,12 +89,13 @@ class CacheComponent extends Component {
 		if ($url === '/') {
 			$url = '_root';
 		}
+        $cache = $url;
 		$prefix = Configure::read('Cache.prefix');
 		if ($prefix) {
-			$path = $prefix . '_' . $url;
+			$cache = $prefix . '_' . $url;
 		}
 		if ($url !== '_root') {
-			$cache = Inflector::slug($path);
+			$cache = Inflector::slug($cache);
 		}
 		if (empty($cache)) {
 			return false;
