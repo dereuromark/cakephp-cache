@@ -63,7 +63,7 @@ class CacheFilter extends DispatcherFilter {
 		$content = file_get_contents($file);
 		$cacheInfo = $this->extractCacheInfo($content);
 		$cacheTime = $cacheInfo['time'];
-		
+
 		if ($cacheTime < time() && $cacheTime != 0) {
 			unlink($file);
 			return;
