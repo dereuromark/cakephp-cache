@@ -36,6 +36,29 @@ class CacheComponentTest extends TestCase {
 		unset($this->Controller);
 	}
 
+    public function testFileFromSubdirection() {
+        $this->Controller->request->url = 'pages/view/1';
+        $this->Controller->request->base = '/myapp';
+        $this->Controller->request->webroot = '/myapp/';
+        $this->Controller->request->here = '/myapp/pages/view/1';
+
+        $this->Controller->response = $this->getMock('Cake\Network\Response', ['body', 'type']);
+
+        $this->Controller->response->expects($this->once())
+            ->method('body')
+            ->will($this->returnValue('Foo bar'));
+        $this->Controller->response->expects($this->once())
+            ->method('type')
+            ->will($this->returnValue('application/json'));
+
+        $event = new Event('Controller.shutdown', $this->Controller);
+        $this->Controller->Cache->shutdown($event);
+        $file = CACHE . 'views' . DS . 'pages-view-1.html';
+        $this->assertEquals(is_file($file), true);
+
+        unlink($file);
+    }
+
 	/**
 	 * @return void
 	 */
