@@ -1,11 +1,11 @@
 <?php
 namespace Cache\Test\TestCase\Controller\Component;
 
-use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use TestApp\Controller\CacheComponentTestController;
 
 /**
  */
@@ -206,50 +206,6 @@ class CacheComponentTest extends TestCase {
 	 */
 	protected function getResponseMock(array $methods) {
 		return $this->getMockBuilder(Response::class)->setMethods($methods)->getMock();
-	}
-
-}
-
-/**
- * Use Controller instead of AppController to avoid conflicts
- */
-class CacheComponentTestController extends Controller {
-
-	/**
-	 * @var array
-	 */
-	public $components = ['Cache.Cache'];
-
-	/**
-	 * @var bool
-	 */
-	public $failed = false;
-
-	/**
-	 * @var array
-	 */
-	public $testHeaders = [];
-
-	public function fail() {
-		$this->failed = true;
-	}
-
-	/**
-	 * @param array|string $url
-	 * @param int|null $status
-	 *
-	 * @return null
-	 */
-	public function redirect($url, $status = null) {
-		return $status;
-	}
-
-	/**
-	 * @param int $status
-	 * @return void
-	 */
-	public function header($status) {
-		$this->testHeaders[] = $status;
 	}
 
 }
