@@ -16,6 +16,9 @@ It uses a dispatcher and a component.
 Why not a helper anymore? Mainly because a helper is too limited and would
 not be able to cache serialized views, e.g. JSON, CSV, RSS content which have been build view-less.
 
+## Demo
+[sandbox.dereuromark.de/sandbox/cache-examples/](http://sandbox.dereuromark.de/sandbox/cache-examples/)
+
 ## Installation
 
 You can install this plugin into your CakePHP application using [composer](http://getcomposer.org).
