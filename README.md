@@ -44,6 +44,7 @@ DispatcherFactory::add('Cache.Cache', [
     }
 ]);
 ```
+By adding the `'when'` part, we make sure it only get's invoked for GET requests.
 
 You then need to add the component to the controllers you want to make cache-able:
 ```php
