@@ -29,11 +29,11 @@ class CacheShellTest extends TestCase {
 			->setMethods(['in', '_stop'])
 			->setConstructorArgs([$io])
 			->getMock();
+
+		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'test.html';
 	}
 
 	/**
-	 * tearDown
-	 *
 	 * @return void
 	 */
 	public function tearDown() {
@@ -48,6 +48,26 @@ class CacheShellTest extends TestCase {
 		$this->Shell->runCommand(['status']);
 		$output = $this->out->output();
 		$expected = '0 cache files found';
+		$this->assertContains($expected, $output);
+
+		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.html');
+
+		$this->Shell->runCommand(['status']);
+		$output = $this->out->output();
+		$expected = '1 cache files found';
+		$this->assertContains($expected, $output);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testStatusWithUrl() {
+		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.html');
+
+		$this->Shell->runCommand(['status', '/test']);
+		$output = $this->out->output();
+
+		$expected = 'Cached until: (unlimited)';
 		$this->assertContains($expected, $output);
 	}
 

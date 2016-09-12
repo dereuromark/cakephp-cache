@@ -101,7 +101,7 @@ class CacheFilter extends DispatcherFilter {
 	 *
 	 * @return string
 	 */
-	protected function getFile($url, $mustExist = true) {
+	public function getFile($url, $mustExist = true) {
 		if ($url === '/') {
 			$url = '_root';
 		}
@@ -129,7 +129,7 @@ class CacheFilter extends DispatcherFilter {
 	 *
 	 * @return array Time/Ext
 	 */
-	protected function extractCacheInfo(&$content) {
+	public function extractCacheInfo(&$content) {
 		if ($this->_cacheInfo) {
 			return $this->_cacheInfo;
 		}
@@ -189,7 +189,7 @@ class CacheFilter extends DispatcherFilter {
 			$response->header('Content-Length', filesize($file));
 		}
 
-		$content = $this->_cacheContent;
+		$cacheContent = $this->_cacheContent;
 		$cacheInfo = $this->_cacheInfo;
 
 		$modifiedTime = filemtime($file);
@@ -202,10 +202,10 @@ class CacheFilter extends DispatcherFilter {
 
 		if (Configure::read('debug') || $this->config('debug')) {
 			if ($cacheInfo['ext'] === 'html') {
-				$content = '<!--created:' . $modifiedTime . '-->' . $content;
+				$cacheContent = '<!--created:' . $modifiedTime . '-->' . $cacheContent;
 			}
 		}
-		$response->body($content);
+		$response->body($cacheContent);
 	}
 
 }

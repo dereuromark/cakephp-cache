@@ -49,26 +49,25 @@ class CacheShell extends Shell {
 
 	/**
 	 * @param string|null $url
-	 * @return void|int
+	 * @return int|null
 	 */
 	public function clear($url = null) {
 		if ($url) {
 			$cache = new CacheFilter();
 			$file = $cache->getFile($url);
 			if (!$file) {
-				$this->error('No cache file found');
-				return;
+				$this->abort('No cache file found');
 			}
 			unlink($file);
 			$this->out('File ' . $file . ' deleted');
-			return;
+			return null;
 		}
 
 		$folder = CACHE . 'views' . DS;
 
 		$continue = $this->in('Clear `' . $folder . '`?', ['y', 'n'], 'y');
 		if ($continue !== 'y') {
-			return $this->error('Aborted!');
+			$this->abort('Aborted!');
 		}
 
 		$fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
