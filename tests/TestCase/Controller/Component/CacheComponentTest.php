@@ -49,7 +49,7 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . 'home.html';
+		$file = CACHE . 'views' . DS . '_root.html';
 		$result = file_get_contents($file);
 		$expected = '<!--cachetime:0;ext:html-->Foo bar';
 		$this->assertEquals($expected, $result);
@@ -71,7 +71,7 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . 'home.html';
+		$file = CACHE . 'views' . DS . '_root.html';
 		$result = file_get_contents($file);
 		$expectedTime = time() + DAY;
 		$expected = '<!--cachetime:' . substr($expectedTime, 0, -1);
@@ -159,7 +159,7 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . 'home.html';
+		$file = CACHE . 'views' . DS . '_root.html';
 		$result = file_get_contents($file);
 		$expected = '<!--cachetime:0;ext:html-->Foo bar  andmore text.';
 		$this->assertEquals($expected, $result);
@@ -185,7 +185,7 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . 'home.html';
+		$file = CACHE . 'views' . DS . '_root.html';
 		$result = file_get_contents($file);
 		$expected = '<!--cachetime:0;ext:html-->Foo b.';
 		$this->assertEquals($expected, $result);

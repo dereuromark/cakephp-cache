@@ -85,15 +85,18 @@ class CacheComponent extends Component {
 			$cacheTime = strtotime($duration, $now);
 		}
 
-		$path = $this->request->here();
-		if ($path === '/') {
-			$path = 'home';
+		$url = $this->request->here();
+		if ($url === '/') {
+			$url = '_root';
 		}
+		$cache = $url;
 		$prefix = Configure::read('Cache.prefix');
 		if ($prefix) {
-			$path = $prefix . '_' . $path;
+			$cache = $prefix . '_' . $url;
 		}
-		$cache = Inflector::slug($path);
+		if ($url !== '_root') {
+			$cache = Inflector::slug($cache);
+		}
 		if (empty($cache)) {
 			return false;
 		}

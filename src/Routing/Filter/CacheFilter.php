@@ -90,7 +90,7 @@ class CacheFilter extends DispatcherFilter {
 	 */
 	public function getFile($url, $mustExist = true) {
 		if ($url === '/') {
-			$url = 'home';
+			$url = '_root';
 		}
 
 		$path = $url;
@@ -99,7 +99,9 @@ class CacheFilter extends DispatcherFilter {
 			$path = $prefix . '_' . $path;
 		}
 
-		$path = Inflector::slug($path);
+		if ($url !== '_root') {
+			$path = Inflector::slug($path);
+		}
 
 		$folder = CACHE . 'views' . DS;
 		$file = $folder . $path . '.html';
