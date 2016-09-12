@@ -36,12 +36,7 @@ Plugin::loadAll();
 ```
 
 ## Usage
-You need to add the component to the controllers you want to make cache-able:
-```php
-public $components = ['Cache.Cache'];
-```
-
-And your bootstrap needs to enable the dispatcher filter:
+Your bootstrap needs to enable the dispatcher filter:
 ```php
 DispatcherFactory::add('Cache.Cache', [
     'when' => function ($request, $response) {
@@ -50,9 +45,29 @@ DispatcherFactory::add('Cache.Cache', [
 ]);
 ```
 
+You then need to add the component to the controllers you want to make cache-able:
+```php
+public $components = ['Cache.Cache'];
+```
+
+If you want to provide some configuration, it is adviced to use the `initialize` callback instead, though:
+```php
+/**
+ * @return void
+ */
+public function initialize() {
+	$this->loadComponent('Cache.Cache', [
+		'actions' => [
+			...
+		],
+		...
+	]);
+}
+```
+
 The component creates the cache file, the dispatcher on the next request will discover it and deliver this static file instead as long
-as the file modification date is within the allowed range. Once the file got too old it will be cleaned out.
-The next complete dispatching process will make the component create a fresh cache file then.
+as the file modification date is within the allowed range. 
+Once the file gets too old it will be cleaned out, a real action will be called and a fresh cache file will be created.
 
 ### Global Configuration
 The `CACHE` constant can be adjusted in your bootstrap and defaults to `tmp/cache/views/`.
