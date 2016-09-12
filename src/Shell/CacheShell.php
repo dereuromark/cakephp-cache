@@ -30,9 +30,9 @@ class CacheShell extends Shell {
 		$cache = new CacheFilter();
 		$file = $cache->getFile($url);
 		if (!$file) {
-			$this->out('No cache file found');
-			return;
+			$this->abort('No cache file found');
 		}
+
 		$content = file_get_contents($file);
 		$cacheInfo = $cache->extractCacheInfo($content);
 		$time = $cacheInfo['time'];
