@@ -4,11 +4,17 @@ namespace Cache\Test\TestCase\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
  */
 class CacheComponentTest extends TestCase {
+
+	/**
+	 * @var \Cake\Controller\Controller
+	 */
+	protected $Controller;
 
 	/**
 	 * @return void
@@ -40,7 +46,7 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testAction() {
-		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response = $this->getResponseMock(['body']);
 
 		$this->Controller->response->expects($this->once())
 			->method('body')
@@ -62,7 +68,7 @@ class CacheComponentTest extends TestCase {
 	 */
 	public function testActionWithCacheTime() {
 		$this->Controller->Cache->config('duration', DAY);
-		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response = $this->getResponseMock(['body']);
 
 		$this->Controller->response->expects($this->once())
 			->method('body')
@@ -87,7 +93,7 @@ class CacheComponentTest extends TestCase {
 		//$this->Controller->request->params['action'] = 'bar';
 		$this->Controller->request->here = '/foo/bar/baz.json?x=y';
 
-		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body', 'type']);
+		$this->Controller->response = $this->getResponseMock(['body', 'type']);
 
 		$this->Controller->response->expects($this->once())
 			->method('body')
@@ -115,7 +121,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->request->params['action'] = 'bar';
 		$this->Controller->request->here = '/foo/bar';
-		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response = $this->getResponseMock(['body']);
 		$this->Controller->response->expects($this->once())
 			->method('body')
 			->will($this->returnValue('Foo bar'));
@@ -128,7 +134,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->request->params['action'] = 'baz';
 		$this->Controller->request->here = '/foo/baz';
-		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response = $this->getResponseMock(['body']);
 		$this->Controller->response->expects($this->once())
 			->method('body')
 			->will($this->returnValue('Foo bar'));
@@ -148,7 +154,7 @@ class CacheComponentTest extends TestCase {
 	public function testActionWithCompress() {
 		$this->Controller->Cache->config('compress', true);
 
-		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response = $this->getResponseMock(['body']);
 
 		$this->Controller->response->expects($this->once())
 			->method('body')
@@ -176,7 +182,7 @@ class CacheComponentTest extends TestCase {
 			return $content;
 		});
 
-		$this->Controller->response = $this->getMock('Cake\Network\Response', ['body']);
+		$this->Controller->response = $this->getResponseMock(['body']);
 
 		$this->Controller->response->expects($this->once())
 			->method('body')
@@ -191,6 +197,15 @@ class CacheComponentTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		unlink($file);
+	}
+
+	/**
+	 * @param array $methods
+	 *
+	 * @return \Cake\Http\Client\Response|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected function getResponseMock(array $methods) {
+		return $this->getMockBuilder(Response::class)->setMethods($methods)->getMock();
 	}
 
 }

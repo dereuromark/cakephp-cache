@@ -1,6 +1,7 @@
 <?php
 namespace Cache\Test\TestCase\Shell;
 
+use Cache\Shell\CacheShell;
 use Cake\Console\ConsoleIo;
 use Tools\TestSuite\ConsoleOutput;
 use Tools\TestSuite\TestCase;
@@ -10,8 +11,11 @@ use Tools\TestSuite\TestCase;
 class CacheShellTest extends TestCase {
 
 	/**
-	 * setUp method
-	 *
+	 * @var \Cache\Shell\CacheShell|\PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $Shell;
+
+	/**
 	 * @return void
 	 */
 	public function setUp() {
@@ -21,11 +25,10 @@ class CacheShellTest extends TestCase {
 		$this->err = new ConsoleOutput();
 		$io = new ConsoleIo($this->out, $this->err);
 
-		$this->Shell = $this->getMock(
-			'Cache\Shell\CacheShell',
-			['in', '_stop'],
-			[$io]
-		);
+		$this->Shell = $this->getMockBuilder(CacheShell::class)
+			->setMethods(['in', '_stop'])
+			->setConstructorArgs([$io])
+			->getMock();
 	}
 
 	/**

@@ -29,8 +29,16 @@ class CacheFilter extends DispatcherFilter {
 	protected $_cacheTime = '+1 day';
 
 	/**
-	 * Constructor.
-	 *
+	 * @var string|null
+	 */
+	protected $_cacheContent;
+
+	/**
+	 * @var array|null
+	 */
+	protected $_cacheInfo;
+
+	/**
 	 * @param array $config Array of config.
 	 */
 	public function __construct($config = []) {
@@ -44,31 +52,34 @@ class CacheFilter extends DispatcherFilter {
 	 * Checks if a requested cache file exists and sends it to the browser
 	 *
 	 * @param \Cake\Event\Event $event containing the request and response object
-	 * @return \Cake\Network\Response if the client is requesting a recognized cache file, null otherwise
+	 *
+	 * @return \Cake\Network\Response|null Response if the client is requesting a recognized cache file, null otherwise
 	 */
 	public function beforeDispatch(Event $event) {
 		if (Configure::read('Cache.check') === false) {
-			return;
+			return null;
 		}
 
+		/* @var \Cake\Network\Request $request */
 		$request = $event->data['request'];
 
 		$url = $request->here();
 		$file = $this->getFile($url);
 
 		if ($file === null) {
-			return;
+			return null;
 		}
 
-		$content = file_get_contents($file);
-		$cacheInfo = $this->extractCacheInfo($content);
+		$cacheContent = $this->extractCacheContent($file);
+		$cacheInfo = $this->extractCacheInfo($cacheContent);
 		$cacheTime = $cacheInfo['time'];
 
 		if ($cacheTime < time() && $cacheTime != 0) {
 			unlink($file);
-			return;
+			return null;
 		}
 
+		/* @var \Cake\Network\Response $response */
 		$response = $event->data['response'];
 		$event->stopPropagation();
 
@@ -86,9 +97,10 @@ class CacheFilter extends DispatcherFilter {
 	/**
 	 * @param string $url
 	 * @param bool $mustExist
+	 *
 	 * @return string
 	 */
-	public function getFile($url, $mustExist = true) {
+	protected function getFile($url, $mustExist = true) {
 		if ($url === '/') {
 			$url = '_root';
 		}
@@ -113,21 +125,43 @@ class CacheFilter extends DispatcherFilter {
 
 	/**
 	 * @param string &$content
+	 *
 	 * @return array Time/Ext
 	 */
-	public function extractCacheInfo(&$content) {
+	protected function extractCacheInfo(&$content) {
+		if ($this->_cacheInfo) {
+			return $this->_cacheInfo;
+		}
+
 		$cacheTime = 0;
 		$cacheExt = 'html';
-		$content = preg_replace_callback('/^\<\!--cachetime\:(\d+);ext\:(\w+)--\>/', function ($matches) use (&$cacheTime, &$cacheExt) {
+		$this->_cacheContent = preg_replace_callback('/^\<\!--cachetime\:(\d+);ext\:(\w+)--\>/', function ($matches) use (&$cacheTime, &$cacheExt) {
 			$cacheTime = $matches[1];
 			$cacheExt = $matches[2];
 			return '';
-		}, $content);
+		}, $this->_cacheContent);
 
-		return [
+		$this->_cacheInfo = [
 			'time' => (int)$cacheTime,
 			'ext' => $cacheExt
 		];
+
+		return $this->_cacheInfo;
+	}
+
+	/**
+	 * @param string $file
+	 *
+	 * @return string
+	 */
+	protected function extractCacheContent($file) {
+		if ($this->_cacheContent !== null) {
+			return $this->_cacheContent;
+		}
+
+		$this->_cacheContent = (string)file_get_contents($file);
+
+		return $this->_cacheContent;
 	}
 
 	/**
@@ -137,6 +171,7 @@ class CacheFilter extends DispatcherFilter {
 	 * @param \Cake\Network\Response $response The response object to use.
 	 * @param string $file Path to the asset file in the file system
 	 * @param string $ext The extension of the file to determine its mime type
+	 *
 	 * @return void
 	 */
 	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
@@ -153,8 +188,8 @@ class CacheFilter extends DispatcherFilter {
 			$response->header('Content-Length', filesize($file));
 		}
 
-		$content = file_get_contents($file);
-		$cacheInfo = $this->extractCacheInfo($content);
+		$content = $this->_cacheContent;
+		$cacheInfo = $this->_cacheInfo;
 
 		$modifiedTime = filemtime($file);
 		$cacheTime = $cacheInfo['time'];

@@ -47,7 +47,6 @@ class CacheComponent extends Component {
 	}
 
 	/**
-	 * @param \Cake\Event\Event $event
 	 * @return bool|int|string
 	 */
 	protected function _isActionCached() {
@@ -125,7 +124,7 @@ class CacheComponent extends Component {
 	}
 
 	/**
-	 * Compress HTML
+	 * Compresses HTML
 	 *
 	 * @param string $content
 	 * @param string $ext

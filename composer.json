@@ -4,12 +4,13 @@
 	"type": "cakephp-plugin",
 	"license": "MIT",
 	"require": {
-		"php": ">=5.4.16",
-		"cakephp/cakephp": "~3.0"
+		"php": ">=5.5",
+		"cakephp/cakephp": "~3.3"
 	},
 	"require-dev": {
 		"dereuromark/cakephp-tools": "dev-master",
-		"fig-r/psr2r-sniffer": "dev-master"
+		"fig-r/psr2r-sniffer": "dev-master",
+		"phpunit/phpunit": "*"
 	},
 	"autoload": {
 		"psr-4": {
