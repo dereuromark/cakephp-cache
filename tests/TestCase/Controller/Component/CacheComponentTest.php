@@ -201,7 +201,7 @@ class CacheComponentTest extends TestCase {
 
 	/**
 	 * @return void
-     */
+	 */
 	public function testFileWithBasePath() {
 		$this->Controller->request->url = 'pages/view/1';
 		$this->Controller->request->base = '/myapp';
