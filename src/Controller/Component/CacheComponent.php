@@ -85,9 +85,11 @@ class CacheComponent extends Component {
 		}
 
 		$url = $this->request->here();
+		$url = str_replace($this->request->base, '', $url);
 		if ($url === '/') {
 			$url = '_root';
 		}
+
 		$cache = $url;
 		$prefix = Configure::read('Cache.prefix');
 		if ($prefix) {

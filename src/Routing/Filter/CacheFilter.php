@@ -64,6 +64,7 @@ class CacheFilter extends DispatcherFilter {
 		$request = $event->data['request'];
 
 		$url = $request->here();
+		$url = str_replace($request->base, '', $url);
 		$file = $this->getFile($url);
 
 		if ($file === null) {

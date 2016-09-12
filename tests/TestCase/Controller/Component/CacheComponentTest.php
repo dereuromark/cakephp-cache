@@ -200,6 +200,28 @@ class CacheComponentTest extends TestCase {
 	}
 
 	/**
+	 * @return void
+     */
+	public function testFileWithBasePath() {
+		$this->Controller->request->url = 'pages/view/1';
+		$this->Controller->request->base = '/myapp';
+		$this->Controller->request->webroot = '/myapp/';
+		$this->Controller->request->here = '/myapp/pages/view/1';
+		$this->Controller->response = $this->getResponseMock(['body', 'type']);
+		$this->Controller->response->expects($this->once())
+			->method('body')
+			->will($this->returnValue('Foo bar'));
+		$this->Controller->response->expects($this->once())
+			->method('type')
+			->will($this->returnValue('application/json'));
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+		$file = CACHE . 'views' . DS . 'pages-view-1.html';
+		$this->assertEquals(is_file($file), true);
+		unlink($file);
+	}
+
+	/**
 	 * @param array $methods
 	 *
 	 * @return \Cake\Http\Client\Response|\PHPUnit_Framework_MockObject_MockObject
