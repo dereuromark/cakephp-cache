@@ -202,7 +202,7 @@ class CacheFilter extends DispatcherFilter {
 
 		if (Configure::read('debug') || $this->config('debug')) {
 			if ($cacheInfo['ext'] === 'html') {
-				$cacheContent = '<!--created:' . $modifiedTime . '-->' . $cacheContent;
+				$cacheContent = '<!--created:' . date('Y-m-d H:i:s', $modifiedTime) . '-->' . $cacheContent;
 			}
 		}
 		$response->body($cacheContent);

@@ -1,6 +1,7 @@
 <?php
 namespace Cache\Controller\Component;
 
+use Cache\Utility\Compressor;
 use Cake\Controller\Component;
 use Cake\Core\Configure;
 use Cake\Event\Event;
@@ -18,7 +19,6 @@ class CacheComponent extends Component {
 	protected $_defaultConfig = [
 		'duration' => null,
 		'actions' => [],
-		'debug' => false,
 		'compress' => false,
 	];
 
@@ -35,12 +35,12 @@ class CacheComponent extends Component {
 		}
 
 		$duration = $this->config('duration');
-		$isActionCached = $this->_isActionCached();
-		if ($isActionCached === false) {
+		$isActionCachable = $this->_isActionCachable();
+		if ($isActionCachable === false) {
 			return;
 		}
-		if ($isActionCached !== true) {
-			$duration = $isActionCached;
+		if ($isActionCachable !== true) {
+			$duration = $isActionCachable;
 		}
 
 		$this->_writeFile($content, $duration);
@@ -49,7 +49,7 @@ class CacheComponent extends Component {
 	/**
 	 * @return bool|int|string
 	 */
-	protected function _isActionCached() {
+	protected function _isActionCachable() {
 		$actions = $this->config('actions');
 		if (!$actions) {
 			return true;
@@ -103,15 +103,7 @@ class CacheComponent extends Component {
 		}
 
 		$ext = $this->response->mapType($this->response->type());
-
-		$compress = $this->config('compress');
-		if ($compress === true) {
-			$content = $this->_compress($content, $ext);
-		} elseif (is_callable($compress)) {
-			$content = $compress($content, $ext);
-		} elseif ($compress) {
-			$content = call_user_func($compress, $content, $ext);
-		}
+		$content = $this->_compress($content, $ext);
 
 		$cache = $cache . '.html';
 		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;
@@ -137,21 +129,17 @@ class CacheComponent extends Component {
 			return $content;
 		}
 
-		// Removes HTML comments (not containing IE conditional comments).
-		$content = preg_replace_callback('/<!--([\\s\\S]*?)-->/', [$this, '_commentIgnore'], $content);
-
-		// Trim each line.
-		$content = preg_replace('/^\\s+|\\s+$/m', '', $content);
+		$compress = $this->config('compress');
+		if ($compress === true) {
+			$Compressor = new Compressor();
+			$content = $Compressor->compress($content);
+		} elseif (is_callable($compress)) {
+			$content = $compress($content);
+		} elseif ($compress) {
+			$content = call_user_func($compress, $content);
+		}
 
 		return $content;
-	}
-
-	/**
-	 * @param array $m
-	 * @return string
-	 */
-	protected function _commentIgnore($m) {
-		return (strpos($m[1], '[') === 0 || strpos($m[1], '<![') !== false) ? $m[0] : '';
 	}
 
 }
