@@ -27,7 +27,7 @@ class AppView extends View {
 }
 ```
 
-### Caching specific controller actions
+### Basic usage
 For each controller you can specify to either cache all actions or explicit ones.
 
 ```php
@@ -37,12 +37,20 @@ public function initialize() {
 	parent::initialize();
 
 	$this->loadComponent('Cache.PartialCache', [
-		'actions' => ['index', 'view']
+		'actions' => ['index', 'view' => DAY]
 	]);
 }
 ```
-By default the duration is unlimited, but you can also set a time.
+By default the duration is unlimited, but you can also set a time. The "view" action here is cached for one day.
 
+In case you want to further compress the output, you can either use the basic built in compressor:
+```php
+'compress' => true
+```
+or you can use any custom compressor using a callable:
+```php
+'compress' => function ($content) { ... }
+```
 
 ### Caching some PagesController views
 For the PagesController you will need to look for the first "pass" element which represents the page name.
@@ -61,3 +69,26 @@ public function initialize() {
 	}
 }
 ```
+
+
+### Clearing the cache
+
+The Cache shell shipped with this plugin should make it easy to clear the cache manually:
+```
+cake cache clear
+```
+
+
+### Debugging
+In debug mode or with config `debug` enabled, you will see a timestamp added as comment to the beginning of the cache file
+and an end comment tag at end of the cached content.
+
+## Limitations
+- It cannot provide partially dynamic parts as the 2.x CacheHelper could. The view template need to be completely cached.
+- Make sure you only cache public and non-personalized static templates. There should also no DB data changing the content.
+
+
+## TODOS
+- Allow partial layout caching?
+- Check if we better use the URLs for caching (to allow params and query strings).
+- Re-implement the removed CacheHelper with its nocache parts?

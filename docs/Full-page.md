@@ -69,7 +69,7 @@ The Cache shell shipped with this plugin should make it easy to clear the cache 
 cake cache clear [optional/url]
 ```
 
-### Further Cache Shell Goodies
+#### Further Cache Shell Goodies
 Using
 ```
 cake cache status [optional/url/]
@@ -88,7 +88,7 @@ In debug mode or with config `debug` enabled, you will see a timestamp added as 
 
 ## Limitations
 - It cannot provide partially dynamic parts as the 2.x CacheHelper could. The pages need to be completely cached.
-So this is most likely a useful caching strategy for non-HTML caches like JSON, XML, CSV, ...
+So this is most likely a useful caching strategy for static full-page HTML or non-HTML requests like JSON, XML, CSV, ...
 - Make sure you only cache public and non-personalized actions.
 The dispatcher cannot know if cache files of some non-public actions are requested by an authorized user.
 
@@ -99,5 +99,3 @@ The dispatcher cannot know if cache files of some non-public actions are request
 - Allow usage of subfolders for File cache to avoid the folder to have millions of files as a flat list?
 - What happens with custom headers set in the original request? How can we pass those to the final cached response?
 - Re-implement the removed CacheHelper with its nocache parts?
-- Backport to 2.x?
-

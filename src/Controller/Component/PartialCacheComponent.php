@@ -16,9 +16,8 @@ class PartialCacheComponent extends Component {
 	 * @var array
 	 */
 	protected $_defaultConfig = [
-		'duration' => null,
 		'actions' => [],
-		'compress' => true,
+		'compress' => false,
 	];
 
 	/**

@@ -125,18 +125,17 @@ class CacheComponent extends Component {
 	 * @return string Content
 	 */
 	protected function _compress($content, $ext) {
-		if ($ext !== 'html') {
-			return $content;
-		}
-
 		$compress = $this->config('compress');
 		if ($compress === true) {
-			$Compressor = new Compressor();
-			$content = $Compressor->compress($content);
+			// Native compressor only supports HTML right now
+			if ($ext === 'html') {
+				$Compressor = new Compressor();
+				$content = $Compressor->compress($content);
+			}
 		} elseif (is_callable($compress)) {
-			$content = $compress($content);
+			$content = $compress($content, $ext);
 		} elseif ($compress) {
-			$content = call_user_func($compress, $content);
+			$content = call_user_func($compress, $content, $ext);
 		}
 
 		return $content;
