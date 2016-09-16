@@ -62,8 +62,13 @@ class PartialCacheView extends AppView {
 			$defaultLayout = $this->layout;
 			$this->layout = $layout;
 		}
+		
+		$viewFileName = null;
+		if ($view !== false) {
+			$viewFileName = $this->_getViewFileName($view);
+		}
 
-		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+		if ($viewFileName) {
 			$this->_currentType = static::TYPE_TEMPLATE;
 			$this->dispatchEvent('View.beforeRender', [$viewFileName]);
 			$this->Blocks->set('content', $this->_getCachedOrRender($viewFileName));
