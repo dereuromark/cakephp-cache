@@ -22,7 +22,7 @@ class PartialCacheViewTest extends TestCase {
 		$this->PartialCacheView = $this->getMockBuilder(PartialCacheView::class)
 			->setMethods(['_getViewFileName'])
 			->getMock();
-		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'partial . ' . DS . 'view.html';
+		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'partial' . DS . 'view.html';
 	}
 
 	/**
