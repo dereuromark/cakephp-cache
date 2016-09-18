@@ -167,7 +167,7 @@ class CacheComponentTest extends TestCase {
 
 		$file = CACHE . 'views' . DS . '_root.html';
 		$result = file_get_contents($file);
-		$expected = '<!--cachetime:0;ext:html-->Foo bar  andmore text.';
+		$expected = '<!--cachetime:0;ext:html-->Foo bar and more text.';
 		$this->assertEquals($expected, $result);
 
 		unlink($file);
