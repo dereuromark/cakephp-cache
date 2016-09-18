@@ -80,4 +80,26 @@ class PartialCacheViewTest extends TestCase {
 		$this->assertSame('<!--cachetime:0--><b>Bold<b/>', file_get_contents($this->tmpDir . 'view'));
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testRenderCompress() {
+		$this->PartialCacheView = $this->getMockBuilder(PartialCacheView::class)
+			->setMethods(['_getViewFileName', '_render'])
+			->setConstructorArgs([null, null, null, ['compress' => true]])
+			->getMock();
+
+		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
+		$this->PartialCacheView->expects($this->once())->method('_render')->willReturn(file_get_contents($this->testCacheFile));
+		$this->PartialCacheView->autoLayout(false);
+		$content = file_get_contents($this->testCacheFile);
+		$content = str_replace('cachetime:0', 'cachetime:' . (time() - HOUR), $content);
+		file_put_contents($this->tmpDir . 'view', $content);
+
+		$result = $this->PartialCacheView->render();
+
+		$this->assertSame('<h1>Test</h1> <p>Some paragraph.</p>', $result);
+		$this->assertSame('<!--cachetime:0--><h1>Test</h1> <p>Some paragraph.</p>', file_get_contents($this->tmpDir . 'view'));
+	}
+
 }

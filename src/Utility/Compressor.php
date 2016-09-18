@@ -14,6 +14,9 @@ class Compressor {
 		// Removes HTML comments (not containing IE conditional comments).
 		$content = preg_replace_callback('/<!--([\\s\\S]*?)-->/', [$this, '_commentIgnore'], $content);
 
+		// Remove whitespace
+		$content = preg_replace('/[\s]+/mu', ' ', $content);
+
 		// Trim each line.
 		$content = preg_replace('/^\\s+|\\s+$/m', '', $content);
 
