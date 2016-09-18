@@ -89,6 +89,5 @@ But you can use CakePHP built in element caching here (`echo $this->element('hel
 - Make sure you only cache public and non-personalized static templates. There should also no frequent DB data changing the content.
 
 ## TODOS
-- Allow partial layout caching?
 - Check if we better use the URLs for caching (to allow params and query strings).
 - Re-implement the removed CacheHelper with its nocache parts?
