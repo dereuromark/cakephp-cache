@@ -42,8 +42,8 @@ class PartialCacheView extends AppView {
 	) {
 		parent::__construct($request, $response, $eventManager, $viewOptions);
 
-		$this->_duration = $viewOptions['duration'];
-		$this->_compress = $viewOptions['compress'];
+		$this->_duration = isset($viewOptions['duration']) ? $viewOptions['duration'] : 0;
+		$this->_compress = isset($viewOptions['compress']) ? $viewOptions['compress'] : false;
 	}
 
 	/**
@@ -62,7 +62,7 @@ class PartialCacheView extends AppView {
 			$defaultLayout = $this->layout;
 			$this->layout = $layout;
 		}
-		
+
 		$viewFileName = null;
 		if ($view !== false) {
 			$viewFileName = $this->_getViewFileName($view);

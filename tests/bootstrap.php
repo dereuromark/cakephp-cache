@@ -3,6 +3,8 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+use Cake\View\View;
+
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'src');
@@ -28,10 +30,6 @@ define('CAKE', CORE_PATH . APP_DIR . DS);
 require dirname(__DIR__) . '/vendor/autoload.php';
 require CORE_PATH . 'config/bootstrap.php';
 
-Cake\Core\Configure::write('App', [
-	'namespace' => 'App'
-]);
-
 Cake\Core\Configure::write('debug', true);
 
 $cache = [
@@ -56,9 +54,6 @@ $cache = [
 
 Cake\Cache\Cache::config($cache);
 
-//needed?
-Cake\Core\Plugin::load('Shim', ['path' => ROOT . DS, 'autoload' => true]);
-
 // Ensure default test connection is defined
 if (!getenv('db_class')) {
 	putenv('db_class=Cake\Database\Driver\Sqlite');
@@ -76,3 +71,6 @@ Cake\Datasource\ConnectionManager::config('test', [
 	'quoteIdentifiers' => true,
 	'cacheMetadata' => true,
 ]);
+
+// Faking the AppView class for tests
+class_alias(View::class, 'App\View\AppView');
