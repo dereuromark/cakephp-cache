@@ -1,10 +1,7 @@
 <?php
 namespace Cache\Test\TestCase\Shell;
 
-use Cache\Shell\CacheShell;
 use Cache\View\PartialCacheView;
-use Cake\Console\ConsoleIo;
-use Tools\TestSuite\ConsoleOutput;
 use Tools\TestSuite\TestCase;
 
 /**
