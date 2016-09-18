@@ -23,6 +23,10 @@ class PartialCacheViewTest extends TestCase {
 			->setMethods(['_getViewFileName'])
 			->getMock();
 		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'partial' . DS . 'view.html';
+		$this->tmpDir = CACHE . 'views' . DS;
+		if (!is_dir($this->tmpDir)) {
+			mkdir($this->tmpDir, 0770, true);
+		}
 	}
 
 	/**
@@ -48,8 +52,9 @@ class PartialCacheViewTest extends TestCase {
 	 * @return void
 	 */
 	public function testRenderCacheHit() {
-		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn($this->testCacheFile);
+		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
 		$this->PartialCacheView->autoLayout(false);
+		copy($this->testCacheFile, $this->tmpDir . 'view');
 
 		$result = $this->PartialCacheView->render();
 
