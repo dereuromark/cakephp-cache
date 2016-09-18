@@ -121,9 +121,9 @@ class PartialCacheView extends AppView {
 		$content = $this->_render($viewFileName);
 		$content = $this->_compress($content);
 
-		$content = '<!--cachetime:' . (int)$this->_duration . '-->' . $content;
+		$cacheContent = '<!--cachetime:' . (int)$this->_duration . '-->' . $content;
 
-		file_put_contents($cacheFile, $content);
+		file_put_contents($cacheFile, $cacheContent);
 
 		return $content;
 	}

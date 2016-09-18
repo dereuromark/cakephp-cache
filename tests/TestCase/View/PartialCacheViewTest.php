@@ -20,7 +20,7 @@ class PartialCacheViewTest extends TestCase {
 		parent::setUp();
 
 		$this->PartialCacheView = $this->getMockBuilder(PartialCacheView::class)
-			->setMethods(['_getViewFileName'])
+			->setMethods(['_getViewFileName', '_render'])
 			->getMock();
 		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'partial' . DS . 'view.html';
 		$this->tmpDir = CACHE . 'views' . DS;
@@ -61,6 +61,23 @@ class PartialCacheViewTest extends TestCase {
 		$this->assertContains('<!--created:', $result);
 		$this->assertContains('<p>Some paragraph.</p>', $result);
 		$this->assertContains('<!--end-->', $result);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testRenderCacheHitExpired() {
+		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
+		$this->PartialCacheView->expects($this->once())->method('_render')->willReturn('<b>Bold<b/>');
+		$this->PartialCacheView->autoLayout(false);
+		$content = file_get_contents($this->testCacheFile);
+		$content = str_replace('cachetime:0', 'cachetime:' . (time() - HOUR), $content);
+		file_put_contents($this->tmpDir . 'view', $content);
+
+		$result = $this->PartialCacheView->render();
+
+		$this->assertSame('<b>Bold<b/>', $result);
+		$this->assertSame('<!--cachetime:0--><b>Bold<b/>', file_get_contents($this->tmpDir . 'view'));
 	}
 
 }
