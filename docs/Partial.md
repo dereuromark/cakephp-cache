@@ -85,8 +85,8 @@ and an end comment tag at end of the cached content.
 
 ## Limitations
 - It cannot provide partially dynamic parts as the 2.x CacheHelper could. The view template need to be completely cached.
+But you can use CakePHP built in element caching here (`echo $this->element('helpbox', [], ['cache' => true]);`).
 - Make sure you only cache public and non-personalized static templates. There should also no DB data changing the content.
-
 
 ## TODOS
 - Allow partial layout caching?
