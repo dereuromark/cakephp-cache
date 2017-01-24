@@ -72,7 +72,7 @@ class CacheMiddleware {
 		$cacheInfo = $this->extractCacheInfo($cacheContent);
 		$cacheTime = $cacheInfo['time'];
 
-		if ($cacheTime < time() && $cacheTime != 0) {
+		if ($cacheTime < time() && $cacheTime !== 0) {
 			unlink($file);
 			return $next($request, $response);
 		}
