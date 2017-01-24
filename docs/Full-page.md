@@ -1,17 +1,6 @@
 # Full-page caching
 
-## Usage
-Your bootstrap needs to enable the dispatcher filter:
-```php
-DispatcherFactory::add('Cache.Cache', [
-    'when' => function ($request, $response) {
-        return $request->is('get');
-    }
-]);
-```
-By adding the `'when'` part, we make sure it only get's invoked for GET requests.
-
-You then need to add the component to the controllers you want to make cache-able:
+Once the Middleware is loaded, you need to add the component to the controllers you want to make cache-able:
 ```php
 public $components = ['Cache.Cache'];
 ```
