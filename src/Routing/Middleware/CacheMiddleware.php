@@ -194,8 +194,8 @@ class CacheMiddleware {
 			$cacheTime = $this->config('cacheTime');
 		}
 
-		$response = $response->cache($modifiedTime, $cacheTime);
-		$response = $response->type($cacheInfo['ext']);
+		$response = $response->withCache($modifiedTime, $cacheTime);
+		$response = $response->withType($cacheInfo['ext']);
 
 		if (Configure::read('debug') || $this->config('debug')) {
 			if ($cacheInfo['ext'] === 'html') {
