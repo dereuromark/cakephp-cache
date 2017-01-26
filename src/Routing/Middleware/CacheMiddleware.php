@@ -3,14 +3,13 @@ namespace Cache\Routing\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\Response;
 use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\Utility\Inflector;
-use Cake\View\View;
-use Cake\View\ViewBuilder;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Note that this middleware is only expected to work for CakePHP 3.4+
+ */
 class CacheMiddleware {
 
 	use InstanceConfigTrait;
@@ -49,11 +48,11 @@ class CacheMiddleware {
 	 * @param callable $next The next middleware to call.
 	 * @return \Psr\Http\Message\ResponseInterface A response.
 	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next) {
+	public function __invoke(Request $request, Response $response, $next) {
 		if (Configure::read('Cache.check') === false) {
 			return $next($request, $response);
 		}
-		/** @var callable $when */
+		/* @var callable $when */
 		$when = $this->config('when');
 		if ($when !== null && $when($request, $request) !== true) {
 			return $next($request, $response);
@@ -77,15 +76,15 @@ class CacheMiddleware {
 			return $next($request, $response);
 		}
 
-		/** @var \Cake\Http\Response $response */
-		$response->modified(filemtime($file));
+		/* @var \Cake\Http\Response $response */
+		$response = $response->withModified(filemtime($file));
 		if ($response->checkNotModified($request)) {
 			return $response;
 		}
 
 		$pathSegments = explode('.', $file);
 		$ext = array_pop($pathSegments);
-		$this->_deliverCacheFile($request, $response, $file, $ext);
+		$response = $this->_deliverCacheFile($request, $response, $file, $ext);
 
 		return $response;
 	}
@@ -168,20 +167,24 @@ class CacheMiddleware {
 	 * @param string $file Path to the asset file in the file system
 	 * @param string $ext The extension of the file to determine its mime type
 	 *
-	 * @return void
+	 * @return \Cake\Network\Response
 	 */
 	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
 		$compressionEnabled = $response->compress();
-		if ($response->type($ext) === $ext) {
+		/*
+		if ($response->type() === $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = $request->env('HTTP_USER_AGENT');
 			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 				$contentType = 'application/octetstream';
 			}
-			$response->type($contentType);
+
+			dd($contentType);
+			$response = $response->withType($contentType);
 		}
+		*/
 		if (!$compressionEnabled) {
-			$response->header('Content-Length', filesize($file));
+			$response = $response->withHeader('Content-Length', (string)filesize($file));
 		}
 
 		$cacheContent = $this->_cacheContent;
@@ -192,15 +195,20 @@ class CacheMiddleware {
 		if (!$cacheTime) {
 			$cacheTime = $this->config('cacheTime');
 		}
-		$response->cache($modifiedTime, $cacheTime);
-		$response->type($cacheInfo['ext']);
+
+		/* @var \Cake\Http\Response $response */
+		$response = $response->withCache($modifiedTime, $cacheTime);
+		$response = $response->withType($cacheInfo['ext']);
 
 		if (Configure::read('debug') || $this->config('debug')) {
 			if ($cacheInfo['ext'] === 'html') {
 				$cacheContent = '<!--created:' . date('Y-m-d H:i:s', $modifiedTime) . '-->' . $cacheContent;
 			}
 		}
-		$response->body($cacheContent);
+
+		$body = $response->getBody();
+		$body->write($cacheContent);
+		return $response->withBody($body);
 	}
 
 }

@@ -2,15 +2,53 @@
 
 namespace Cache\Test\TestCase\Routing\Middleware;
 
+use Cache\Routing\Middleware\CacheMiddleware;
+use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
  */
 class CacheMiddlewareTest extends TestCase {
+
+	/**
+	 * setup
+	 *
+	 * @return void
+	 */
+	public function setUp() {
+		parent::setUp();
+
+		Configure::write('App.namespace', 'TestApp');
+	}
+
+	/**
+	 * Teardown
+	 *
+	 * @return void
+	 */
+	public function tearDown() {
+		parent::tearDown();
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testBasicRequest() {
+		$request = ServerRequestFactory::fromGlobals();
+		$response = new Response();
+
+		$middleware = new CacheMiddleware();
+		$next = function ($req, $res) {
+			return $res;
+		};
+		$newResponse = $middleware($request, $response, $next);
+		$this->assertSame($response, $newResponse);
+		$this->assertSame('text/html', $newResponse->type());
+	}
 
 	/**
 	 * Tests setting parameters
@@ -23,25 +61,64 @@ class CacheMiddlewareTest extends TestCase {
 		$content = '<!--cachetime:0;ext:json-->Foo bar';
 		file_put_contents($file, $content);
 
-		$filter = new CacheFilter();
-
-		$request = new Request('/testcontroller/testaction/params1/params2.json');
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
+		]);
 		$response = new Response();
-		$event = new Event(__CLASS__, $this, compact('request', 'response'));
-		$filter->beforeDispatch($event);
 
-		$result = $response->body();
+		$middleware = new CacheMiddleware();
+		$next = function ($req, $res) {
+			return $res;
+		};
+		/* @var \Cake\Http\Response $newResponse */
+		$newResponse = $middleware($request, $response, $next);
+
+		$result = $newResponse->body();
 		$expected = 'Foo bar';
 		$this->assertEquals($expected, $result);
 
-		$result = $response->type();
+		$result = $newResponse->type();
 		$expected = 'application/json';
 		$this->assertEquals($expected, $result);
 
-		$result = $response->header();
+		$result = $newResponse->header();
 		$this->assertNotEmpty($result['Expires']); // + 1 day
 
 		unlink($file);
+	}
+
+	/**
+	 * Tests that post skips
+	 *
+	 * @return void
+	 */
+	public function testBasicUrlWithExtPost() {
+		$folder = CACHE . 'views' . DS;
+		$file = $folder . 'testcontroller-testaction-params1-params2-json.html';
+		$content = '<!--cachetime:0;ext:json-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
+			'REQUEST_METHOD' => 'POST',
+		]);
+		$this->assertTrue($request->is('post'));
+
+		$response = new Response();
+
+		$middleware = new CacheMiddleware([
+			'when' => function ($request, $response) {
+				return $request->is('get');
+			},
+		]);
+
+		$next = function ($req, $res) {
+			return $res;
+		};
+		/* @var \Cake\Http\Response $newResponse */
+		$newResponse = $middleware($request, $response, $next);
+
+		$this->assertSame('text/html', $newResponse->type());
 	}
 
 	/**
@@ -51,7 +128,7 @@ class CacheMiddlewareTest extends TestCase {
 	 */
 	public function testQueryStringAndCustomTime() {
 		$folder = CACHE . 'views' . DS;
-		$file = $folder . 'posts-home-coffee-life-sleep-sissies-coffee-life-sleep-sissies.html';
+		$file = $folder . 'posts-home-coffee-life-sleep-sissies.html';
 		$content = '<!--cachetime:' . (time() + WEEK) . ';ext:html-->Foo bar';
 		file_put_contents($file, $content);
 
@@ -61,23 +138,30 @@ class CacheMiddlewareTest extends TestCase {
 		Router::connect('/:controller/:action/*');
 
 		$_GET = ['coffee' => 'life', 'sleep' => 'sissies'];
-		$filter = new CacheFilter();
-		$request = new Request('posts/home/?coffee=life&sleep=sissies');
-		$response = new Response();
-		$event = new Event(__CLASS__, $this, compact('request', 'response'));
-		$filter->beforeDispatch($event);
 
-		$result = $response->body();
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/posts/home',
+		]);
+		$response = new Response();
+
+		$middleware = new CacheMiddleware();
+		$next = function ($req, $res) {
+			return $res;
+		};
+		/* @var \Cake\Http\Response $newResponse */
+		$newResponse = $middleware($request, $response, $next);
+
+		$result = $newResponse->body();
 		$expected = '<!--created:';
 		$this->assertTextStartsWith($expected, $result);
 		$expected = '-->Foo bar';
 		$this->assertTextEndsWith($expected, $result);
 
-		$result = $response->type();
+		$result = $newResponse->type();
 		$expected = 'text/html';
 		$this->assertEquals($expected, $result);
 
-		$result = $response->header();
+		$result = $newResponse->header();
 		$this->assertNotEmpty($result['Expires']); // + 1 week
 
 		unlink($file);
