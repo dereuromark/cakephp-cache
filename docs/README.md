@@ -3,7 +3,7 @@
 ## Enabling the Cache lookup
 
 ### Middleware
-In your `/src/Application.php` add the middleware right after the the assets for example:
+In your `/src/Application.php` add the Cache middleware right after the the assets one for example:
 ```php
 	/**
 	 * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to setup.
@@ -26,9 +26,12 @@ In your `/src/Application.php` add the middleware right after the the assets for
 		return $middleware;
 	}
 ```
+By adding the `'when'` part, we make sure it only get's invoked for GET requests.
 
-### Deprecated filter
-Your bootstrap needs to enable the dispatcher filter:
+Note: This Middleware requires CakePHP 3.4+
+
+### DispatcherFilter
+Your bootstrap needs to enable the Cache dispatcher filter:
 ```php
 DispatcherFactory::add('Cache.Cache', [
 	'when' => function ($request, $response) {
@@ -36,8 +39,8 @@ DispatcherFactory::add('Cache.Cache', [
 	}
 ]);
 ```
-By adding the `'when'` part, we make sure it only get's invoked for GET requests.
 
+Note: This DispatcherFilter is **deprecated** and should only be used prior to CakePHP 3.4.
 
 ## Full-page caching
 
