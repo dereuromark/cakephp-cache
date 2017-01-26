@@ -12,7 +12,7 @@ No dynamic parts anymore, just complete static content ready to be delivered.
 If you don't want to set up ESI and other third party caching software, this CakePHP only approach
 does the job.
 
-It uses a dispatcher and a component.
+It uses a Middleware and a Component.
 Why not a helper anymore? Mainly because a helper is too limited and would
 not be able to cache serialized views, e.g. JSON, CSV, RSS content which have been build view-less.
 

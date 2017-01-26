@@ -1,32 +1,27 @@
 <?php
-namespace Cache\Routing\Filter;
+namespace Cache\Routing\Middleware;
 
 use Cake\Core\Configure;
-use Cake\Event\Event;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 
 /**
- * @deprecated Use new 3.3+ CacheMiddleware instead.
+ * Note that this middleware is only expected to work for CakePHP 3.4+
  */
-class CacheFilter extends DispatcherFilter {
+class CacheMiddleware {
+
+	use InstanceConfigTrait;
 
 	/**
-	 * Default priority for all methods in this filter
-	 * This filter should run before the request gets parsed by router
-	 *
-	 * @var int
+	 * @var array
 	 */
-	protected $_priority = 9;
-
-	/**
-	 * The amount of time to browser cache files (which are unlimited).
-	 *
-	 * @var string
-	 */
-	protected $_cacheTime = '+1 day';
+	protected $_defaultConfig = [
+		'when' => null,
+		'cacheTime' => '+1 day',
+		//TODO 'priority' => 9,
+	];
 
 	/**
 	 * @var string|null
@@ -39,59 +34,58 @@ class CacheFilter extends DispatcherFilter {
 	protected $_cacheInfo;
 
 	/**
-	 * @param array $config Array of config.
+	 * @param array $config
 	 */
-	public function __construct($config = []) {
-		if (!empty($config['cacheTime'])) {
-			$this->_cacheTime = $config['cacheTime'];
-		}
-		parent::__construct($config);
+	public function __construct(array $config = []) {
+		$this->config($config);
 	}
 
 	/**
-	 * Checks if a requested cache file exists and sends it to the browser
+	 * Checks if a requested cache file exists and sends it to the browser.
 	 *
-	 * @param \Cake\Event\Event $event containing the request and response object
-	 *
-	 * @return \Cake\Network\Response|null Response if the client is requesting a recognized cache file, null otherwise
+	 * @param \Psr\Http\Message\ServerRequestInterface $request The request.
+	 * @param \Psr\Http\Message\ResponseInterface $response The response.
+	 * @param callable $next The next middleware to call.
+	 * @return \Psr\Http\Message\ResponseInterface A response.
 	 */
-	public function beforeDispatch(Event $event) {
+	public function __invoke(Request $request, Response $response, $next) {
 		if (Configure::read('Cache.check') === false) {
-			return null;
+			return $next($request, $response);
+		}
+		/* @var callable $when */
+		$when = $this->config('when');
+		if ($when !== null && $when($request, $request) !== true) {
+			return $next($request, $response);
 		}
 
-		/* @var \Cake\Network\Request $request */
-		$request = $event->data['request'];
-
+		/* @var \Cake\Http\ServerRequest $request */
 		$url = $request->here();
 		$url = str_replace($request->base, '', $url);
 		$file = $this->getFile($url);
 
 		if ($file === null) {
-			return null;
+			return $next($request, $response);
 		}
 
 		$cacheContent = $this->extractCacheContent($file);
 		$cacheInfo = $this->extractCacheInfo($cacheContent);
 		$cacheTime = $cacheInfo['time'];
 
-		if ($cacheTime < time() && $cacheTime != 0) {
+		if ($cacheTime < time() && $cacheTime !== 0) {
 			unlink($file);
-			return null;
+			return $next($request, $response);
 		}
 
-		/* @var \Cake\Network\Response $response */
-		$response = $event->data['response'];
-		$event->stopPropagation();
-
-		$response->modified(filemtime($file));
+		/* @var \Cake\Http\Response $response */
+		$response = $response->withModified(filemtime($file));
 		if ($response->checkNotModified($request)) {
 			return $response;
 		}
 
 		$pathSegments = explode('.', $file);
 		$ext = array_pop($pathSegments);
-		$this->_deliverCacheFile($request, $response, $file, $ext);
+		$response = $this->_deliverCacheFile($request, $response, $file, $ext);
+
 		return $response;
 	}
 
@@ -168,25 +162,27 @@ class CacheFilter extends DispatcherFilter {
 	/**
 	 * Sends an asset file to the client
 	 *
-	 * @param \Cake\Network\Request $request The request object to use.
-	 * @param \Cake\Network\Response $response The response object to use.
+	 * @param \Cake\Http\ServerRequest $request The request object to use.
+	 * @param \Cake\Http\Response $response The response object to use.
 	 * @param string $file Path to the asset file in the file system
 	 * @param string $ext The extension of the file to determine its mime type
 	 *
-	 * @return void
+	 * @return \Cake\Network\Response
 	 */
 	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
 		$compressionEnabled = $response->compress();
-		if ($response->type($ext) === $ext) {
+		if ($response->type() === $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = $request->env('HTTP_USER_AGENT');
 			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 				$contentType = 'application/octetstream';
 			}
-			$response->type($contentType);
+
+			$response = $response->withType($contentType);
 		}
+
 		if (!$compressionEnabled) {
-			$response->header('Content-Length', filesize($file));
+			$response = $response->header('Content-Length', (string)filesize($file));
 		}
 
 		$cacheContent = $this->_cacheContent;
@@ -195,17 +191,21 @@ class CacheFilter extends DispatcherFilter {
 		$modifiedTime = filemtime($file);
 		$cacheTime = $cacheInfo['time'];
 		if (!$cacheTime) {
-			$cacheTime = $this->_cacheTime;
+			$cacheTime = $this->config('cacheTime');
 		}
-		$response->cache($modifiedTime, $cacheTime);
-		$response->type($cacheInfo['ext']);
+
+		$response = $response->cache($modifiedTime, $cacheTime);
+		$response = $response->type($cacheInfo['ext']);
 
 		if (Configure::read('debug') || $this->config('debug')) {
 			if ($cacheInfo['ext'] === 'html') {
 				$cacheContent = '<!--created:' . date('Y-m-d H:i:s', $modifiedTime) . '-->' . $cacheContent;
 			}
 		}
-		$response->body($cacheContent);
+
+		$body = $response->getBody();
+		$body->write($cacheContent);
+		return $response->withBody($body);
 	}
 
 }

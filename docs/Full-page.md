@@ -1,17 +1,49 @@
 # Full-page caching
 
-## Usage
-Your bootstrap needs to enable the dispatcher filter:
+## Enabling the Cache lookup
+
+### Middleware
+In your `/src/Application.php` add the Cache middleware right after the the assets one for example:
 ```php
-DispatcherFactory::add('Cache.Cache', [
-    'when' => function ($request, $response) {
-        return $request->is('get');
-    }
-]);
+	/**
+	 * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to setup.
+	 * @return \Cake\Http\MiddlewareQueue The updated middleware.
+	 */
+	public function middleware($middleware) {
+		$middleware
+			...
+			->add(new AssetMiddleware())
+
+			// Handle cached files
+			->add(new CacheMiddleware([
+				'when' => function ($request, $response) {
+            		return $request->is('get');
+            	},
+			]))
+
+			...
+
+		return $middleware;
+	}
 ```
 By adding the `'when'` part, we make sure it only get's invoked for GET requests.
 
-You then need to add the component to the controllers you want to make cache-able:
+Note: This Middleware requires CakePHP 3.4+
+
+### DispatcherFilter
+Your bootstrap needs to enable the Cache dispatcher filter:
+```php
+DispatcherFactory::add('Cache.Cache', [
+	'when' => function ($request, $response) {
+		return $request->is('get');
+	}
+]);
+```
+
+Note: This DispatcherFilter is **deprecated** and should only be used prior to CakePHP 3.4.
+
+## Usage
+Once the Middleware is loaded, you need to add the component to the controllers you want to make cache-able:
 ```php
 public $components = ['Cache.Cache'];
 ```
@@ -32,7 +64,7 @@ public function initialize() {
 ```
 
 The component creates the cache file, the dispatcher on the next request will discover it and deliver this static file instead as long
-as the file modification date is within the allowed range. 
+as the file modification date is within the allowed range.
 Once the file gets too old it will be cleaned out, a real action will be called and a fresh cache file will be created.
 
 ### Global Configuration
