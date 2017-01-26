@@ -5,6 +5,10 @@
 
 use Cake\View\View;
 
+if (!defined('DS')) {
+ define('DS', DIRECTORY_SEPARATOR);
+}
+
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'src');
 
