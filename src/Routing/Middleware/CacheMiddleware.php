@@ -182,7 +182,7 @@ class CacheMiddleware {
 		}
 
 		if (!$compressionEnabled) {
-			$response = $response->header('Content-Length', (string)filesize($file));
+			$response = $response->withHeader('Content-Length', (string)filesize($file));
 		}
 
 		$cacheContent = $this->_cacheContent;
