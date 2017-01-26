@@ -4,8 +4,8 @@ namespace Cache\Test\TestCase\Routing\Middleware;
 
 use Cache\Routing\Middleware\CacheMiddleware;
 use Cake\Core\Configure;
-use Cake\Event\Event;
-use Cake\Http\Response;
+use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -38,7 +38,7 @@ class CacheMiddlewareTest extends TestCase {
 	 * @return void
 	 */
 	public function testBasicRequest() {
-		$request = ServerRequestFactory::fromGlobals();
+		$request = Request::createFromGlobals();
 		$response = new Response();
 
 		$middleware = new CacheMiddleware();
@@ -61,7 +61,7 @@ class CacheMiddlewareTest extends TestCase {
 		$content = '<!--cachetime:0;ext:json-->Foo bar';
 		file_put_contents($file, $content);
 
-		$request = ServerRequestFactory::fromGlobals([
+		$request = Request::createFromGlobals([
 			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
 		]);
 		$response = new Response();
@@ -98,7 +98,7 @@ class CacheMiddlewareTest extends TestCase {
 		$content = '<!--cachetime:0;ext:json-->Foo bar';
 		file_put_contents($file, $content);
 
-		$request = ServerRequestFactory::fromGlobals([
+		$request = Request::createFromGlobals([
 			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
 			'REQUEST_METHOD' => 'POST',
 		]);
@@ -139,7 +139,7 @@ class CacheMiddlewareTest extends TestCase {
 
 		$_GET = ['coffee' => 'life', 'sleep' => 'sissies'];
 
-		$request = ServerRequestFactory::fromGlobals([
+		$request = Request::createFromGlobals([
 			'REQUEST_URI' => '/posts/home',
 		]);
 		$response = new Response();
