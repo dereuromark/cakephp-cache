@@ -171,7 +171,6 @@ class CacheMiddleware {
 	 */
 	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
 		$compressionEnabled = $response->compress();
-		/*
 		if ($response->type() === $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = $request->env('HTTP_USER_AGENT');
@@ -179,12 +178,11 @@ class CacheMiddleware {
 				$contentType = 'application/octetstream';
 			}
 
-			dd($contentType);
 			$response = $response->withType($contentType);
 		}
-		*/
+
 		if (!$compressionEnabled) {
-			$response = $response->withHeader('Content-Length', (string)filesize($file));
+			$response = $response->header('Content-Length', (string)filesize($file));
 		}
 
 		$cacheContent = $this->_cacheContent;
@@ -196,9 +194,8 @@ class CacheMiddleware {
 			$cacheTime = $this->config('cacheTime');
 		}
 
-		/* @var \Cake\Http\Response $response */
-		$response = $response->withCache($modifiedTime, $cacheTime);
-		$response = $response->withType($cacheInfo['ext']);
+		$response = $response->cache($modifiedTime, $cacheTime);
+		$response = $response->type($cacheInfo['ext']);
 
 		if (Configure::read('debug') || $this->config('debug')) {
 			if ($cacheInfo['ext'] === 'html') {
