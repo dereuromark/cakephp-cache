@@ -20,7 +20,6 @@ class CacheMiddleware {
 	protected $_defaultConfig = [
 		'when' => null,
 		'cacheTime' => '+1 day',
-		//TODO 'priority' => 9,
 	];
 
 	/**
