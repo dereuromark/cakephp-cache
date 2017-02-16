@@ -8,7 +8,7 @@
 		"cakephp/cakephp": "^3.3"
 	},
 	"require-dev": {
-		"dereuromark/cakephp-tools": "dev-master",
+		"dereuromark/cakephp-tools": "^1.2",
 		"fig-r/psr2r-sniffer": "dev-master",
 		"phpunit/phpunit": "*"
 	},
