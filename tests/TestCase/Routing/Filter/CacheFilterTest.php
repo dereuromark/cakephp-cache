@@ -3,6 +3,7 @@
 namespace Cache\Test\TestCase\Routing\Filter;
 
 use Cache\Routing\Filter\CacheFilter;
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -13,6 +14,12 @@ use Cake\TestSuite\TestCase;
  * Routing filter test.
  */
 class CacheFilterTest extends TestCase {
+
+	public function setUp() {
+		parent::setUp();
+
+		$this->skipIf(version_compare(Configure::version(), '3.4.0', '>='), 'Only for CakePHP 3.3 and below, use the middleware otherwise.');
+	}
 
 	/**
 	 * test setting parameters in beforeDispatch method

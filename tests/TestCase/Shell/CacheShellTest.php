@@ -3,6 +3,7 @@ namespace Cache\Test\TestCase\Shell;
 
 use Cache\Shell\CacheShell;
 use Cake\Console\ConsoleIo;
+use Cake\Filesystem\Folder;
 use Tools\TestSuite\ConsoleOutput;
 use Tools\TestSuite\TestCase;
 
@@ -31,6 +32,12 @@ class CacheShellTest extends TestCase {
 			->getMock();
 
 		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'test.html';
+
+		$Folder = new Folder(CACHE . 'views' . DS);
+		$Folder->delete();
+		if (!is_dir(CACHE . 'views' . DS)) {
+			mkdir(CACHE . 'views' . DS, 0770, true);
+		}
 	}
 
 	/**
@@ -45,7 +52,7 @@ class CacheShellTest extends TestCase {
 	 * @return void
 	 */
 	public function testStatus() {
-		$this->Shell->runCommand(['status']);
+		$this->Shell->runCommand(['status', '-v']);
 		$output = $this->out->output();
 		$expected = '0 cache files found';
 		$this->assertContains($expected, $output);

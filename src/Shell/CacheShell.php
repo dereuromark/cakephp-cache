@@ -24,6 +24,11 @@ class CacheShell extends Shell {
 			$fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
 			$count = iterator_count($fi);
 			$this->out($count . ' cache files found.');
+			if ($this->param('verbose')) {
+				foreach ($fi as $f) {
+					$this->out(' - ' . $f->getFileName());
+				}
+			}
 			return;
 		}
 
