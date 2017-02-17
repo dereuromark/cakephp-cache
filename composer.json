@@ -10,7 +10,7 @@
 	"require-dev": {
 		"dereuromark/cakephp-tools": "^1.2",
 		"fig-r/psr2r-sniffer": "dev-master",
-		"phpunit/phpunit": "*"
+		"phpunit/phpunit": "5.*"
 	},
 	"autoload": {
 		"psr-4": {
