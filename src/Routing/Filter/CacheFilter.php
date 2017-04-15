@@ -53,7 +53,7 @@ class CacheFilter extends DispatcherFilter {
 	 *
 	 * @param \Cake\Event\Event $event containing the request and response object
 	 *
-	 * @return \Cake\Network\Response|null Response if the client is requesting a recognized cache file, null otherwise
+	 * @return \Cake\Http\Response|null Response if the client is requesting a recognized cache file, null otherwise
 	 */
 	public function beforeDispatch(Event $event) {
 		if (Configure::read('Cache.check') === false) {
@@ -80,7 +80,7 @@ class CacheFilter extends DispatcherFilter {
 			return null;
 		}
 
-		/* @var \Cake\Network\Response $response */
+		/* @var \Cake\Http\Response $response */
 		$response = $event->data['response'];
 		$event->stopPropagation();
 
@@ -169,7 +169,7 @@ class CacheFilter extends DispatcherFilter {
 	 * Sends an asset file to the client
 	 *
 	 * @param \Cake\Network\Request $request The request object to use.
-	 * @param \Cake\Network\Response $response The response object to use.
+	 * @param \Cake\Http\Response $response The response object to use.
 	 * @param string $file Path to the asset file in the file system
 	 * @param string $ext The extension of the file to determine its mime type
 	 *

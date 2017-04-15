@@ -166,7 +166,7 @@ class CacheMiddleware {
 	 * @param string $file Path to the asset file in the file system
 	 * @param string $ext The extension of the file to determine its mime type
 	 *
-	 * @return \Cake\Network\Response
+	 * @return \Cake\Http\Response
 	 */
 	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
 		$compressionEnabled = $response->compress();
