@@ -38,7 +38,7 @@ class PartialCacheComponent extends Component {
 			return;
 		}
 
-		/* @var \Cake\Controller\Controller $controller */
+		/** @var \Cake\Controller\Controller $controller */
 		$controller = $event->subject();
 		$builder = $controller->viewBuilder();
 		if ($builder->className()) {

@@ -69,7 +69,7 @@ class CacheMiddlewareTest extends TestCase {
 		$next = function ($req, $res) {
 			return $res;
 		};
-		/* @var \Cake\Http\Response $newResponse */
+		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
 		$result = $newResponse->body();
@@ -114,7 +114,7 @@ class CacheMiddlewareTest extends TestCase {
 		$next = function ($req, $res) {
 			return $res;
 		};
-		/* @var \Cake\Http\Response $newResponse */
+		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
 		$this->assertSame('text/html', $newResponse->type());
@@ -147,7 +147,7 @@ class CacheMiddlewareTest extends TestCase {
 		$next = function ($req, $res) {
 			return $res;
 		};
-		/* @var \Cake\Http\Response $newResponse */
+		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
 		$result = $newResponse->body();

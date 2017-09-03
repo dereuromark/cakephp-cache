@@ -60,7 +60,7 @@ class CacheFilter extends DispatcherFilter {
 			return null;
 		}
 
-		/* @var \Cake\Network\Request $request */
+		/** @var \Cake\Network\Request $request */
 		$request = $event->data['request'];
 
 		$url = $request->here();
@@ -80,7 +80,7 @@ class CacheFilter extends DispatcherFilter {
 			return null;
 		}
 
-		/* @var \Cake\Http\Response $response */
+		/** @var \Cake\Http\Response $response */
 		$response = $event->data['response'];
 		$event->stopPropagation();
 

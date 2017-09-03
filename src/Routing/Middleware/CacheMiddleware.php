@@ -51,13 +51,13 @@ class CacheMiddleware {
 		if (Configure::read('Cache.check') === false) {
 			return $next($request, $response);
 		}
-		/* @var callable $when */
+		/** @var callable $when */
 		$when = $this->config('when');
 		if ($when !== null && $when($request, $request) !== true) {
 			return $next($request, $response);
 		}
 
-		/* @var \Cake\Http\ServerRequest $request */
+		/** @var \Cake\Http\ServerRequest $request */
 		$url = $request->here();
 		$url = str_replace($request->base, '', $url);
 		$file = $this->getFile($url);
@@ -75,7 +75,7 @@ class CacheMiddleware {
 			return $next($request, $response);
 		}
 
-		/* @var \Cake\Http\Response $response */
+		/** @var \Cake\Http\Response $response */
 		$response = $response->withModified(filemtime($file));
 		if ($response->checkNotModified($request)) {
 			return $response;
