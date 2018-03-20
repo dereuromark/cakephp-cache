@@ -24,8 +24,8 @@ class CacheComponentTestController extends Controller {
 	public $testHeaders = [];
 
 	/***
-     * @return void
-     */
+	 * @return void
+	 */
 	public function fail() {
 		$this->failed = true;
 	}

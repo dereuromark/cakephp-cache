@@ -13,8 +13,8 @@
 
     <!-- Add any additional test suites you want to run here -->
     <testsuites>
-        <testsuite name="Cache Test Suite">
-            <directory>./tests/TestCase</directory>
+        <testsuite name="cache">
+            <directory>tests/TestCase/</directory>
         </testsuite>
     </testsuites>
 
@@ -32,7 +32,7 @@
     <!-- Prevent coverage reports from looking in tests, vendors, config folders -->
     <filter>
         <whitelist>
-            <directory suffix=".php">./src/</directory>
+            <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
 
