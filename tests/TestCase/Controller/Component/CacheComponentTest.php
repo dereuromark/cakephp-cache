@@ -1,11 +1,10 @@
 <?php
 namespace Cache\Test\TestCase\Controller\Component;
 
-use Cake\Core\Configure;
+use App\Controller\CacheComponentTestController;
 use Cake\Event\Event;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
-use TestApp\Controller\CacheComponentTestController;
 
 /**
  */
@@ -22,14 +21,13 @@ class CacheComponentTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		Configure::write('App.namespace', 'TestApp');
-
 		$this->Controller = new CacheComponentTestController();
 		$this->Controller->startupProcess();
 
-		$this->Controller->request->session()->delete('CacheMessage');
+		$this->Controller->request->getSession()->delete('CacheMessage');
 
 		$this->Controller->Cache->config('debug', true);
+		$this->Controller->Cache->config('force', true);
 	}
 
 	/**

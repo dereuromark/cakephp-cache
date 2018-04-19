@@ -20,6 +20,7 @@ class CacheComponent extends Component {
 		'duration' => null,
 		'actions' => [],
 		'compress' => false,
+		'force' => false,
 	];
 
 	/**
@@ -27,7 +28,11 @@ class CacheComponent extends Component {
 	 * @return void
 	 */
 	public function shutdown(Event $event) {
-		$this->response = $event->subject->response;
+		if (Configure::read('debug') && !$this->getConfig('force')) {
+			return;
+		}
+
+		$this->response = $event->getSubject()->response;
 
 		$content = $this->response->body();
 		if (!$content) {

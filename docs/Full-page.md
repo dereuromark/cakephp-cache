@@ -28,8 +28,6 @@ In your `/src/Application.php` add the Cache middleware right after the the asse
 ```
 By adding the `'when'` part, we make sure it only get's invoked for GET requests.
 
-Note: This Middleware requires CakePHP 3.4+
-
 ### DispatcherFilter
 Your bootstrap needs to enable the Cache dispatcher filter:
 ```php
@@ -40,7 +38,7 @@ DispatcherFactory::add('Cache.Cache', [
 ]);
 ```
 
-Note: This DispatcherFilter is **deprecated** and should only be used prior to CakePHP 3.4.
+Note: This DispatcherFilter is **deprecated** and should only be used when upgrading from existing apps.
 
 ## Usage
 Once the Middleware is loaded, you need to add the component to the controllers you want to make cache-able:
@@ -90,6 +88,10 @@ or you can use any custom compressor using a callable:
 ```
 The latter is useful if you want to control the compression per extension.
 
+With debug mode being on the cache is by default not enabled. You can force this locally using this param:
+```php
+'force' => true
+```
 
 ### Filter Configuration
 In case you need to run this before other high priority filters to avoid those to be invoked, you can raise the `priority` config.

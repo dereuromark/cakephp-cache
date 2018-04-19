@@ -20,7 +20,7 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Cache\\Test\\": "tests/",
-			"TestApp\\": "tests/test_app/src/"
+			"App\\": "tests/test_app/src/"
 		}
 	},
 	"scripts": {
