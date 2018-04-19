@@ -58,6 +58,7 @@ class PartialCacheView extends AppView {
 			return null;
 		}
 
+		$defaultLayout = null;
 		if ($layout !== null) {
 			$defaultLayout = $this->layout;
 			$this->layout = $layout;

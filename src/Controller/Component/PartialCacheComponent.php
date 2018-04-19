@@ -39,24 +39,22 @@ class PartialCacheComponent extends Component {
 		}
 
 		/** @var \Cake\Controller\Controller $controller */
-		$controller = $event->subject();
+		$controller = $event->getSubject();
 		$builder = $controller->viewBuilder();
-		if ($builder->className()) {
+		if ($builder->getClassName()) {
 			return;
 		}
 
-		$builder->className(PartialCacheView::class);
+		$builder->setClassName(PartialCacheView::class);
 		$duration = $isActionCachable === true ? null : $isActionCachable;
-		$builder->options(['duration' => $duration, 'compress' => $this->config('compress')]);
+		$builder->setOptions(['duration' => $duration, 'compress' => $this->getConfig('compress')]);
 	}
 
 	/**
-	 * @param \Cake\Event\Event $event
-	 *
 	 * @return bool|int|string
 	 */
 	protected function _isActionCachable() {
-		$actions = $this->config('actions');
+		$actions = $this->getConfig('actions');
 		if (!$actions) {
 			return true;
 		}

@@ -118,7 +118,7 @@ class CacheMiddleware {
 	}
 
 	/**
-	 * @param string &$content
+	 * @param string $content
 	 *
 	 * @return array Time/Ext
 	 */

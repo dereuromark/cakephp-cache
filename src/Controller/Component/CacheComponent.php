@@ -39,7 +39,7 @@ class CacheComponent extends Component {
 			return;
 		}
 
-		$duration = $this->config('duration');
+		$duration = $this->getConfig('duration');
 		$isActionCachable = $this->_isActionCachable();
 		if ($isActionCachable === false) {
 			return;
@@ -55,7 +55,7 @@ class CacheComponent extends Component {
 	 * @return bool|int|string
 	 */
 	protected function _isActionCachable() {
-		$actions = $this->config('actions');
+		$actions = $this->getConfig('actions');
 		if (!$actions) {
 			return true;
 		}
@@ -130,7 +130,7 @@ class CacheComponent extends Component {
 	 * @return string Content
 	 */
 	protected function _compress($content, $ext) {
-		$compress = $this->config('compress');
+		$compress = $this->getConfig('compress');
 		if ($compress === true) {
 			// Native compressor only supports HTML right now
 			if ($ext === 'html') {
