@@ -13,40 +13,4 @@ class CacheComponentTestController extends Controller {
 	 */
 	public $components = ['Cache.Cache'];
 
-	/**
-	 * @var bool
-	 */
-	public $failed = false;
-
-	/**
-	 * @var array
-	 */
-	public $testHeaders = [];
-
-	/***
-	 * @return void
-	 */
-	public function fail() {
-		$this->failed = true;
-	}
-
-	/**
-	 * @param array|string $url
-	 * @param int|null $status
-	 *
-	 * @return null
-	 */
-	public function redirect($url, $status = null) {
-		return $status;
-	}
-
-	/**
-	 * @param int $status
-	 *
-	 * @return void
-	 */
-	public function header($status) {
-		$this->testHeaders[] = $status;
-	}
-
 }
