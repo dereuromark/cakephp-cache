@@ -5,7 +5,7 @@ use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 /**
  * Note that this middleware is only expected to work for CakePHP 3.4+
@@ -36,7 +36,7 @@ class CacheMiddleware {
 	 * @param array $config
 	 */
 	public function __construct(array $config = []) {
-		$this->config($config);
+		$this->setConfig($config);
 	}
 
 	/**
@@ -52,14 +52,14 @@ class CacheMiddleware {
 			return $next($request, $response);
 		}
 		/** @var callable $when */
-		$when = $this->config('when');
+		$when = $this->getConfig('when');
 		if ($when !== null && $when($request, $request) !== true) {
 			return $next($request, $response);
 		}
 
 		/** @var \Cake\Http\ServerRequest $request */
-		$url = $request->here();
-		$url = str_replace($request->base, '', $url);
+		$url = $request->getRequestTarget();
+		$url = str_replace($request->getAttribute('base'), '', $url);
 		$file = $this->getFile($url);
 
 		if ($file === null) {
@@ -106,7 +106,7 @@ class CacheMiddleware {
 		}
 
 		if ($url !== '_root') {
-			$path = Inflector::slug($path);
+			$path = Text::slug($path);
 		}
 
 		$folder = CACHE . 'views' . DS;
