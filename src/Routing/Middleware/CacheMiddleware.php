@@ -36,7 +36,7 @@ class CacheMiddleware {
 	 * @param array $config
 	 */
 	public function __construct(array $config = []) {
-		$this->config($config);
+		$this->setConfig($config);
 	}
 
 	/**
@@ -52,7 +52,7 @@ class CacheMiddleware {
 			return $next($request, $response);
 		}
 		/** @var callable $when */
-		$when = $this->config('when');
+		$when = $this->getConfig('when');
 		if ($when !== null && $when($request, $request) !== true) {
 			return $next($request, $response);
 		}
@@ -190,13 +190,13 @@ class CacheMiddleware {
 		$modifiedTime = filemtime($file);
 		$cacheTime = $cacheInfo['time'];
 		if (!$cacheTime) {
-			$cacheTime = $this->config('cacheTime');
+			$cacheTime = $this->getConfig('cacheTime');
 		}
 
 		$response = $response->withCache($modifiedTime, $cacheTime);
 		$response = $response->withType($cacheInfo['ext']);
 
-		if (Configure::read('debug') || $this->config('debug')) {
+		if (Configure::read('debug') || $this->getConfig('debug')) {
 			if ($cacheInfo['ext'] === 'html') {
 				$cacheContent = '<!--created:' . date('Y-m-d H:i:s', $modifiedTime) . '-->' . $cacheContent;
 			}

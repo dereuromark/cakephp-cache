@@ -5,26 +5,26 @@
 ### Middleware
 In your `/src/Application.php` add the Cache middleware right after the the assets one for example:
 ```php
-	/**
-	 * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to setup.
-	 * @return \Cake\Http\MiddlewareQueue The updated middleware.
-	 */
-	public function middleware($middleware) {
-		$middleware
-			...
-			->add(new AssetMiddleware())
+    /**
+     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to setup.
+     * @return \Cake\Http\MiddlewareQueue The updated middleware.
+     */
+    public function middleware($middleware) {
+        $middleware
+            ...
+            ->add(new AssetMiddleware())
 
-			// Handle cached files
-			->add(new CacheMiddleware([
-				'when' => function ($request, $response) {
-            		return $request->is('get');
-            	},
-			]))
+            // Handle cached files
+            ->add(new CacheMiddleware([
+                'when' => function ($request, $response) {
+                    return $request->is('get');
+                },
+            ]))
 
-			...
+            ...
 
-		return $middleware;
-	}
+        return $middleware;
+    }
 ```
 By adding the `'when'` part, we make sure it only get's invoked for GET requests.
 
@@ -32,9 +32,9 @@ By adding the `'when'` part, we make sure it only get's invoked for GET requests
 Your bootstrap needs to enable the Cache dispatcher filter:
 ```php
 DispatcherFactory::add('Cache.Cache', [
-	'when' => function ($request, $response) {
-		return $request->is('get');
-	}
+    'when' => function ($request, $response) {
+        return $request->is('get');
+    }
 ]);
 ```
 
@@ -52,12 +52,12 @@ If you want to provide some configuration, it is adviced to use the `initialize`
  * @return void
  */
 public function initialize() {
-	$this->loadComponent('Cache.Cache', [
-		'actions' => [
-			...
-		],
-		...
-	]);
+    $this->loadComponent('Cache.Cache', [
+        'actions' => [
+            ...
+        ],
+        ...
+    ]);
 }
 ```
 

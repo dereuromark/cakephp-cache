@@ -3,9 +3,6 @@ namespace Cache\Utility;
 
 class Compressor {
 
-	public function __construct() {
-	}
-
 	/**
 	 * @param string $content
 	 * @return string

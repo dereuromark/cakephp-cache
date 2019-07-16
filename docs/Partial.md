@@ -19,10 +19,10 @@ use Cake\View\View;
 
 class AppView extends View {
 
-	public function initialize() {
-		...
-		$this->loadHelper('AssetCompress.AssetCompress');
-	}
+    public function initialize() {
+        ...
+        $this->loadHelper('AssetCompress.AssetCompress');
+    }
 
 }
 ```
@@ -34,11 +34,11 @@ For each controller you can specify to either cache all actions or explicit ones
 // in your controller
 
 public function initialize() {
-	parent::initialize();
+    parent::initialize();
 
-	$this->loadComponent('Cache.PartialCache', [
-		'actions' => ['index', 'view' => DAY]
-	]);
+    $this->loadComponent('Cache.PartialCache', [
+        'actions' => ['index', 'view' => DAY]
+    ]);
 }
 ```
 By default the duration is unlimited, but you can also set a time. The "view" action here is cached for one day.
@@ -59,14 +59,14 @@ For the PagesController you will need to look for the first "pass" element which
 // in PagesController
 
 public function initialize() {
-	parent::initialize();
+    parent::initialize();
 
-	$pass = current($this->request->params['pass']);
-	if ($pass && in_array($pass, ['home', 'some-public-action'])) {
-		$this->loadComponent('Cache.PartialCache', [
-			...
-		]);
-	}
+    $pass = current($this->request->params['pass']);
+    if ($pass && in_array($pass, ['home', 'some-public-action'])) {
+        $this->loadComponent('Cache.PartialCache', [
+            ...
+        ]);
+    }
 }
 ```
 
