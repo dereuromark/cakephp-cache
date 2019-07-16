@@ -84,7 +84,8 @@ class CacheFilter extends DispatcherFilter {
 		$response = $event->data['response'];
 		$event->stopPropagation();
 
-		$response->modified(filemtime($file));
+		$modified = filemtime($file) ?: time();
+		$response->modified($modified);
 		if ($response->checkNotModified($request)) {
 			return $response;
 		}
@@ -99,7 +100,7 @@ class CacheFilter extends DispatcherFilter {
 	 * @param string $url
 	 * @param bool $mustExist
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getFile($url, $mustExist = true) {
 		if ($url === '/') {
@@ -125,7 +126,7 @@ class CacheFilter extends DispatcherFilter {
 	}
 
 	/**
-	 * @param string &$content
+	 * @param string $content
 	 *
 	 * @return array Time/Ext
 	 */
@@ -186,13 +187,14 @@ class CacheFilter extends DispatcherFilter {
 			$response->type($contentType);
 		}
 		if (!$compressionEnabled) {
-			$response->header('Content-Length', filesize($file));
+			$filesize = filesize($file);
+			$response->header('Content-Length', $filesize ? (string)$filesize : null);
 		}
 
 		$cacheContent = $this->_cacheContent;
 		$cacheInfo = $this->_cacheInfo;
 
-		$modifiedTime = filemtime($file);
+		$modifiedTime = filemtime($file) ?: time();
 		$cacheTime = $cacheInfo['time'];
 		if (!$cacheTime) {
 			$cacheTime = $this->_cacheTime;

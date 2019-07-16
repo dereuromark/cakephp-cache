@@ -75,8 +75,9 @@ class CacheMiddleware {
 			return $next($request, $response);
 		}
 
+		$modified = filemtime($file) ?: time();
 		/** @var \Cake\Http\Response $response */
-		$response = $response->withModified(filemtime($file));
+		$response = $response->withModified($modified);
 		if ($response->checkNotModified($request)) {
 			return $response;
 		}
@@ -92,7 +93,7 @@ class CacheMiddleware {
 	 * @param string $url
 	 * @param bool $mustExist
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function getFile($url, $mustExist = true) {
 		if ($url === '/') {
@@ -187,7 +188,7 @@ class CacheMiddleware {
 		$cacheContent = $this->_cacheContent;
 		$cacheInfo = $this->_cacheInfo;
 
-		$modifiedTime = filemtime($file);
+		$modifiedTime = filemtime($file) ?: time();
 		$cacheTime = $cacheInfo['time'];
 		if (!$cacheTime) {
 			$cacheTime = $this->getConfig('cacheTime');

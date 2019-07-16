@@ -26,7 +26,7 @@ class PartialCacheComponent extends Component {
 	 */
 	public function startup(Event $event) {
 		if (Configure::read('Cache.check') === false) {
-			return null;
+			return;
 		}
 
 		if (isset($this->request->params['_ext']) && $this->request->params['_ext'] !== 'html') {

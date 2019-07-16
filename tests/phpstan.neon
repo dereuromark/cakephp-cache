@@ -3,3 +3,6 @@ parameters:
 		- %rootDir%/../../../tests/bootstrap.php
 		- %rootDir%/../../../tests/shim.php
 	ignoreErrors:
+		- '#Access to protected property .+\:\:.+.#'
+		- '#PHPDoc tag @param for parameter \$request with type .+ServerRequestInterface is not subtype of native type .+ServerRequest.#'
+		- '#PHPDoc tag @param for parameter \$response with type .+ResponseInterface is not subtype of native type .+Response.#'
