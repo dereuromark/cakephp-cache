@@ -7,8 +7,6 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Utility\Inflector;
 
-/**
- */
 class CacheComponent extends Component {
 
 	/**

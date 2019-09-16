@@ -6,8 +6,6 @@ use Cake\Event\Event;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
-/**
- */
 class CacheComponentTest extends TestCase {
 
 	/**

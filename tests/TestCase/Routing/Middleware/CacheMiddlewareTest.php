@@ -9,8 +9,6 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
-/**
- */
 class CacheMiddlewareTest extends TestCase {
 
 	/**

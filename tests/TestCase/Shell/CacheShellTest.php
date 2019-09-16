@@ -7,8 +7,6 @@ use Cake\Filesystem\Folder;
 use Tools\TestSuite\ConsoleOutput;
 use Tools\TestSuite\TestCase;
 
-/**
- */
 class CacheShellTest extends TestCase {
 
 	/**
