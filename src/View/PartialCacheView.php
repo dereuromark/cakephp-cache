@@ -169,7 +169,7 @@ class PartialCacheView extends AppView {
 
 		return [
 			'content' => $content,
-			'time' => $cacheTime
+			'time' => $cacheTime,
 		];
 	}
 

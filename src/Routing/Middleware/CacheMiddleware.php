@@ -138,7 +138,7 @@ class CacheMiddleware {
 
 		$this->_cacheInfo = [
 			'time' => (int)$cacheTime,
-			'ext' => $cacheExt
+			'ext' => $cacheExt,
 		];
 
 		return $this->_cacheInfo;

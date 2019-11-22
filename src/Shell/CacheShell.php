@@ -97,7 +97,7 @@ class CacheShell extends Shell {
 		$infoParser = $parser->toArray();
 		$infoParser['arguments']['url'] = [
 			'help' => 'Absolute URL',
-			'required' => false
+			'required' => false,
 		];
 
 		$parser->description('Cache Shell to cleanup caching of view files.')
@@ -107,7 +107,7 @@ class CacheShell extends Shell {
 				])
 				->addSubcommand('clear', [
 					'help' => 'Clear all or part of the files',
-					'parser' => $parser
+					'parser' => $parser,
 				]);
 
 		return $parser;
