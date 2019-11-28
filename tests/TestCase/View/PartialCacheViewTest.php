@@ -1,4 +1,5 @@
 <?php
+
 namespace Cache\Test\TestCase\Shell;
 
 use Cache\View\PartialCacheView;

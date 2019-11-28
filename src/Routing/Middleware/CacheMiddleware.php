@@ -1,4 +1,5 @@
 <?php
+
 namespace Cache\Routing\Middleware;
 
 use Cake\Core\Configure;

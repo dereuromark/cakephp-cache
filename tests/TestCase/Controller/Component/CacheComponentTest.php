@@ -1,4 +1,5 @@
 <?php
+
 namespace Cache\Test\TestCase\Controller\Component;
 
 use App\Controller\CacheComponentTestController;

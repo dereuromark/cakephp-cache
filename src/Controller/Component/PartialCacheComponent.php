@@ -1,4 +1,5 @@
 <?php
+
 namespace Cache\Controller\Component;
 
 use Cache\View\PartialCacheView;

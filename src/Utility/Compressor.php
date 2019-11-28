@@ -1,4 +1,5 @@
 <?php
+
 namespace Cache\Utility;
 
 class Compressor {
