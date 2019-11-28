@@ -45,11 +45,11 @@ By default the duration is unlimited, but you can also set a time. The "view" ac
 
 In case you want to further compress the output, you can either use the basic built in compressor:
 ```php
-'compress' => true
+'compress' => true,
 ```
 or you can use any custom compressor using a callable:
 ```php
-'compress' => function ($content) { ... }
+'compress' => function ($content) { ... },
 ```
 
 ### Caching some PagesController views

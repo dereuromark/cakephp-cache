@@ -75,22 +75,22 @@ If you need a prefix in order to allow multiple (sub)domains to deliver content 
 If you only want certain actions to be cached, provide them as `actions` array.
 The default `cacheTime` can be set as global value, but if you want certain actions to be cached differently, use the `actions` array:
 ```php
-'actions' => ['report', 'view' => DAY, 'index' => HOUR]
+'actions' => ['report', 'view' => DAY, 'index' => HOUR],
 ```
 
 In case you want to further compress the output, you can either use the basic built in compressor:
 ```php
-'compress' => true
+'compress' => true,
 ```
 or you can use any custom compressor using a callable:
 ```php
-'compress' => function ($content, $ext) { ... }
+'compress' => function ($content, $ext) { ... },
 ```
 The latter is useful if you want to control the compression per extension.
 
 With debug mode being on the cache is by default not enabled. You can force this locally using this param:
 ```php
-'force' => true
+'force' => true,
 ```
 
 ### Filter Configuration

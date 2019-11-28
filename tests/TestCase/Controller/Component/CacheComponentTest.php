@@ -25,8 +25,8 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->request->getSession()->delete('CacheMessage');
 
-		$this->Controller->Cache->config('debug', true);
-		$this->Controller->Cache->config('force', true);
+		$this->Controller->Cache->setConfig('debug', true);
+		$this->Controller->Cache->setConfig('force', true);
 	}
 
 	/**
@@ -64,7 +64,7 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithCacheTime() {
-		$this->Controller->Cache->config('duration', DAY);
+		$this->Controller->Cache->setConfig('duration', DAY);
 		$this->Controller->response = $this->getResponseMock(['body']);
 
 		$this->Controller->response->expects($this->once())
@@ -114,7 +114,7 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithWhitelist() {
-		$this->Controller->Cache->config('actions', ['baz']);
+		$this->Controller->Cache->setConfig('actions', ['baz']);
 
 		$this->Controller->request->params['action'] = 'bar';
 		$this->Controller->request->here = '/foo/bar';
@@ -149,7 +149,7 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithCompress() {
-		$this->Controller->Cache->config('compress', true);
+		$this->Controller->Cache->setConfig('compress', true);
 
 		$this->Controller->response = $this->getResponseMock(['body']);
 
@@ -174,7 +174,7 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithCompressCallback() {
-		$this->Controller->Cache->config('compress', function ($content) {
+		$this->Controller->Cache->setConfig('compress', function ($content) {
 			$content = str_replace('bar', 'b', $content);
 			return $content;
 		});
