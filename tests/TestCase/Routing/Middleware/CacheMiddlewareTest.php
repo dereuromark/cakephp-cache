@@ -28,7 +28,7 @@ class CacheMiddlewareTest extends TestCase {
 		$response = new Response();
 
 		$middleware = new CacheMiddleware();
-		$next = function (ServerRequest $req, ServerRequest $res) {
+		$next = function (ServerRequest $req, Response $res) {
 			return $res;
 		};
 		$newResponse = $middleware($request, $response, $next);
