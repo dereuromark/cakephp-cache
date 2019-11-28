@@ -3,24 +3,13 @@
 namespace Cache\Test\TestCase\Routing\Middleware;
 
 use Cache\Routing\Middleware\CacheMiddleware;
-use Cake\Core\Configure;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 class CacheMiddlewareTest extends TestCase {
-
-	/**
-	 * setup
-	 *
-	 * @return void
-	 */
-	public function setUp() {
-		parent::setUp();
-
-		$this->skipIf(version_compare(Configure::version(), '3.4') < 0);
-	}
 
 	/**
 	 * Teardown
@@ -39,12 +28,12 @@ class CacheMiddlewareTest extends TestCase {
 		$response = new Response();
 
 		$middleware = new CacheMiddleware();
-		$next = function ($req, $res) {
+		$next = function (ServerRequest $req, ServerRequest $res) {
 			return $res;
 		};
 		$newResponse = $middleware($request, $response, $next);
 		$this->assertSame($response, $newResponse);
-		$this->assertSame('text/html', $newResponse->type());
+		$this->assertSame('text/html', $newResponse->getType());
 	}
 
 	/**
@@ -70,15 +59,15 @@ class CacheMiddlewareTest extends TestCase {
 		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
-		$result = $newResponse->body();
+		$result = $newResponse->getBody();
 		$expected = 'Foo bar';
 		$this->assertEquals($expected, $result);
 
-		$result = $newResponse->type();
+		$result = $newResponse->getType();
 		$expected = 'application/json';
 		$this->assertEquals($expected, $result);
 
-		$result = $newResponse->header();
+		$result = $newResponse->getHeaders();
 		$this->assertNotEmpty($result['Expires']); // + 1 day
 
 		unlink($file);
@@ -104,7 +93,7 @@ class CacheMiddlewareTest extends TestCase {
 		$response = new Response();
 
 		$middleware = new CacheMiddleware([
-			'when' => function ($request, $response) {
+			'when' => function (ServerRequest $request, ServerRequest $response) {
 				return $request->is('get');
 			},
 		]);
@@ -115,7 +104,7 @@ class CacheMiddlewareTest extends TestCase {
 		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
-		$this->assertSame('text/html', $newResponse->type());
+		$this->assertSame('text/html', $newResponse->getType());
 	}
 
 	/**
@@ -134,31 +123,43 @@ class CacheMiddlewareTest extends TestCase {
 		Router::connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
 		Router::connect('/:controller/:action/*');
 
-		$_GET = ['coffee' => 'life', 'sleep' => 'sissies'];
-
-		$request = ServerRequestFactory::fromGlobals([
+		$server = [
 			'REQUEST_URI' => '/posts/home',
+		];
+		$query = [
+			'coffee' => 'life',
+			'sleep' => 'sissies',
+		];
+		/*
+		// broken
+		$request = ServerRequestFactory::fromGlobals(
+			$server,
+			$query
+		);
+		*/
+		$request = new ServerRequest([
+			'url' => '/posts/home?' . http_build_query($query),
 		]);
 		$response = new Response();
 
 		$middleware = new CacheMiddleware();
-		$next = function ($req, $res) {
+		$next = function (ServerRequest $req, ServerRequest $res) {
 			return $res;
 		};
 		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
-		$result = $newResponse->body();
+		$result = $newResponse->getBody();
 		$expected = '<!--created:';
 		$this->assertTextStartsWith($expected, $result);
 		$expected = '-->Foo bar';
 		$this->assertTextEndsWith($expected, $result);
 
-		$result = $newResponse->type();
+		$result = $newResponse->getType();
 		$expected = 'text/html';
 		$this->assertEquals($expected, $result);
 
-		$result = $newResponse->header();
+		$result = $newResponse->getHeaders();
 		$this->assertNotEmpty($result['Expires']); // + 1 week
 
 		unlink($file);

@@ -11,7 +11,7 @@ use Tools\TestSuite\TestCase;
 class CacheShellTest extends TestCase {
 
 	/**
-	 * @var \Cache\Shell\CacheShell|\PHPUnit_Framework_MockObject_MockObject
+	 * @var \Cache\Shell\CacheShell|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected $Shell;
 

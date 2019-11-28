@@ -101,7 +101,7 @@ class CacheShell extends Shell {
 			'required' => false,
 		];
 
-		$parser->description('Cache Shell to cleanup caching of view files.')
+		$parser->setDescription('Cache Shell to cleanup caching of view files.')
 				->addSubcommand('status', [
 					'help' => 'Status information about the files',
 					'parser' => $infoParser,
