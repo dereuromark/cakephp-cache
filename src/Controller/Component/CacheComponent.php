@@ -33,7 +33,7 @@ class CacheComponent extends Component {
 
 		$this->response = $event->getSubject()->response;
 
-		$content = $this->response->body();
+		$content = $this->response->getBody();
 		if (!$content) {
 			return;
 		}
@@ -59,8 +59,7 @@ class CacheComponent extends Component {
 			return true;
 		}
 
-		$action = $this->request->params['action'];
-
+		$action = $this->request->getParam('action');
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];
 		}
@@ -88,8 +87,8 @@ class CacheComponent extends Component {
 			$cacheTime = strtotime($duration, $now);
 		}
 
-		$url = $this->request->here();
-		$url = str_replace($this->request->base, '', $url);
+		$url = $this->request->getRequestTarget();
+		$url = str_replace($this->request->getAttribute('base'), '', $url);
 		if ($url === '/') {
 			$url = '_root';
 		}
@@ -106,7 +105,7 @@ class CacheComponent extends Component {
 			return false;
 		}
 
-		$ext = $this->response->mapType($this->response->type());
+		$ext = $this->response->mapType($this->response->getType());
 		$content = $this->_compress($content, $ext);
 
 		$cache = $cache . '.html';

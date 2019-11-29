@@ -32,7 +32,7 @@ class CacheMiddlewareTest extends TestCase {
 			return $res;
 		};
 		$newResponse = $middleware($request, $response, $next);
-		$this->assertSame($response, $newResponse);
+		$this->assertSame($response, $newResponse, (string)$response . ' vs ' . (string)$newResponse);
 		$this->assertSame('text/html', $newResponse->getType());
 	}
 
