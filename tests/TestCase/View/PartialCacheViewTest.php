@@ -8,7 +8,7 @@ use Tools\TestSuite\TestCase;
 class PartialCacheViewTest extends TestCase {
 
 	/**
-	 * @var \Cache\View\PartialCacheView|\PHPUnit_Framework_MockObject_MockObject
+	 * @var \Cache\View\PartialCacheView|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected $PartialCacheView;
 
@@ -40,7 +40,7 @@ class PartialCacheViewTest extends TestCase {
 	 * @return void
 	 */
 	public function testRenderCacheMiss() {
-		$this->PartialCacheView->autoLayout(false);
+		$this->PartialCacheView->enableAutoLayout(false);
 
 		$result = $this->PartialCacheView->render();
 
@@ -52,7 +52,7 @@ class PartialCacheViewTest extends TestCase {
 	 */
 	public function testRenderCacheHit() {
 		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
-		$this->PartialCacheView->autoLayout(false);
+		$this->PartialCacheView->enableAutoLayout(false);
 		copy($this->testCacheFile, $this->tmpDir . 'view');
 
 		$result = $this->PartialCacheView->render();
@@ -68,7 +68,7 @@ class PartialCacheViewTest extends TestCase {
 	public function testRenderCacheHitExpired() {
 		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
 		$this->PartialCacheView->expects($this->once())->method('_render')->willReturn('<b>Bold<b/>');
-		$this->PartialCacheView->autoLayout(false);
+		$this->PartialCacheView->enableAutoLayout(false);
 		$content = file_get_contents($this->testCacheFile);
 		$content = str_replace('cachetime:0', 'cachetime:' . (time() - HOUR), $content);
 		file_put_contents($this->tmpDir . 'view', $content);
@@ -90,7 +90,7 @@ class PartialCacheViewTest extends TestCase {
 
 		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
 		$this->PartialCacheView->expects($this->once())->method('_render')->willReturn(file_get_contents($this->testCacheFile));
-		$this->PartialCacheView->autoLayout(false);
+		$this->PartialCacheView->enableAutoLayout(false);
 		$content = file_get_contents($this->testCacheFile);
 		$content = str_replace('cachetime:0', 'cachetime:' . (time() - HOUR), $content);
 		file_put_contents($this->tmpDir . 'view', $content);

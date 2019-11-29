@@ -10,7 +10,7 @@ use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
 
 /**
- * @deprecated Use new 3.3+ CacheMiddleware instead.
+ * @deprecated Use new 3.4+ CacheMiddleware instead.
  */
 class CacheFilter extends DispatcherFilter {
 

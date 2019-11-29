@@ -59,8 +59,8 @@ class CacheMiddleware {
 		}
 
 		/** @var \Cake\Http\ServerRequest $request */
-		$url = $request->here();
-		$url = str_replace($request->base, '', $url);
+		$url = $request->getRequestTarget();
+		$url = str_replace($request->getAttribute('base'), '', $url);
 		$file = $this->getFile($url);
 
 		if ($file === null) {
@@ -172,10 +172,10 @@ class CacheMiddleware {
 	 */
 	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
 		$compressionEnabled = $response->compress();
-		if ($response->type() === $ext) {
+		if ($response->getType() === $ext) {
 			$contentType = 'application/octet-stream';
-			$agent = $request->env('HTTP_USER_AGENT');
-			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
+			$agent = $request->getEnv('HTTP_USER_AGENT');
+			if ($agent && (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent))) {
 				$contentType = 'application/octetstream';
 			}
 
