@@ -2,11 +2,11 @@
 
 namespace Cache\Test\TestCase\Controller\Component;
 
-use App\Controller\CacheComponentTestController;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
+use TestApp\Controller\CacheComponentTestController;
 
 class CacheComponentTest extends TestCase {
 
@@ -18,13 +18,13 @@ class CacheComponentTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->Controller = new CacheComponentTestController();
 		$this->Controller->startupProcess();
 
-		$this->Controller->request->getSession()->delete('CacheMessage');
+		$this->Controller->getRequest()->getSession()->delete('CacheMessage');
 
 		$this->Controller->Cache->setConfig('debug', true);
 		$this->Controller->Cache->setConfig('force', true);
@@ -33,7 +33,7 @@ class CacheComponentTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 
 		unset($this->Controller->Cache);
@@ -44,9 +44,9 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testAction() {
-		$this->Controller->response = $this->getResponseMock(['getBody']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar'));
 
@@ -68,7 +68,7 @@ class CacheComponentTest extends TestCase {
 		$this->Controller->Cache->setConfig('duration', DAY);
 		$this->Controller->response = $this->getResponseMock(['getBody']);
 
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar'));
 
@@ -94,10 +94,10 @@ class CacheComponentTest extends TestCase {
 		$this->Controller->setRequest($request);
 		$this->Controller->response = $this->getResponseMock(['getBody', 'getType']);
 
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar'));
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getType')
 			->will($this->returnValue('application/json'));
 
@@ -127,7 +127,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->setRequest($request);
 		$this->Controller->response = $this->getResponseMock(['getBody']);
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar'));
 
@@ -145,7 +145,7 @@ class CacheComponentTest extends TestCase {
 		]);
 		$this->Controller->setRequest($request);
 		$this->Controller->response = $this->getResponseMock(['getBody']);
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar'));
 
@@ -166,7 +166,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->response = $this->getResponseMock(['getBody']);
 
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar <!-- Some comment --> and
 
@@ -194,7 +194,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->response = $this->getResponseMock(['getBody']);
 
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar.'));
 
@@ -220,10 +220,10 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->setRequest($request);
 		$this->Controller->response = $this->getResponseMock(['getBody', 'getType']);
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
 			->will($this->returnValue('Foo bar'));
-		$this->Controller->response->expects($this->once())
+		$this->Controller->getResponse()->expects($this->once())
 			->method('getType')
 			->will($this->returnValue('text/html'));
 

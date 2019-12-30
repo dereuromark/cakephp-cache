@@ -4,9 +4,9 @@ namespace Cache\Routing\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Network\Request;
-use Cake\Network\Response;
-use Cake\Utility\Inflector;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
+use Cake\Utility\Text;
 
 /**
  * Note that this middleware is only expected to work for CakePHP 3.4+
@@ -48,7 +48,7 @@ class CacheMiddleware {
 	 * @param callable $next The next middleware to call.
 	 * @return \Psr\Http\Message\ResponseInterface A response.
 	 */
-	public function __invoke(Request $request, Response $response, $next) {
+	public function __invoke(ServerRequest $request, Response $response, $next) {
 		if (Configure::read('Cache.check') === false) {
 			return $next($request, $response);
 		}
@@ -108,7 +108,7 @@ class CacheMiddleware {
 		}
 
 		if ($url !== '_root') {
-			$path = Inflector::slug($path);
+			$path = Text::slug($path);
 		}
 
 		$folder = CACHE . 'views' . DS;
@@ -170,7 +170,7 @@ class CacheMiddleware {
 	 *
 	 * @return \Cake\Http\Response
 	 */
-	protected function _deliverCacheFile(Request $request, Response $response, $file, $ext) {
+	protected function _deliverCacheFile(ServerRequest $request, Response $response, $file, $ext) {
 		$compressionEnabled = $response->compress();
 		if ($response->getType() === $ext) {
 			$contentType = 'application/octet-stream';

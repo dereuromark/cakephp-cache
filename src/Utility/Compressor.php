@@ -25,7 +25,7 @@ class Compressor {
 	 * @param array $m
 	 * @return string
 	 */
-	protected function _commentIgnore($m) {
+	protected function _commentIgnore(array $m) {
 		return (strpos($m[1], '[') === 0 || strpos($m[1], '<![') !== false) ? $m[0] : '';
 	}
 

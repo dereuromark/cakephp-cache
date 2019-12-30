@@ -13,9 +13,19 @@ class PartialCacheViewTest extends TestCase {
 	protected $PartialCacheView;
 
 	/**
+	 * @var string
+	 */
+	protected $testCacheFile;
+
+	/**
+	 * @var string
+	 */
+	protected $tmpDir;
+
+	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->PartialCacheView = $this->getMockBuilder(PartialCacheView::class)
@@ -31,7 +41,7 @@ class PartialCacheViewTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		unset($this->Shell);
 	}
@@ -57,9 +67,9 @@ class PartialCacheViewTest extends TestCase {
 
 		$result = $this->PartialCacheView->render();
 
-		$this->assertContains('<!--created:', $result);
-		$this->assertContains('<p>Some paragraph.</p>', $result);
-		$this->assertContains('<!--end-->', $result);
+		$this->assertStringContainsString('<!--created:', $result);
+		$this->assertStringContainsString('<p>Some paragraph.</p>', $result);
+		$this->assertStringContainsString('<!--end-->', $result);
 	}
 
 	/**

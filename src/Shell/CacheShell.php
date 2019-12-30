@@ -2,7 +2,8 @@
 
 namespace Cache\Shell;
 
-use Cache\Routing\Filter\CacheFilter;
+use Cache\Utility\FileCache;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use FilesystemIterator;
 
@@ -33,7 +34,7 @@ class CacheShell extends Shell {
 			return;
 		}
 
-		$cache = new CacheFilter();
+		$cache = new FileCache();
 		$file = $cache->getFile($url);
 		if (!$file) {
 			$this->abort('No cache file found');
@@ -57,9 +58,9 @@ class CacheShell extends Shell {
 	 * @param string|null $url
 	 * @return int|null
 	 */
-	public function clear($url = null) {
+	public function delete($url = null) {
 		if ($url) {
-			$cache = new CacheFilter();
+			$cache = new FileCache();
 			$file = $cache->getFile($url);
 			if (!$file) {
 				$this->abort('No cache file found');
@@ -92,7 +93,7 @@ class CacheShell extends Shell {
 	 *
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
-	public function getOptionParser() {
+	public function getOptionParser(): ConsoleOptionParser {
 		$parser = parent::getOptionParser();
 
 		$infoParser = $parser->toArray();
@@ -106,7 +107,7 @@ class CacheShell extends Shell {
 					'help' => 'Status information about the files',
 					'parser' => $infoParser,
 				])
-				->addSubcommand('clear', [
+				->addSubcommand('delete', [
 					'help' => 'Clear all or part of the files',
 					'parser' => $parser,
 				]);

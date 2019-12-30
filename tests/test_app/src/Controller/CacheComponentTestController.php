@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
 
@@ -10,8 +10,12 @@ use Cake\Controller\Controller;
 class CacheComponentTestController extends Controller {
 
 	/**
-	 * @var array
+	 * @return void
 	 */
-	public $components = ['Cache.Cache'];
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->loadComponent('Cache.Cache');
+	}
 
 }

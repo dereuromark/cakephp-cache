@@ -61,8 +61,8 @@ For the PagesController you will need to look for the first "pass" element which
 public function initialize() {
     parent::initialize();
 
-    $pass = current($this->request->params['pass']);
-    if ($pass && in_array($pass, ['home', 'some-public-action'])) {
+    $pass = current($this->request->getParam('pass'));
+    if ($pass && in_array($pass, ['home', 'some-public-action'], true)) {
         $this->loadComponent('Cache.PartialCache', [
             ...
         ]);

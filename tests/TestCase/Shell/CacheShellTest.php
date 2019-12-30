@@ -18,7 +18,7 @@ class CacheShellTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->out = new ConsoleOutput();
@@ -42,7 +42,7 @@ class CacheShellTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		unset($this->Shell);
 	}
@@ -54,14 +54,14 @@ class CacheShellTest extends TestCase {
 		$this->Shell->runCommand(['status', '-v']);
 		$output = $this->out->output();
 		$expected = '0 cache files found';
-		$this->assertContains($expected, $output);
+		$this->assertStringContainsString($expected, $output);
 
 		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.html');
 
 		$this->Shell->runCommand(['status']);
 		$output = $this->out->output();
 		$expected = '1 cache files found';
-		$this->assertContains($expected, $output);
+		$this->assertStringContainsString($expected, $output);
 	}
 
 	/**
@@ -74,7 +74,7 @@ class CacheShellTest extends TestCase {
 		$output = $this->out->output();
 
 		$expected = 'Cached until: (unlimited)';
-		$this->assertContains($expected, $output);
+		$this->assertStringContainsString($expected, $output);
 	}
 
 	/**
@@ -87,7 +87,7 @@ class CacheShellTest extends TestCase {
 		$this->Shell->runCommand(['clear']);
 		$output = $this->out->output();
 		$expected = 'Done!';
-		$this->assertContains($expected, $output);
+		$this->assertStringContainsString($expected, $output);
 	}
 
 }

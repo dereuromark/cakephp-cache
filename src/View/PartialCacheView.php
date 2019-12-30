@@ -6,9 +6,9 @@ use App\View\AppView;
 use Cache\Utility\Compressor;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Network\Request;
-use Cake\Network\Response;
-use Cake\Utility\Inflector;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
+use Cake\Utility\Text;
 
 /**
  * A view class that is used for caching partial view templates.
@@ -29,13 +29,18 @@ class PartialCacheView extends AppView {
 	protected $_compress;
 
 	/**
-	 * @param \Cake\Network\Request|null $request Request instance.
+	 * @var bool
+	 */
+	protected $hasRendered = false;
+
+	/**
+	 * @param \Cake\Http\ServerRequest|null $request Request instance.
 	 * @param \Cake\Http\Response|null $response Response instance.
 	 * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
 	 * @param array $viewOptions View options.
 	 */
 	public function __construct(
-		Request $request = null,
+		ServerRequest $request = null,
 		Response $response = null,
 		EventManager $eventManager = null,
 		array $viewOptions = []
@@ -51,11 +56,11 @@ class PartialCacheView extends AppView {
 	 *
 	 * @param string|null $view Name of view file to use
 	 * @param string|null $layout Layout to use.
-	 * @return string|null Rendered content or null if content already rendered and returned earlier.
+	 * @return string Rendered content.
 	 */
-	public function render($view = null, $layout = null) {
+	public function render(?string $view = null, $layout = null): string {
 		if ($this->hasRendered) {
-			return null;
+			return '';
 		}
 
 		$defaultLayout = null;
@@ -66,7 +71,7 @@ class PartialCacheView extends AppView {
 
 		$viewFileName = null;
 		if ($view !== false) {
-			$viewFileName = $this->_getViewFileName($view);
+			$viewFileName = $this->_getTemplateFileName($view);
 		}
 
 		if ($viewFileName) {
@@ -106,7 +111,7 @@ class PartialCacheView extends AppView {
 			mkdir($cacheFolder, 0770, true);
 		}
 
-		$cacheFile = $cacheFolder . Inflector::slug($path);
+		$cacheFile = $cacheFolder . Text::slug($path);
 
 		if (file_exists($cacheFile)) {
 			$cacheContent = $this->extractCacheContent($cacheFile);

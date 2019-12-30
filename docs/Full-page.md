@@ -28,25 +28,8 @@ In your `/src/Application.php` add the Cache middleware right after the the asse
 ```
 By adding the `'when'` part, we make sure it only get's invoked for GET requests.
 
-### DispatcherFilter
-Your bootstrap needs to enable the Cache dispatcher filter:
-```php
-DispatcherFactory::add('Cache.Cache', [
-    'when' => function ($request, $response) {
-        return $request->is('get');
-    }
-]);
-```
-
-Note: This DispatcherFilter is **deprecated** and should only be used when upgrading from existing apps.
-
 ## Usage
 Once the Middleware is loaded, you need to add the component to the controllers you want to make cache-able:
-```php
-public $components = ['Cache.Cache'];
-```
-
-If you want to provide some configuration, it is adviced to use the `initialize` callback instead, though:
 ```php
 /**
  * @return void
@@ -93,10 +76,6 @@ With debug mode being on the cache is by default not enabled. You can force this
 'force' => true,
 ```
 
-### Filter Configuration
-In case you need to run this before other high priority filters to avoid those to be invoked, you can raise the `priority` config.
-You can also adjust the `cacheTime` value for how long the browser should cache the unlimited cache files, defaults to `+1 day`.
-
 ### Clear the Cache
 The Cache shell shipped with this plugin should make it easy to clear the cache manually:
 ```
@@ -112,7 +91,7 @@ you get the amount of currently cached files.
 
 Using
 ```
-cake cache status /some-controller/some-action/?maybe=querystrings
+cake cache status /some-controller/some-action?maybe=query-strings
 ```
 You can get information on the cache of this particular URL, e.g. how long it is still cached.
 

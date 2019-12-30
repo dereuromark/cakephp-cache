@@ -5,7 +5,7 @@ namespace Cache\Controller\Component;
 use Cache\View\PartialCacheView;
 use Cake\Controller\Component;
 use Cake\Core\Configure;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 
 class PartialCacheComponent extends Component {
 
@@ -20,15 +20,15 @@ class PartialCacheComponent extends Component {
 	];
 
 	/**
-	 * @param \Cake\Event\Event $event
+	 * @param \Cake\Event\EventInterface $event
 	 * @return void
 	 */
-	public function startup(Event $event) {
+	public function startup(EventInterface $event): void {
 		if (Configure::read('Cache.check') === false) {
 			return;
 		}
 
-		if (isset($this->request->params['_ext']) && $this->request->params['_ext'] !== 'html') {
+		if ($this->getController()->getRequest()->getParam('_ext') && $this->getController()->getRequest()->getParam('_ext') !== 'html') {
 			return;
 		}
 
@@ -58,7 +58,7 @@ class PartialCacheComponent extends Component {
 			return true;
 		}
 
-		$action = $this->request->params['action'];
+		$action = $this->getController()->getRequest()->getParam('action');
 
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];

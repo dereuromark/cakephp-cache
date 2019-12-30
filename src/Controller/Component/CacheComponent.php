@@ -5,8 +5,8 @@ namespace Cache\Controller\Component;
 use Cache\Utility\Compressor;
 use Cake\Controller\Component;
 use Cake\Core\Configure;
-use Cake\Event\Event;
-use Cake\Utility\Inflector;
+use Cake\Event\EventInterface;
+use Cake\Utility\Text;
 
 class CacheComponent extends Component {
 
@@ -23,17 +23,18 @@ class CacheComponent extends Component {
 	];
 
 	/**
-	 * @param \Cake\Event\Event $event
+	 * @param \Cake\Event\EventInterface $event
 	 * @return void
 	 */
-	public function shutdown(Event $event) {
+	public function shutdown(EventInterface $event): void {
 		if (Configure::read('debug') && !$this->getConfig('force')) {
 			return;
 		}
 
-		$this->response = $event->getSubject()->response;
+		/** @var \Cake\Http\Response $response */
+		$response = $event->getSubject()->getResponse();
 
-		$content = $this->response->getBody();
+		$content = (string)$response->getBody();
 		if (!$content) {
 			return;
 		}
@@ -59,7 +60,7 @@ class CacheComponent extends Component {
 			return true;
 		}
 
-		$action = $this->request->getParam('action');
+		$action = $this->getController()->getRequest()->getParam('action');
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];
 		}
@@ -87,8 +88,8 @@ class CacheComponent extends Component {
 			$cacheTime = strtotime($duration, $now);
 		}
 
-		$url = $this->request->getRequestTarget();
-		$url = str_replace($this->request->getAttribute('base'), '', $url);
+		$url = $this->getController()->getRequest()->getRequestTarget();
+		$url = str_replace($this->getController()->getRequest()->getAttribute('base'), '', $url);
 		if ($url === '/') {
 			$url = '_root';
 		}
@@ -99,13 +100,13 @@ class CacheComponent extends Component {
 			$cache = $prefix . '_' . $url;
 		}
 		if ($url !== '_root') {
-			$cache = Inflector::slug($cache);
+			$cache = Text::slug($cache);
 		}
 		if (empty($cache)) {
 			return false;
 		}
 
-		$ext = $this->response->mapType($this->response->getType());
+		$ext = $this->getController()->getResponse()->mapType($this->getController()->getResponse()->getType());
 		$content = $this->_compress($content, $ext);
 
 		$cache = $cache . '.html';
