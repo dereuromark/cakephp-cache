@@ -7,6 +7,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\CacheComponentTestController;
+use Zend\Diactoros\StreamFactory;
 
 class CacheComponentTest extends TestCase {
 
@@ -48,14 +49,14 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar'));
+			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
 
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
 		$file = CACHE . 'views' . DS . '_root.html';
 		$result = file_get_contents($file);
-		$expected = '<!--cachetime:0;ext:html-->Foo bar';
+		$expected = '<!--cachetime:0;ext:html-->Foo bar.';
 		$this->assertEquals($expected, $result);
 
 		unlink($file);
@@ -66,11 +67,11 @@ class CacheComponentTest extends TestCase {
 	 */
 	public function testActionWithCacheTime() {
 		$this->Controller->Cache->setConfig('duration', DAY);
-		$this->Controller->response = $this->getResponseMock(['getBody']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar'));
+			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
 
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
@@ -92,11 +93,11 @@ class CacheComponentTest extends TestCase {
 			'url' => '/foo/bar/baz.json?x=y',
 		]);
 		$this->Controller->setRequest($request);
-		$this->Controller->response = $this->getResponseMock(['getBody', 'getType']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody', 'getType']));
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar'));
+			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getType')
 			->will($this->returnValue('application/json'));
@@ -106,7 +107,7 @@ class CacheComponentTest extends TestCase {
 
 		$file = CACHE . 'views' . DS . 'foo-bar-baz-json-x-y.html';
 		$result = file_get_contents($file);
-		$expected = '<!--cachetime:0;ext:json-->Foo bar';
+		$expected = '<!--cachetime:0;ext:json-->Foo bar.';
 		$this->assertEquals($expected, $result);
 
 		unlink($file);
@@ -129,10 +130,10 @@ class CacheComponentTest extends TestCase {
 		]);
 
 		$this->Controller->setRequest($request);
-		$this->Controller->response = $this->getResponseMock(['getBody']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar'));
+			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
 
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
@@ -150,10 +151,10 @@ class CacheComponentTest extends TestCase {
 			],
 		]);
 		$this->Controller->setRequest($request);
-		$this->Controller->response = $this->getResponseMock(['getBody']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar'));
+			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
 
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
@@ -170,13 +171,14 @@ class CacheComponentTest extends TestCase {
 	public function testActionWithCompress() {
 		$this->Controller->Cache->setConfig('compress', true);
 
-		$this->Controller->response = $this->getResponseMock(['getBody']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 
+		$text = (new StreamFactory())->createStream('Foo bar <!-- Some comment --> and
+
+			more text.');
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar <!-- Some comment --> and
-
-			more text.'));
+			->will($this->returnValue($text));
 
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
@@ -198,11 +200,11 @@ class CacheComponentTest extends TestCase {
 			return $content;
 		});
 
-		$this->Controller->response = $this->getResponseMock(['getBody']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar.'));
+			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
 
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
@@ -222,13 +224,16 @@ class CacheComponentTest extends TestCase {
 		$request = new ServerRequest([
 			'url' => '/myapp/pages/view/1',
 			'base' => '/myapp',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
 		]);
 
 		$this->Controller->setRequest($request);
-		$this->Controller->response = $this->getResponseMock(['getBody', 'getType']);
+		$this->Controller->setResponse($this->getResponseMock(['getBody', 'getType']));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue('Foo bar'));
+			->will($this->returnValue((new StreamFactory())->createStream('Foo bar')));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getType')
 			->will($this->returnValue('text/html'));
@@ -243,7 +248,7 @@ class CacheComponentTest extends TestCase {
 	/**
 	 * @param array $methods
 	 *
-	 * @return \Cake\Http\Client\Response|\PHPUnit\Framework\MockObject\MockObject
+	 * @return \Cake\Http\Response|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected function getResponseMock(array $methods) {
 		return $this->getMockBuilder(Response::class)->setMethods($methods)->getMock();

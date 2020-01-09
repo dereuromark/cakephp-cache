@@ -80,11 +80,11 @@ class CacheShellTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testClear() {
+	public function testDelete() {
 		$this->Shell->expects($this->any())->method('in')
 			->will($this->returnValue('y'));
 
-		$this->Shell->runCommand(['clear']);
+		$this->Shell->runCommand(['delete']);
 		$output = $this->out->output();
 		$expected = 'Done!';
 		$this->assertStringContainsString($expected, $output);
