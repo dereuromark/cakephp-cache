@@ -28,7 +28,7 @@ class PartialCacheComponent extends Component {
 			return;
 		}
 
-		if ($this->getController()->getRequest()->getParam('_ext') !== 'html') {
+		if ($this->getController()->getRequest()->getParam('_ext') && $this->getController()->getRequest()->getParam('_ext') !== 'html') {
 			return;
 		}
 
