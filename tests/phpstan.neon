@@ -6,3 +6,4 @@ parameters:
 		- '#Access to protected property .+\:\:.+.#'
 		- '#PHPDoc tag @param for parameter \$request with type .+ServerRequestInterface is not subtype of native type .+ServerRequest.#'
 		- '#PHPDoc tag @param for parameter \$response with type .+ResponseInterface is not subtype of native type .+Response.#'
+		- '#Parameter \#1 \$function of function call_user_func expects callable\(\): mixed, mixed given.#'

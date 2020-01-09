@@ -4,7 +4,7 @@ namespace Cache\Test\TestCase\Routing\Middleware;
 
 use Cache\Routing\Middleware\CacheMiddleware;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequest as Request;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -28,7 +28,7 @@ class CacheMiddlewareTest extends TestCase {
 		$response = new Response();
 
 		$middleware = new CacheMiddleware();
-		$next = function (ServerRequest $req, Response $res) {
+		$next = function (Request $req, Response $res) {
 			return $res;
 		};
 		$newResponse = $middleware($request, $response, $next);
@@ -49,17 +49,19 @@ class CacheMiddlewareTest extends TestCase {
 
 		$request = ServerRequestFactory::fromGlobals([
 			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
+			'REQUEST_METHOD' => 'GET',
 		]);
+		$this->assertTrue($request->is('get'));
 		$response = new Response();
 
 		$middleware = new CacheMiddleware();
-		$next = function ($req, $res) {
+		$next = function (Request $req, Response $res) {
 			return $res;
 		};
 		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
-		$result = $newResponse->getBody();
+		$result = (string)$newResponse->getBody();
 		$expected = 'Foo bar';
 		$this->assertEquals($expected, $result);
 
@@ -89,22 +91,22 @@ class CacheMiddlewareTest extends TestCase {
 			'REQUEST_METHOD' => 'POST',
 		]);
 		$this->assertTrue($request->is('post'));
-
 		$response = new Response();
 
 		$middleware = new CacheMiddleware([
-			'when' => function (ServerRequest $request, ServerRequest $response) {
+			'when' => function (Request $request, Response $response) {
 				return $request->is('get');
 			},
 		]);
 
-		$next = function ($req, $res) {
+		$next = function (Request $req, Response $res) {
 			return $res;
 		};
 		/** @var \Cake\Http\Response $newResponse */
 		$newResponse = $middleware($request, $response, $next);
 
 		$this->assertSame('text/html', $newResponse->getType());
+		$this->assertSame('', (string)$newResponse->getBody());
 	}
 
 	/**
@@ -123,27 +125,20 @@ class CacheMiddlewareTest extends TestCase {
 		Router::connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
 		Router::connect('/:controller/:action/*');
 
-		$server = [
-			'REQUEST_URI' => '/posts/home',
-		];
 		$query = [
 			'coffee' => 'life',
 			'sleep' => 'sissies',
 		];
-		/*
-		// broken
-		$request = ServerRequestFactory::fromGlobals(
-			$server,
-			$query
-		);
-		*/
-		$request = new ServerRequest([
+		$request = new Request([
 			'url' => '/posts/home?' . http_build_query($query),
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
 		]);
 		$response = new Response();
 
 		$middleware = new CacheMiddleware();
-		$next = function (ServerRequest $req, ServerRequest $res) {
+		$next = function (Request $req, Response $res) {
 			return $res;
 		};
 		/** @var \Cake\Http\Response $newResponse */

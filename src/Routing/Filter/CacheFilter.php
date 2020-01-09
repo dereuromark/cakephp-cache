@@ -63,6 +63,9 @@ class CacheFilter extends DispatcherFilter {
 
 		/** @var \Cake\Network\Request $request */
 		$request = $event->data['request'];
+		if (!$request->is('get')) {
+			return null;
+		}
 
 		$url = $request->here();
 		$url = str_replace($request->base, '', $url);

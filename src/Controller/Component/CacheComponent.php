@@ -58,8 +58,11 @@ class CacheComponent extends Component {
 		if (!$actions) {
 			return true;
 		}
+		if (!$this->getController()->getRequest()->is('get')) {
+			return false;
+		}
 
-		$action = $this->request->getParam('action');
+		$action = $this->getController()->getRequest()->getParam('action');
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];
 		}
@@ -87,8 +90,8 @@ class CacheComponent extends Component {
 			$cacheTime = strtotime($duration, $now);
 		}
 
-		$url = $this->request->getRequestTarget();
-		$url = str_replace($this->request->getAttribute('base'), '', $url);
+		$url = $this->getController()->getRequest()->getRequestTarget();
+		$url = str_replace($this->getController()->getRequest()->getAttribute('base'), '', $url);
 		if ($url === '/') {
 			$url = '_root';
 		}

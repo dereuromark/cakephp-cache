@@ -2,31 +2,33 @@
 
 ## Enabling the Cache lookup
 
+This is only enabled for GET requests. Any POST requests or alike will not be cached as per HTTP specs.
+
 ### Middleware
 In your `/src/Application.php` add the Cache middleware right after the the assets one for example:
 ```php
-    /**
-     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to setup.
-     * @return \Cake\Http\MiddlewareQueue The updated middleware.
-     */
-    public function middleware($middleware) {
-        $middleware
-            ...
-            ->add(new AssetMiddleware())
+/**
+ * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to setup.
+ * @return \Cake\Http\MiddlewareQueue The updated middleware.
+ */
+public function middleware($middlewareQueue) {
+    $middlewareQueue
+        ...
+        ->add(new AssetMiddleware())
 
-            // Handle cached files
-            ->add(new CacheMiddleware([
-                'when' => function ($request, $response) {
-                    return $request->is('get');
-                },
-            ]))
+        // Handle cached files
+        ->add(new CacheMiddleware([
+            'when' => function (ServerRequest $request, Response $response) {
+                return $request->is('get');
+            },
+        ]))
 
-            ...
+        ...
 
-        return $middleware;
-    }
+    return $middlewareQueue;
+}
 ```
-By adding the `'when'` part, we make sure it only get's invoked for GET requests.
+By adding the `'when'` part, we make sure it only get's invoked for GET requests which is a performance increase.
 
 ### DispatcherFilter
 Your bootstrap needs to enable the Cache dispatcher filter:

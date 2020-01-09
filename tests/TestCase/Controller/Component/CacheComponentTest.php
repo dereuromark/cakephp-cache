@@ -123,6 +123,9 @@ class CacheComponentTest extends TestCase {
 			'params' => [
 				'action' => 'bar',
 			],
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
 		]);
 
 		$this->Controller->setRequest($request);
@@ -141,6 +144,9 @@ class CacheComponentTest extends TestCase {
 			'url' => '/foo/baz',
 			'params' => [
 				'action' => 'baz',
+			],
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
 			],
 		]);
 		$this->Controller->setRequest($request);

@@ -4,8 +4,8 @@ namespace Cache\Routing\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest as Request;
 use Cake\Utility\Inflector;
 
 /**
@@ -49,7 +49,7 @@ class CacheMiddleware {
 	 * @return \Psr\Http\Message\ResponseInterface A response.
 	 */
 	public function __invoke(Request $request, Response $response, $next) {
-		if (Configure::read('Cache.check') === false) {
+		if (Configure::read('Cache.check') === false || !$request->is('get')) {
 			return $next($request, $response);
 		}
 		/** @var callable $when */

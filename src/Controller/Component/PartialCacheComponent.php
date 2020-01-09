@@ -28,7 +28,7 @@ class PartialCacheComponent extends Component {
 			return;
 		}
 
-		if (isset($this->request->params['_ext']) && $this->request->params['_ext'] !== 'html') {
+		if ($this->getController()->getRequest()->getParam('_ext') !== 'html') {
 			return;
 		}
 
@@ -57,8 +57,11 @@ class PartialCacheComponent extends Component {
 		if (!$actions) {
 			return true;
 		}
+		if (!$this->getController()->getRequest()->is('get')) {
+			return false;
+		}
 
-		$action = $this->request->params['action'];
+		$action = $this->getController()->getRequest()->getParam('action');
 
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];

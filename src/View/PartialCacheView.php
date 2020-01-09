@@ -6,8 +6,8 @@ use App\View\AppView;
 use Cache\Utility\Compressor;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
-use Cake\Network\Request;
-use Cake\Network\Response;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest as Request;
 use Cake\Utility\Inflector;
 
 /**
@@ -29,7 +29,7 @@ class PartialCacheView extends AppView {
 	protected $_compress;
 
 	/**
-	 * @param \Cake\Network\Request|null $request Request instance.
+	 * @param \Cake\Http\ServerRequest|null $request Request instance.
 	 * @param \Cake\Http\Response|null $response Response instance.
 	 * @param \Cake\Event\EventManager|null $eventManager Event manager instance.
 	 * @param array $viewOptions View options.
