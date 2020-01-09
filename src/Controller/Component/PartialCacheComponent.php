@@ -57,6 +57,9 @@ class PartialCacheComponent extends Component {
 		if (!$actions) {
 			return true;
 		}
+		if (!$this->getController()->getRequest()->is('get')) {
+			return false;
+		}
 
 		$action = $this->getController()->getRequest()->getParam('action');
 

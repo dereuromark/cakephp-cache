@@ -77,8 +77,9 @@ class CacheShell extends Shell {
 			$this->abort('Aborted!');
 		}
 
-		$fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
-		foreach ($fi as $file) {
+		/** @var \SplFileInfo[] $files */
+		$files = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
+		foreach ($files as $file) {
 			$path = $file->getPathname();
 			if ($this->params['verbose']) {
 				$this->out('Deleting ' . $path);
@@ -86,6 +87,8 @@ class CacheShell extends Shell {
 			unlink($path);
 		}
 		$this->out('Done!');
+
+		return null;
 	}
 
 	/**

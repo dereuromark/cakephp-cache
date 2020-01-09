@@ -49,7 +49,7 @@ class CacheMiddleware {
 	 * @return \Psr\Http\Message\ResponseInterface A response.
 	 */
 	public function __invoke(ServerRequest $request, Response $response, $next) {
-		if (Configure::read('Cache.check') === false) {
+		if (Configure::read('Cache.check') === false || !$request->is('get')) {
 			return $next($request, $response);
 		}
 		/** @var callable $when */

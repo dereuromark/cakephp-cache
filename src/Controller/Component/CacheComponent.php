@@ -59,6 +59,9 @@ class CacheComponent extends Component {
 		if (!$actions) {
 			return true;
 		}
+		if (!$this->getController()->getRequest()->is('get')) {
+			return false;
+		}
 
 		$action = $this->getController()->getRequest()->getParam('action');
 		if (array_key_exists($action, $actions)) {
