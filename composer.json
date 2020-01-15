@@ -28,7 +28,6 @@
 		"issues": "https://github.com/dereuromark/cakephp-cache/issues"
 	},
 	"prefer-stable": true,
-	"minimum-stability": "dev",
 	"scripts": {
 		"test": "php phpunit.phar",
 		"test-setup": "[ ! -f phpunit.phar ] && wget https://phar.phpunit.de/phpunit-8.4.3.phar && mv phpunit-8.4.3.phar phpunit.phar || true",
