@@ -3,7 +3,7 @@
 namespace Cache\Test\TestCase\Shell;
 
 use Cache\View\PartialCacheView;
-use Tools\TestSuite\TestCase;
+use Shim\TestSuite\TestCase;
 
 class PartialCacheViewTest extends TestCase {
 

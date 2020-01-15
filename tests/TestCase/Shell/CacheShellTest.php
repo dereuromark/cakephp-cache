@@ -5,8 +5,8 @@ namespace Cache\Test\TestCase\Shell;
 use Cache\Shell\CacheShell;
 use Cake\Console\ConsoleIo;
 use Cake\Filesystem\Folder;
-use Tools\TestSuite\ConsoleOutput;
-use Tools\TestSuite\TestCase;
+use Shim\TestSuite\ConsoleOutput;
+use Shim\TestSuite\TestCase;
 
 class CacheShellTest extends TestCase {
 
