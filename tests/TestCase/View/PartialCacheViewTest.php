@@ -29,7 +29,7 @@ class PartialCacheViewTest extends TestCase {
 		parent::setUp();
 
 		$this->PartialCacheView = $this->getMockBuilder(PartialCacheView::class)
-			->setMethods(['_getViewFileName', '_render'])
+			->setMethods(['_getTemplateFileName', '_render'])
 			->getMock();
 		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'partial' . DS . 'view.html';
 		$this->tmpDir = CACHE . 'views' . DS;
@@ -61,7 +61,7 @@ class PartialCacheViewTest extends TestCase {
 	 * @return void
 	 */
 	public function testRenderCacheHit() {
-		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
+		$this->PartialCacheView->expects($this->once())->method('_getTemplateFileName')->willReturn('view');
 		$this->PartialCacheView->enableAutoLayout(false);
 		copy($this->testCacheFile, $this->tmpDir . 'view');
 
@@ -76,7 +76,7 @@ class PartialCacheViewTest extends TestCase {
 	 * @return void
 	 */
 	public function testRenderCacheHitExpired() {
-		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
+		$this->PartialCacheView->expects($this->once())->method('_getTemplateFileName')->willReturn('view');
 		$this->PartialCacheView->expects($this->once())->method('_render')->willReturn('<b>Bold<b/>');
 		$this->PartialCacheView->enableAutoLayout(false);
 		$content = file_get_contents($this->testCacheFile);
@@ -94,11 +94,11 @@ class PartialCacheViewTest extends TestCase {
 	 */
 	public function testRenderCompress() {
 		$this->PartialCacheView = $this->getMockBuilder(PartialCacheView::class)
-			->setMethods(['_getViewFileName', '_render'])
+			->setMethods(['_getTemplateFileName', '_render'])
 			->setConstructorArgs([null, null, null, ['compress' => true]])
 			->getMock();
 
-		$this->PartialCacheView->expects($this->once())->method('_getViewFileName')->willReturn('view');
+		$this->PartialCacheView->expects($this->once())->method('_getTemplateFileName')->willReturn('view');
 		$this->PartialCacheView->expects($this->once())->method('_render')->willReturn(file_get_contents($this->testCacheFile));
 		$this->PartialCacheView->enableAutoLayout(false);
 		$content = file_get_contents($this->testCacheFile);

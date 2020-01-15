@@ -70,7 +70,7 @@ class PartialCacheView extends AppView {
 		}
 
 		$viewFileName = null;
-		if ($view !== false) {
+		if ($view !== '') {
 			$viewFileName = $this->_getTemplateFileName($view);
 		}
 
