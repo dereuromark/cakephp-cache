@@ -7,11 +7,12 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Text;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Note that this middleware is only expected to work for CakePHP 3.4+
- */
-class CacheMiddleware {
+class CacheMiddleware implements MiddlewareInterface {
 
 	use InstanceConfigTrait;
 
@@ -88,6 +89,14 @@ class CacheMiddleware {
 		$response = $this->_deliverCacheFile($request, $response, $file, $ext);
 
 		return $response;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+	{
+		// TODO: Implement process() method.
 	}
 
 	/**
@@ -208,5 +217,4 @@ class CacheMiddleware {
 		$body->write($cacheContent);
 		return $response->withBody($body);
 	}
-
 }
