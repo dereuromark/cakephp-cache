@@ -7,11 +7,12 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Text;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Note that this middleware is only expected to work for CakePHP 3.4+
- */
-class CacheMiddleware {
+class CacheMiddleware implements MiddlewareInterface {
 
 	use InstanceConfigTrait;
 
@@ -41,21 +42,19 @@ class CacheMiddleware {
 	}
 
 	/**
-	 * Checks if a requested cache file exists and sends it to the browser.
+	 * @param \Cake\Http\ServerRequest $request
+	 * @param \Psr\Http\Server\RequestHandlerInterface $handler
 	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-	 * @param \Psr\Http\Message\ResponseInterface $response The response.
-	 * @param callable $next The next middleware to call.
-	 * @return \Psr\Http\Message\ResponseInterface A response.
+	 * @return \Psr\Http\Message\ResponseInterface
 	 */
-	public function __invoke(ServerRequest $request, Response $response, $next) {
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		if (Configure::read('Cache.check') === false || !$request->is('get')) {
-			return $next($request, $response);
+			return $handler->handle($request);
 		}
 		/** @var callable $when */
 		$when = $this->getConfig('when');
 		if ($when !== null && $when($request, $request) !== true) {
-			return $next($request, $response);
+			return $handler->handle($request);
 		}
 
 		/** @var \Cake\Http\ServerRequest $request */
@@ -64,7 +63,7 @@ class CacheMiddleware {
 		$file = $this->getFile($url);
 
 		if ($file === null) {
-			return $next($request, $response);
+			return $handler->handle($request);
 		}
 
 		$cacheContent = $this->extractCacheContent($file);
@@ -73,8 +72,11 @@ class CacheMiddleware {
 
 		if ($cacheTime < time() && $cacheTime !== 0) {
 			unlink($file);
-			return $next($request, $response);
+			return $handler->handle($request);
 		}
+
+		/** @var \Cake\Http\Response $response */
+		$response = $handler->handle($request);
 
 		$modified = filemtime($file) ?: time();
 		/** @var \Cake\Http\Response $response */

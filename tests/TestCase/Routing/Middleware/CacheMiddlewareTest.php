@@ -8,6 +8,7 @@ use Cake\Http\ServerRequest as Request;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use TestApp\Http\TestRequestHandler;
 
 class CacheMiddlewareTest extends TestCase {
 
@@ -27,11 +28,10 @@ class CacheMiddlewareTest extends TestCase {
 		$request = ServerRequestFactory::fromGlobals();
 		$response = new Response();
 
+		$handler = new TestRequestHandler(null, $response);
 		$middleware = new CacheMiddleware();
-		$next = function (Request $req, Response $res) {
-			return $res;
-		};
-		$newResponse = $middleware($request, $response, $next);
+		$newResponse = $middleware->process($request, $handler);
+
 		$this->assertSame($response, $newResponse, (string)$response . ' vs ' . (string)$newResponse);
 		$this->assertSame('text/html', $newResponse->getType());
 	}
@@ -54,12 +54,9 @@ class CacheMiddlewareTest extends TestCase {
 		$this->assertTrue($request->is('get'));
 		$response = new Response();
 
+		$handler = new TestRequestHandler(null, $response);
 		$middleware = new CacheMiddleware();
-		$next = function (Request $req, Response $res) {
-			return $res;
-		};
-		/** @var \Cake\Http\Response $newResponse */
-		$newResponse = $middleware($request, $response, $next);
+		$newResponse = $middleware->process($request, $handler);
 
 		$result = (string)$newResponse->getBody();
 		$expected = 'Foo bar';
@@ -98,12 +95,8 @@ class CacheMiddlewareTest extends TestCase {
 				return $request->is('get');
 			},
 		]);
-
-		$next = function (Request $req, Response $res) {
-			return $res;
-		};
-		/** @var \Cake\Http\Response $newResponse */
-		$newResponse = $middleware($request, $response, $next);
+		$handler = new TestRequestHandler(null, $response);
+		$newResponse = $middleware->process($request, $handler);
 
 		$this->assertSame('text/html', $newResponse->getType());
 		$this->assertSame('', (string)$newResponse->getBody());
@@ -137,12 +130,9 @@ class CacheMiddlewareTest extends TestCase {
 		]);
 		$response = new Response();
 
+		$handler = new TestRequestHandler(null, $response);
 		$middleware = new CacheMiddleware();
-		$next = function (Request $req, Response $res) {
-			return $res;
-		};
-		/** @var \Cake\Http\Response $newResponse */
-		$newResponse = $middleware($request, $response, $next);
+		$newResponse = $middleware->process($request, $handler);
 
 		$result = $newResponse->getBody();
 		$expected = '<!--created:';
