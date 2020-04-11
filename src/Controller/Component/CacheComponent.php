@@ -33,7 +33,7 @@ class CacheComponent extends Component {
 		}
 		/** @var callable $when */
 		$when = $this->getConfig('when');
-		if ($when !== null && $when($request) !== true) {
+		if ($when !== null && $when($event->getSubject()->getRequest()) !== true) {
 			return;
 		}
 
