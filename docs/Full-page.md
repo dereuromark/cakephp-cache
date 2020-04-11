@@ -17,18 +17,26 @@ public function middleware($middlewareQueue) {
         ->add(new AssetMiddleware())
 
         // Handle cached files
-        ->add(new CacheMiddleware([
-            'when' => function (ServerRequest $request, Response $response) {
-                return $request->is('get');
-            },
-        ]))
+        ->add(new CacheMiddleware())
 
         ...
 
     return $middlewareQueue;
 }
 ```
-By adding the `'when'` part, we make sure it only get's invoked for GET requests which is a performance increase.
+
+It by default only gets invoked for GET requests, as per HTTP spec for caching (POST requests should never be cached).
+If you need to further specify it, you can the `'when'` config and pass a callable:
+
+```php
+      ->add(new CacheMiddleware([
+          'when' => function (ServerRequest $request) {
+              return !$request->is('ajax');
+          },
+      ]))
+}
+```
+In this case we also exlude AJAX requests.
 
 ## Usage
 Once the Middleware is loaded, you need to add the component to the controllers you want to make cache-able:
