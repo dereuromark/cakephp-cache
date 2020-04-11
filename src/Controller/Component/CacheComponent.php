@@ -20,6 +20,7 @@ class CacheComponent extends Component {
 		'actions' => [],
 		'compress' => false,
 		'force' => false,
+		'when' => null,
 	];
 
 	/**
@@ -28,6 +29,11 @@ class CacheComponent extends Component {
 	 */
 	public function shutdown(EventInterface $event): void {
 		if (Configure::read('debug') && !$this->getConfig('force')) {
+			return;
+		}
+		/** @var callable $when */
+		$when = $this->getConfig('when');
+		if ($when !== null && $when($request) !== true) {
 			return;
 		}
 
@@ -81,7 +87,6 @@ class CacheComponent extends Component {
 	 * @return bool Success of caching view.
 	 */
 	protected function _writeFile($content, $duration) {
-		//$cacheTime = date('Y-m-d H:i:s', $timestamp);
 		$now = time();
 		if (!$duration) {
 			$cacheTime = 0;

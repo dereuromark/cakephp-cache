@@ -26,17 +26,7 @@ public function middleware($middlewareQueue) {
 ```
 
 It by default only gets invoked for GET requests, as per HTTP spec for caching (POST requests should never be cached).
-If you need to further specify it, you can the `'when'` config and pass a callable:
-
-```php
-      ->add(new CacheMiddleware([
-          'when' => function (ServerRequest $request) {
-              return !$request->is('ajax');
-          },
-      ]))
-}
-```
-In this case we also exlude AJAX requests.
+If you need to further specify it, see then `'when'` config and pass a callable to the component and the middleware.
 
 ## Usage
 Once the Middleware is loaded, you need to add the component to the controllers you want to make cache-able:
@@ -57,6 +47,17 @@ public function initialize() {
 The component creates the cache file, the dispatcher on the next request will discover it and deliver this static file instead as long
 as the file modification date is within the allowed range.
 Once the file gets too old it will be cleaned out, a real action will be called and a fresh cache file will be created.
+
+```php
+    $this->loadComponent('Cache.Cache', [
+        'when' => function (ServerRequest $request) {
+             return !$request->is('ajax');
+        },
+    ])
+}
+```
+In this case we also exlude AJAX requests.
+
 
 ### Global Configuration
 The `CACHE` constant can be adjusted in your bootstrap and defaults to `tmp/cache/views/`.
@@ -118,7 +119,7 @@ The dispatcher cannot know if cache files of some non-public actions are request
 ## TODOS
 - Limit filename length to around 200 (as it includes query strings) and add md5 hashsum instead as suffix.
 - Extract the common file name part into a trait for both component and filter to use.
-- Allow other caching approaches than just file cache?
+- Allow other caching approaches than just file cache? => Cache Engine(s)
 - Allow usage of subfolders for File cache to avoid the folder to have millions of files as a flat list?
 - What happens with custom headers set in the original request? How can we pass those to the final cached response?
 - Re-implement the removed CacheHelper with its nocache parts?
