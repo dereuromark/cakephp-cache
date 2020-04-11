@@ -60,11 +60,11 @@ class CacheMiddlewareTest extends TestCase {
 
 		$result = (string)$newResponse->getBody();
 		$expected = 'Foo bar';
-		$this->assertEquals($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$result = $newResponse->getType();
 		$expected = 'application/json';
-		$this->assertEquals($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$result = $newResponse->getHeaders();
 		$this->assertNotEmpty($result['Expires']); // + 1 day
@@ -90,9 +90,36 @@ class CacheMiddlewareTest extends TestCase {
 		$this->assertTrue($request->is('post'));
 		$response = new Response();
 
+		$middleware = new CacheMiddleware();
+		$handler = new TestRequestHandler(null, $response);
+		$newResponse = $middleware->process($request, $handler);
+
+		$this->assertSame('text/html', $newResponse->getType());
+		$this->assertSame('', (string)$newResponse->getBody());
+	}
+
+	/**
+	 * Tests that AJAX skips if configured as such
+	 *
+	 * @return void
+	 */
+	public function testBasicUrlWithExtAjax() {
+		$folder = CACHE . 'views' . DS;
+		$file = $folder . 'testcontroller-testaction-params1-params2-json.html';
+		$content = '<!--cachetime:0;ext:json-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
+			'REQUEST_METHOD' => 'GET',
+			'HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest',
+		]);
+		$this->assertTrue($request->is('ajax'));
+		$response = new Response();
+
 		$middleware = new CacheMiddleware([
-			'when' => function (Request $request, Response $response) {
-				return $request->is('get');
+			'when' => function (Request $request) {
+				return !$request->is('ajax');
 			},
 		]);
 		$handler = new TestRequestHandler(null, $response);
@@ -142,7 +169,7 @@ class CacheMiddlewareTest extends TestCase {
 
 		$result = $newResponse->getType();
 		$expected = 'text/html';
-		$this->assertEquals($expected, $result);
+		$this->assertSame($expected, $result);
 
 		$result = $newResponse->getHeaders();
 		$this->assertNotEmpty($result['Expires']); // + 1 week
