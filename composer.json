@@ -9,7 +9,7 @@
 	},
 	"require-dev": {
 		"dereuromark/cakephp-tools": "^1.2",
-		"fig-r/psr2r-sniffer": "dev-master",
+		"fig-r/psr2r-sniffer": "^0.6",
 		"phpunit/phpunit": "^5.7.14|^6.0"
 	},
 	"autoload": {
