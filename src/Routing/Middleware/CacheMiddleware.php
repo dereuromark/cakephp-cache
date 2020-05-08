@@ -75,8 +75,7 @@ class CacheMiddleware implements MiddlewareInterface {
 			return $handler->handle($request);
 		}
 
-		/** @var \Cake\Http\Response $response */
-		$response = $handler->handle($request);
+		$response = new Response();
 
 		$modified = filemtime($file) ?: time();
 		/** @var \Cake\Http\Response $response */
@@ -208,6 +207,7 @@ class CacheMiddleware implements MiddlewareInterface {
 
 		$body = $response->getBody();
 		$body->write($cacheContent);
+
 		return $response->withBody($body);
 	}
 
