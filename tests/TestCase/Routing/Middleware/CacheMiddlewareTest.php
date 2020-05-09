@@ -43,8 +43,8 @@ class CacheMiddlewareTest extends TestCase {
 	 */
 	public function testBasicUrlWithExt() {
 		$folder = CACHE . 'views' . DS;
-		$file = $folder . 'testcontroller-testaction-params1-params2-json.html';
-		$content = '<!--cachetime:0;ext:json-->Foo bar';
+		$file = $folder . 'testcontroller-testaction-params1-params2-json.cache';
+		$content = '<!--cachetime:' . (time() - HOUR) . '/0;ext:json-->Foo bar';
 		file_put_contents($file, $content);
 
 		$request = ServerRequestFactory::fromGlobals([
@@ -73,14 +73,41 @@ class CacheMiddlewareTest extends TestCase {
 	}
 
 	/**
+	 * Tests setting parameters
+	 *
+	 * @return void
+	 */
+	public function testBasicUrlWithExtExpired() {
+		$folder = CACHE . 'views' . DS;
+		$file = $folder . 'testcontroller-testaction-params1-params2-json.cache';
+		$content = '<!--cachetime:' . (time() - HOUR) . '/' . (time() - MINUTE) . ';ext:json-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
+			'REQUEST_METHOD' => 'GET',
+		]);
+		$this->assertTrue($request->is('get'));
+		$response = new Response();
+
+		$handler = new TestRequestHandler(null, $response);
+		$middleware = new CacheMiddleware();
+		$newResponse = $middleware->process($request, $handler);
+
+		$result = (string)$newResponse->getBody();
+		$expected = '';
+		$this->assertSame($expected, $result);
+	}
+
+	/**
 	 * Tests that post skips
 	 *
 	 * @return void
 	 */
 	public function testBasicUrlWithExtPost() {
 		$folder = CACHE . 'views' . DS;
-		$file = $folder . 'testcontroller-testaction-params1-params2-json.html';
-		$content = '<!--cachetime:0;ext:json-->Foo bar';
+		$file = $folder . 'testcontroller-testaction-params1-params2-json.cache';
+		$content = '<!--cachetime:' . time() . '/0;ext:json-->Foo bar';
 		file_put_contents($file, $content);
 
 		$request = ServerRequestFactory::fromGlobals([
@@ -105,7 +132,7 @@ class CacheMiddlewareTest extends TestCase {
 	 */
 	public function testBasicUrlWithExtAjax() {
 		$folder = CACHE . 'views' . DS;
-		$file = $folder . 'testcontroller-testaction-params1-params2-json.html';
+		$file = $folder . 'testcontroller-testaction-params1-params2-json.cache';
 		$content = '<!--cachetime:0;ext:json-->Foo bar';
 		file_put_contents($file, $content);
 
@@ -136,8 +163,8 @@ class CacheMiddlewareTest extends TestCase {
 	 */
 	public function testQueryStringAndCustomTime() {
 		$folder = CACHE . 'views' . DS;
-		$file = $folder . 'posts-home-coffee-life-sleep-sissies.html';
-		$content = '<!--cachetime:' . (time() + WEEK) . ';ext:html-->Foo bar';
+		$file = $folder . 'posts-home-coffee-life-sleep-sissies.cache';
+		$content = '<!--cachetime:' . time() . '/' . (time() + WEEK) . ';ext:html-->Foo bar';
 		file_put_contents($file, $content);
 
 		Router::reload();
