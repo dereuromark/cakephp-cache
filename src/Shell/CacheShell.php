@@ -20,7 +20,7 @@ class CacheShell extends Shell {
 	 * @return void
 	 */
 	public function status($url = null) {
-		$engine = Configure::read('CakeCache.engine');
+		$engine = Configure::read('CacheConfig.engine');
 		if (!$engine) {
 			$this->fileStatus($url);
 
@@ -88,7 +88,7 @@ class CacheShell extends Shell {
 		}
 
 		if (!$engine) {
-			$file = CacheKey::generate($url, Configure::read('CakeCache.prefix'));
+			$file = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
 			$file .= '.cache';
 			$this->out('Cache File: ' . basename($file));
 		}
@@ -110,14 +110,14 @@ class CacheShell extends Shell {
 				$this->abort('No cache file found');
 			}
 
-			$cacheKey = CacheKey::generate($url, Configure::read('CakeCache.prefix'));
+			$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
 			$this->removeContent($cacheKey);
 
 			$this->out('File ' . $file . ' deleted');
 			return null;
 		}
 
-		$engine = Configure::read('CakeCache.engine');
+		$engine = Configure::read('CacheConfig.engine');
 		if (!$engine) {
 
 			$folder = CACHE . 'views' . DS;
@@ -157,7 +157,7 @@ class CacheShell extends Shell {
 	 * @return void
 	 */
 	protected function removeContent(string $cacheKey): void {
-		$engine = Configure::read('CakeCache.engine');
+		$engine = Configure::read('CacheConfig.engine');
 		if (!$engine) {
 			$folder = CACHE . 'views' . DS;
 			$file = $folder . $cacheKey . '.cache';

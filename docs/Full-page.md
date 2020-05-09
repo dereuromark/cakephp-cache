@@ -66,7 +66,7 @@ In this case we also exlude AJAX requests.
 The `CACHE` constant can be adjusted in your bootstrap and defaults to `tmp/cache/views/`.
 
 If you need a prefix in order to allow multiple (sub)domains to deliver content in multiple languages for example, use
- `Configure::write('CakeCache.prefix', 'myprefix')` to separate them.
+ `Configure::write('CacheConfig.prefix', 'myprefix')` to separate them.
 
 #### Engine based
 Here you can just configure your preferred cache engine as `app.php` piece, e.g.:

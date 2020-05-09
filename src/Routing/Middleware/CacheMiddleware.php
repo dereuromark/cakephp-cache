@@ -43,7 +43,7 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @param array $config
 	 */
 	public function __construct(array $config = []) {
-		$config += (array)Configure::read('CakeCache');
+		$config += (array)Configure::read('CacheConfig');
 
 		$this->setConfig($config);
 
@@ -59,7 +59,7 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		if (Configure::read('CakeCache.check') === false || !$request->is('get')) {
+		if (Configure::read('CacheConfig.check') === false || !$request->is('get')) {
 			return $handler->handle($request);
 		}
 		/** @var callable $when */

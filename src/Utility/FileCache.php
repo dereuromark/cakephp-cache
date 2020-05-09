@@ -31,7 +31,7 @@ class FileCache {
 		if (!empty($config['cacheTime'])) {
 			$this->_cacheTime = $config['cacheTime'];
 		}
-		if ($this->_cacheTime === '' && !Configure::read('CakeCache.engine')) {
+		if ($this->_cacheTime === '' && !Configure::read('CacheConfig.engine')) {
 			$this->_cacheTime = '+1 hour';
 		}
 	}
@@ -42,9 +42,9 @@ class FileCache {
 	 * @return string|null
 	 */
 	public function getContent($url) {
-		$cacheKey = CacheKey::generate($url, Configure::read('CakeCache.prefix'));
+		$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
 
-		$engine = Configure::read('CakeCache.engine');
+		$engine = Configure::read('CacheConfig.engine');
 		if (!$engine) {
 			$folder = CACHE . 'views' . DS;
 			$file = $folder . $cacheKey . '.cache';

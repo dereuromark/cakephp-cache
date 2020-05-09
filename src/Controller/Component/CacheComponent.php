@@ -36,7 +36,7 @@ class CacheComponent extends Component {
 	 * @param array $config Array of configuration settings.
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$config += (array)Configure::read('CakeCache');
+		$config += (array)Configure::read('CacheConfig');
 
 		parent::__construct($registry, $config);
 	}

@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'CakeCache' => [
+	'CacheConfig' => [
 		'force' => false, // Debug mode => off
 		'check' => null, // Auto
 		'engine' => null, // File
