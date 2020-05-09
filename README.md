@@ -36,6 +36,7 @@ bin/cake plugin load Cache
 ```
 
 ## Usage
-This plugin contains a full-page view cache solution as well as a partial cache solution.
+This plugin contains a full-page view cache solution for your controller actions.
+You can use file-based (default) or any engine based (e.g. Memcache, Redis, ...) cache strategy.
 
 For details see [/docs](/docs).
