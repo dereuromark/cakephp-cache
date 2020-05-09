@@ -2,12 +2,17 @@
 
 namespace Cache\Controller\Component;
 
+use Cache\Utility\CacheKey;
 use Cache\Utility\Compressor;
+use Cake\Cache\Cache;
 use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
-use Cake\Utility\Text;
 
+/**
+ * For complete URL caching. Allows to set a very specific duration per URL.
+ */
 class CacheComponent extends Component {
 
 	/**
@@ -17,11 +22,24 @@ class CacheComponent extends Component {
 	 */
 	protected $_defaultConfig = [
 		'duration' => null,
+		'engine' => null,
 		'actions' => [],
 		'compress' => false,
 		'force' => false,
+		'prefix' => false,
 		'when' => null,
 	];
+
+	/**
+	 * @param \Cake\Controller\ComponentRegistry $registry A component registry
+	 *  this component can use to lazy load its components.
+	 * @param array $config Array of configuration settings.
+	 */
+	public function __construct(ComponentRegistry $registry, array $config = []) {
+		$config += (array)Configure::read('CacheConfig');
+
+		parent::__construct($registry, $config);
+	}
 
 	/**
 	 * @param \Cake\Event\EventInterface $event
@@ -54,7 +72,7 @@ class CacheComponent extends Component {
 			$duration = $isActionCachable;
 		}
 
-		$this->_writeFile($content, $duration);
+		$this->_writeContent($content, $duration);
 	}
 
 	/**
@@ -86,47 +104,42 @@ class CacheComponent extends Component {
 	 * @param int|string $duration Duration to set for cache file.
 	 * @return bool Success of caching view.
 	 */
-	protected function _writeFile($content, $duration) {
-		$now = time();
-		if (!$duration) {
-			$cacheTime = 0;
-		} elseif (is_numeric($duration)) {
-			$cacheTime = $now + $duration;
-		} else {
-			$cacheTime = strtotime($duration, $now);
-		}
+	protected function _writeContent(string $content, $duration) {
+		$cacheTime = CacheKey::cacheTime($duration);
 
 		$url = $this->getController()->getRequest()->getRequestTarget();
 		$url = str_replace($this->getController()->getRequest()->getAttribute('base'), '', $url);
-		if ($url === '/') {
-			$url = '_root';
-		}
-
-		$cache = $url;
-		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$cache = $prefix . '_' . $url;
-		}
-		if ($url !== '_root') {
-			$cache = Text::slug($cache);
-		}
-		if (empty($cache)) {
-			return false;
-		}
+		$cacheKey = CacheKey::generate($url, $this->getConfig('prefix'));
 
 		$ext = $this->getController()->getResponse()->mapType($this->getController()->getResponse()->getType());
 		$content = $this->_compress($content, $ext);
 
-		$cache = $cache . '.html';
 		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;
 
+		$engine = $this->getConfig('engine');
+		if (!$engine) {
+			return $this->_writeFile($content, $cacheKey);
+		}
+
+		return Cache::write($cacheKey, $content, $engine);
+	}
+
+	/**
+	 * @param string $content
+	 * @param string $cache
+	 *
+	 * @return bool
+	 */
+	protected function _writeFile(string $content, string $cache) {
 		$folder = CACHE . 'views' . DS;
 		if (Configure::read('debug') && !is_dir($folder)) {
 			mkdir($folder, 0770, true);
 		}
+
+		$cache .= '.cache';
 		$file = $folder . $cache;
 
-		return file_put_contents($file, $content);
+		return (bool)file_put_contents($file, $content);
 	}
 
 	/**

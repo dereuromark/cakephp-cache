@@ -30,7 +30,7 @@ class CacheShellTest extends TestCase {
 			->setConstructorArgs([$io])
 			->getMock();
 
-		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'test.html';
+		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'test.cache';
 
 		$Folder = new Folder(CACHE . 'views' . DS);
 		$Folder->delete();
@@ -56,7 +56,7 @@ class CacheShellTest extends TestCase {
 		$expected = '0 cache files found';
 		$this->assertStringContainsString($expected, $output);
 
-		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.html');
+		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.cache');
 
 		$this->Shell->runCommand(['status']);
 		$output = $this->out->output();
@@ -68,7 +68,7 @@ class CacheShellTest extends TestCase {
 	 * @return void
 	 */
 	public function testStatusWithUrl() {
-		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.html');
+		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.cache');
 
 		$this->Shell->runCommand(['status', '/test']);
 		$output = $this->out->output();

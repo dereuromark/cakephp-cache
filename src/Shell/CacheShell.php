@@ -2,9 +2,12 @@
 
 namespace Cache\Shell;
 
+use Cache\Utility\CacheKey;
 use Cache\Utility\FileCache;
+use Cake\Cache\Cache;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use FilesystemIterator;
 
 /**
@@ -17,6 +20,28 @@ class CacheShell extends Shell {
 	 * @return void
 	 */
 	public function status($url = null) {
+		$engine = Configure::read('CacheConfig.engine');
+		if (!$engine) {
+			$this->fileStatus($url);
+
+			return;
+		}
+
+		$this->out('Cache Engine: ' . $engine);
+
+		if (!$url) {
+			return;
+		}
+
+		$this->cacheStatus($url, $engine);
+	}
+
+	/**
+	 * @param string|null $url
+	 *
+	 * @return void
+	 */
+	protected function fileStatus($url) {
 		$folder = CACHE . 'views' . DS;
 		if (!is_dir($folder)) {
 			mkdir($folder, 0770, true);
@@ -34,24 +59,43 @@ class CacheShell extends Shell {
 			return;
 		}
 
+		$this->cacheStatus($url);
+	}
+
+	/**
+	 * @param string|null $url
+	 * @param string|null $engine
+	 *
+	 * @return void
+	 */
+	protected function cacheStatus($url, $engine = null) {
 		$cache = new FileCache();
-		$file = $cache->getFile($url);
-		if (!$file) {
+		$fileContent = $cache->getContent($url);
+		if (!$fileContent) {
 			$this->abort('No cache file found');
 		}
 
-		$content = file_get_contents($file);
-		$cacheInfo = $cache->extractCacheInfo($content);
-		$time = $cacheInfo['time'];
+		$cacheInfo = $cache->extractCacheInfo($fileContent);
+		if (!$cacheInfo) {
+			$this->abort('Invalid cache file');
+		}
+
+		$time = $cacheInfo['end'];
 		if ($time) {
 			$time = date('Y-m-d H:i:s', $time);
 		} else {
 			$time = '(unlimited)';
 		}
 
-		$this->out('Cache File: ' . basename($file));
+		if (!$engine) {
+			$file = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
+			$file .= '.cache';
+			$this->out('Cache File: ' . basename($file));
+		}
 		$this->out('URL ext: ' . $cacheInfo['ext']);
+		$this->out('Cached since: ' . date('Y-m-d H:i:s', $cacheInfo['start']));
 		$this->out('Cached until: ' . $time);
+		$this->verbose('Server time: ' . date('Y-m-d H:i:s', time()));
 	}
 
 	/**
@@ -61,34 +105,68 @@ class CacheShell extends Shell {
 	public function delete($url = null) {
 		if ($url) {
 			$cache = new FileCache();
-			$file = $cache->getFile($url);
+			$file = $cache->getContent($url);
 			if (!$file) {
 				$this->abort('No cache file found');
 			}
-			unlink($file);
+
+			$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
+			$this->removeContent($cacheKey);
+
 			$this->out('File ' . $file . ' deleted');
 			return null;
 		}
 
-		$folder = CACHE . 'views' . DS;
+		$engine = Configure::read('CacheConfig.engine');
+		if (!$engine) {
 
-		$continue = $this->in('Clear `' . $folder . '`?', ['y', 'n'], 'y');
+			$folder = CACHE . 'views' . DS;
+
+			$continue = $this->in('Clear `' . $folder . '`?', ['y', 'n'], 'y');
+			if ($continue !== 'y') {
+				$this->abort('Aborted!');
+			}
+
+			/** @var \SplFileInfo[] $files */
+			$files = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
+			foreach ($files as $file) {
+				$path = $file->getPathname();
+				if ($this->params['verbose']) {
+					$this->out('Deleting ' . $path);
+				}
+				unlink($path);
+			}
+			$this->out('Done!');
+
+			return null;
+		}
+
+		$continue = $this->in('Clear Cache `' . $engine . '`?', ['y', 'n'], 'y');
 		if ($continue !== 'y') {
 			$this->abort('Aborted!');
 		}
 
-		/** @var \SplFileInfo[] $files */
-		$files = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
-		foreach ($files as $file) {
-			$path = $file->getPathname();
-			if ($this->params['verbose']) {
-				$this->out('Deleting ' . $path);
-			}
-			unlink($path);
-		}
-		$this->out('Done!');
+		Cache::clear($engine);
 
 		return null;
+	}
+
+	/**
+	 * @param string $cacheKey
+	 *
+	 * @return void
+	 */
+	protected function removeContent(string $cacheKey): void {
+		$engine = Configure::read('CacheConfig.engine');
+		if (!$engine) {
+			$folder = CACHE . 'views' . DS;
+			$file = $folder . $cacheKey . '.cache';
+			unlink($file);
+
+			return;
+		}
+
+		Cache::delete($cacheKey, $engine);
 	}
 
 	/**

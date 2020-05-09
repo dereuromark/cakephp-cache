@@ -6,8 +6,8 @@ use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Laminas\Diactoros\StreamFactory;
 use TestApp\Controller\CacheComponentTestController;
-use Zend\Diactoros\StreamFactory;
 
 class CacheComponentTest extends TestCase {
 
@@ -54,10 +54,12 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . '_root.html';
+		$file = CACHE . 'views' . DS . '_root.cache';
 		$result = file_get_contents($file);
-		$expected = '<!--cachetime:0;ext:html-->Foo bar.';
-		$this->assertEquals($expected, $result);
+		$expected = '<!--cachetime:';
+		$this->assertTextContains($expected, $result);
+		$expected = '/0;ext:html-->Foo bar.';
+		$this->assertTextContains($expected, $result);
 
 		unlink($file);
 	}
@@ -76,11 +78,12 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . '_root.html';
+		$file = CACHE . 'views' . DS . '_root.cache';
 		$result = file_get_contents($file);
-		$expectedTime = time() + DAY;
-		$expected = '<!--cachetime:' . substr($expectedTime, 0, -1);
-		$this->assertTextStartsWith($expected, $result);
+		$time = time();
+		$expectedTime = $time + DAY;
+		$expected = '/' . substr($expectedTime, 0, -1);
+		$this->assertTextContains($expected, $result);
 
 		unlink($file);
 	}
@@ -105,10 +108,12 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . 'foo-bar-baz-json-x-y.html';
+		$file = CACHE . 'views' . DS . 'foo-bar-baz-json-x-y.cache';
 		$result = file_get_contents($file);
-		$expected = '<!--cachetime:0;ext:json-->Foo bar.';
-		$this->assertEquals($expected, $result);
+		$expected = '<!--cachetime:';
+		$this->assertTextContains($expected, $result);
+		$expected = '/0;ext:json-->Foo bar.';
+		$this->assertTextContains($expected, $result);
 
 		unlink($file);
 	}
@@ -138,7 +143,7 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . 'foo-bar.html';
+		$file = CACHE . 'views' . DS . 'foo-bar.cache';
 		$this->assertFalse(file_exists($file));
 
 		$request = new ServerRequest([
@@ -159,7 +164,7 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . 'foo-baz.html';
+		$file = CACHE . 'views' . DS . 'foo-baz.cache';
 		$this->assertFileExists($file);
 
 		unlink($file);
@@ -183,10 +188,12 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . '_root.html';
+		$file = CACHE . 'views' . DS . '_root.cache';
 		$result = file_get_contents($file);
-		$expected = '<!--cachetime:0;ext:html-->Foo bar and more text.';
-		$this->assertEquals($expected, $result);
+		$expected = '<!--cachetime:';
+		$this->assertTextContains($expected, $result);
+		$expected = '/0;ext:html-->Foo bar and more text.';
+		$this->assertTextContains($expected, $result);
 
 		unlink($file);
 	}
@@ -209,10 +216,12 @@ class CacheComponentTest extends TestCase {
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
 
-		$file = CACHE . 'views' . DS . '_root.html';
+		$file = CACHE . 'views' . DS . '_root.cache';
 		$result = file_get_contents($file);
-		$expected = '<!--cachetime:0;ext:html-->Foo b.';
-		$this->assertEquals($expected, $result);
+		$expected = '<!--cachetime:';
+		$this->assertTextContains($expected, $result);
+		$expected = '/0;ext:html-->Foo b.';
+		$this->assertTextContains($expected, $result);
 
 		unlink($file);
 	}
@@ -240,7 +249,7 @@ class CacheComponentTest extends TestCase {
 
 		$event = new Event('Controller.shutdown', $this->Controller);
 		$this->Controller->Cache->shutdown($event);
-		$file = CACHE . 'views' . DS . 'pages-view-1.html';
+		$file = CACHE . 'views' . DS . 'pages-view-1.cache';
 		$this->assertFileExists($file);
 		unlink($file);
 	}

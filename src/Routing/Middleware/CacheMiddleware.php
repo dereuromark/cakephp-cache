@@ -2,16 +2,20 @@
 
 namespace Cache\Routing\Middleware;
 
+use Cache\Utility\CacheKey;
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Utility\Text;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * For use with CacheComponent and basic file caching.
+ */
 class CacheMiddleware implements MiddlewareInterface {
 
 	use InstanceConfigTrait;
@@ -20,8 +24,9 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @var array
 	 */
 	protected $_defaultConfig = [
+		'engine' => null,
 		'when' => null,
-		'cacheTime' => '+1 day',
+		'cacheTime' => null,
 	];
 
 	/**
@@ -38,7 +43,13 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @param array $config
 	 */
 	public function __construct(array $config = []) {
+		$config += (array)Configure::read('CacheConfig');
+
 		$this->setConfig($config);
+
+		if (!$this->getConfig('engine') && $this->getConfig('cacheTime') === null) {
+			$this->setConfig('cacheTime', '+1 hour');
+		}
 	}
 
 	/**
@@ -48,7 +59,7 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		if (Configure::read('Cache.check') === false || !$request->is('get')) {
+		if (Configure::read('CacheConfig.check') === false || !$request->is('get')) {
 			return $handler->handle($request);
 		}
 		/** @var callable $when */
@@ -60,86 +71,109 @@ class CacheMiddleware implements MiddlewareInterface {
 		/** @var \Cake\Http\ServerRequest $request */
 		$url = $request->getRequestTarget();
 		$url = str_replace($request->getAttribute('base'), '', $url);
-		$file = $this->getFile($url);
 
-		if ($file === null) {
+		$cacheKey = CacheKey::generate($url, $this->getConfig('prefix'));
+		$fileContent = $this->getContent($url, $cacheKey);
+
+		if ($fileContent === null) {
 			return $handler->handle($request);
 		}
 
-		$cacheContent = $this->extractCacheContent($file);
+		$cacheContent = $this->extractCacheContent($fileContent);
 		$cacheInfo = $this->extractCacheInfo($cacheContent);
-		$cacheTime = $cacheInfo['time'];
+		if (!$cacheInfo) {
+			return $handler->handle($request);
+		}
 
-		if ($cacheTime < time() && $cacheTime !== 0) {
-			unlink($file);
+		$cacheStart = $cacheInfo['start'];
+		$cacheEnd = $cacheInfo['end'];
+		$cacheExt = $cacheInfo['ext'];
+
+		if ($cacheEnd < time() && $cacheEnd !== 0) {
+			$this->removeContent($cacheKey);
+
 			return $handler->handle($request);
 		}
 
 		$response = new Response();
 
-		$modified = filemtime($file) ?: time();
+		$modified = $cacheStart ?: time();
 		/** @var \Cake\Http\Response $response */
 		$response = $response->withModified($modified);
 		if ($response->checkNotModified($request)) {
 			return $response;
 		}
 
-		$pathSegments = explode('.', $file);
-		$ext = array_pop($pathSegments);
-		$response = $this->_deliverCacheFile($request, $response, $file, $ext);
+		$response = $this->_deliverCacheFile($request, $response, $fileContent, $cacheExt);
 
 		return $response;
 	}
 
 	/**
 	 * @param string $url
-	 * @param bool $mustExist
+	 * @param string $cacheKey
 	 *
 	 * @return string|null
 	 */
-	public function getFile($url, $mustExist = true) {
-		if ($url === '/') {
-			$url = '_root';
+	protected function getContent(string $url, string $cacheKey) {
+		$engine = $this->getConfig('engine');
+		if (!$engine) {
+			$folder = CACHE . 'views' . DS;
+			$file = $folder . $cacheKey . '.cache';
+			if (!file_exists($file)) {
+				return null;
+			}
+
+			return file_get_contents($file);
 		}
 
-		$path = $url;
-		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$path = $prefix . '_' . $path;
+		return Cache::read($cacheKey, $engine) ?: null;
+	}
+
+	/**
+	 * @param string $cacheKey
+	 *
+	 * @return void
+	 */
+	protected function removeContent(string $cacheKey): void {
+		$engine = $this->getConfig('engine');
+		if (!$engine) {
+			$folder = CACHE . 'views' . DS;
+			$file = $folder . $cacheKey . '.cache';
+			unlink($file);
+
+			return;
 		}
 
-		if ($url !== '_root') {
-			$path = Text::slug($path);
-		}
-
-		$folder = CACHE . 'views' . DS;
-		$file = $folder . $path . '.html';
-		if ($mustExist && !file_exists($file)) {
-			return null;
-		}
-		return $file;
+		Cache::delete($cacheKey, $engine);
 	}
 
 	/**
 	 * @param string $content
 	 *
-	 * @return array Time/Ext
+	 * @return array
 	 */
-	public function extractCacheInfo(&$content) {
+	protected function extractCacheInfo(&$content) {
 		if ($this->_cacheInfo) {
 			return $this->_cacheInfo;
 		}
 
-		$cacheTime = 0;
+		$cacheStart = $cacheEnd = 0;
 		$cacheExt = 'html';
-		$this->_cacheContent = preg_replace_callback('/^\<\!--cachetime\:(\d+);ext\:(\w+)--\>/', function ($matches) use (&$cacheTime, &$cacheExt) {
-			$cacheTime = $matches[1];
-			$cacheExt = $matches[2];
+		$this->_cacheContent = preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:(\w+)-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
+			$cacheStart = (int)$matches[1];
+			$cacheEnd = (int)$matches[2];
+			$cacheExt = $matches[3];
 			return '';
 		}, $this->_cacheContent);
 
+		if (!$cacheStart) {
+			return [];
+		}
+
 		$this->_cacheInfo = [
-			'time' => (int)$cacheTime,
+			'start' => $cacheStart,
+			'end' => $cacheEnd,
 			'ext' => $cacheExt,
 		];
 
@@ -147,16 +181,16 @@ class CacheMiddleware implements MiddlewareInterface {
 	}
 
 	/**
-	 * @param string $file
+	 * @param string $fileContent
 	 *
 	 * @return string
 	 */
-	protected function extractCacheContent($file) {
+	protected function extractCacheContent($fileContent) {
 		if ($this->_cacheContent !== null) {
 			return $this->_cacheContent;
 		}
 
-		$this->_cacheContent = (string)file_get_contents($file);
+		$this->_cacheContent = (string)$fileContent;
 
 		return $this->_cacheContent;
 	}
@@ -166,17 +200,17 @@ class CacheMiddleware implements MiddlewareInterface {
 	 *
 	 * @param \Cake\Http\ServerRequest $request The request object to use.
 	 * @param \Cake\Http\Response $response The response object to use.
-	 * @param string $file Path to the asset file in the file system
-	 * @param string $ext The extension of the file to determine its mime type
+	 * @param string $content Content
+	 * @param string $ext Extension
 	 *
 	 * @return \Cake\Http\Response
 	 */
-	protected function _deliverCacheFile(ServerRequest $request, Response $response, $file, $ext) {
+	protected function _deliverCacheFile(ServerRequest $request, Response $response, $content, $ext) {
 		$compressionEnabled = $response->compress();
 		if ($response->getType() === $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = $request->getEnv('HTTP_USER_AGENT');
-			if ($agent && (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent))) {
+			if ($agent && (preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent))) {
 				$contentType = 'application/octetstream';
 			}
 
@@ -184,19 +218,20 @@ class CacheMiddleware implements MiddlewareInterface {
 		}
 
 		if (!$compressionEnabled) {
-			$response = $response->withHeader('Content-Length', (string)filesize($file));
+			$response = $response->withHeader('Content-Length', (string)strlen($content));
 		}
 
 		$cacheContent = $this->_cacheContent;
 		$cacheInfo = $this->_cacheInfo;
+		$cacheStart = $cacheInfo['start'];
+		$cacheEnd = $cacheInfo['end'];
 
-		$modifiedTime = filemtime($file) ?: time();
-		$cacheTime = $cacheInfo['time'];
-		if (!$cacheTime) {
-			$cacheTime = $this->getConfig('cacheTime');
+		$modifiedTime = $cacheStart ?: time();
+		if (!$cacheEnd) {
+			$cacheEnd = $this->getConfig('cacheTime');
 		}
 
-		$response = $response->withCache($modifiedTime, $cacheTime);
+		$response = $response->withCache($modifiedTime, $cacheEnd);
 		$response = $response->withType($cacheInfo['ext']);
 
 		if (Configure::read('debug') || $this->getConfig('debug')) {

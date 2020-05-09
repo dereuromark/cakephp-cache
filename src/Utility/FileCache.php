@@ -2,8 +2,8 @@
 
 namespace Cache\Utility;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
-use Cake\Utility\Text;
 
 class FileCache {
 
@@ -12,7 +12,7 @@ class FileCache {
 	 *
 	 * @var string
 	 */
-	protected $_cacheTime = '+1 day';
+	protected $_cacheTime = '';
 
 	/**
 	 * @var string|null
@@ -31,35 +31,31 @@ class FileCache {
 		if (!empty($config['cacheTime'])) {
 			$this->_cacheTime = $config['cacheTime'];
 		}
+		if ($this->_cacheTime === '' && !Configure::read('CacheConfig.engine')) {
+			$this->_cacheTime = '+1 hour';
+		}
 	}
 
 	/**
 	 * @param string $url
-	 * @param bool $mustExist
 	 *
 	 * @return string|null
 	 */
-	public function getFile($url, $mustExist = true) {
-		if ($url === '/') {
-			$url = '_root';
+	public function getContent($url) {
+		$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
+
+		$engine = Configure::read('CacheConfig.engine');
+		if (!$engine) {
+			$folder = CACHE . 'views' . DS;
+			$file = $folder . $cacheKey . '.cache';
+			if (!file_exists($file)) {
+				return null;
+			}
+
+			return file_get_contents($file);
 		}
 
-		$path = $url;
-		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$path = $prefix . '_' . $path;
-		}
-
-		if ($url !== '_root') {
-			$path = Text::slug($path);
-		}
-
-		$folder = CACHE . 'views' . DS;
-		$file = $folder . $path . '.html';
-		if ($mustExist && !file_exists($file)) {
-			return null;
-		}
-		return $file;
+		return Cache::read($cacheKey, $engine) ?: null;
 	}
 
 	/**
@@ -72,35 +68,26 @@ class FileCache {
 			return $this->_cacheInfo;
 		}
 
-		$cacheTime = 0;
+		$cacheStart = $cacheEnd = 0;
 		$cacheExt = 'html';
-		$this->_cacheContent = preg_replace_callback('/^\<\!--cachetime\:(\d+);ext\:(\w+)--\>/', function ($matches) use (&$cacheTime, &$cacheExt) {
-			$cacheTime = $matches[1];
-			$cacheExt = $matches[2];
+		$content = preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:(\w+)-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
+			$cacheStart = (int)$matches[1];
+			$cacheEnd = (int)$matches[2];
+			$cacheExt = $matches[3];
 			return '';
-		}, $this->_cacheContent);
+		}, $content);
+
+		if (!$cacheStart) {
+			return [];
+		}
 
 		$this->_cacheInfo = [
-			'time' => (int)$cacheTime,
+			'start' => $cacheStart,
+			'end' => $cacheEnd,
 			'ext' => $cacheExt,
 		];
 
 		return $this->_cacheInfo;
-	}
-
-	/**
-	 * @param string $file
-	 *
-	 * @return string
-	 */
-	protected function extractCacheContent($file) {
-		if ($this->_cacheContent !== null) {
-			return $this->_cacheContent;
-		}
-
-		$this->_cacheContent = (string)file_get_contents($file);
-
-		return $this->_cacheContent;
 	}
 
 }
