@@ -74,6 +74,7 @@ class FileCache {
 			$cacheStart = (int)$matches[1];
 			$cacheEnd = (int)$matches[2];
 			$cacheExt = $matches[3];
+
 			return '';
 		}, $content);
 

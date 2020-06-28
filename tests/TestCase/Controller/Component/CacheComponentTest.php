@@ -204,6 +204,7 @@ class CacheComponentTest extends TestCase {
 	public function testActionWithCompressCallback() {
 		$this->Controller->Cache->setConfig('compress', function ($content) {
 			$content = str_replace('bar', 'b', $content);
+
 			return $content;
 		});
 

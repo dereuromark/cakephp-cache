@@ -56,6 +56,7 @@ class CacheShell extends Shell {
 					$this->out(' - ' . $f->getFileName());
 				}
 			}
+
 			return;
 		}
 
@@ -114,6 +115,7 @@ class CacheShell extends Shell {
 			$this->removeContent($cacheKey);
 
 			$this->out('File ' . $file . ' deleted');
+
 			return null;
 		}
 

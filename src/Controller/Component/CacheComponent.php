@@ -94,6 +94,7 @@ class CacheComponent extends Component {
 		if (in_array($action, $actions, true)) {
 			return true;
 		}
+
 		return false;
 	}
 

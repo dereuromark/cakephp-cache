@@ -164,6 +164,7 @@ class CacheMiddleware implements MiddlewareInterface {
 			$cacheStart = (int)$matches[1];
 			$cacheEnd = (int)$matches[2];
 			$cacheExt = $matches[3];
+
 			return '';
 		}, $this->_cacheContent);
 
