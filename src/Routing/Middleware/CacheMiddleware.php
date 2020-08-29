@@ -124,7 +124,7 @@ class CacheMiddleware implements MiddlewareInterface {
 				return null;
 			}
 
-			return file_get_contents($file);
+			return file_get_contents($file) ?: null;
 		}
 
 		return Cache::read($cacheKey, $engine) ?: null;
@@ -229,7 +229,7 @@ class CacheMiddleware implements MiddlewareInterface {
 
 		$modifiedTime = $cacheStart ?: time();
 		if (!$cacheEnd) {
-			$cacheEnd = $this->getConfig('cacheTime');
+			$cacheEnd = $this->getConfig('cacheTime', '+1 hour');
 		}
 
 		$response = $response->withCache($modifiedTime, $cacheEnd);

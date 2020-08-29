@@ -51,14 +51,13 @@ class CacheComponent extends Component {
 		}
 		/** @var callable $when */
 		$when = $this->getConfig('when');
-		if ($when !== null && $when($event->getSubject()->getRequest()) !== true) {
+		/** @var \Cake\Controller\Controller $controller */
+		$controller = $event->getSubject();
+		if ($when !== null && $when($controller->getRequest()) !== true) {
 			return;
 		}
 
-		/** @var \Cake\Http\Response $response */
-		$response = $event->getSubject()->getResponse();
-
-		$content = (string)$response->getBody();
+		$content = (string)$controller->getResponse()->getBody();
 		if (!$content) {
 			return;
 		}
@@ -112,7 +111,7 @@ class CacheComponent extends Component {
 		$url = str_replace($this->getController()->getRequest()->getAttribute('base'), '', $url);
 		$cacheKey = CacheKey::generate($url, $this->getConfig('prefix'));
 
-		$ext = $this->getController()->getResponse()->mapType($this->getController()->getResponse()->getType());
+		$ext = (string)$this->getController()->getResponse()->mapType($this->getController()->getResponse()->getType());
 		$content = $this->_compress($content, $ext);
 
 		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;

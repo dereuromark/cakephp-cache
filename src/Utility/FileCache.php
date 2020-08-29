@@ -52,7 +52,7 @@ class FileCache {
 				return null;
 			}
 
-			return file_get_contents($file);
+			return file_get_contents($file) ?: null;
 		}
 
 		return Cache::read($cacheKey, $engine) ?: null;
