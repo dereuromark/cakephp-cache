@@ -58,11 +58,8 @@ class CacheComponent extends Component {
 		if (!$actions) {
 			return true;
 		}
-		if (!$this->getController()->getRequest()->is('get')) {
-			return false;
-		}
 
-		$action = $this->getController()->getRequest()->getParam('action');
+		$action = $this->request->getParam('action');
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];
 		}
@@ -80,6 +77,13 @@ class CacheComponent extends Component {
 	 * @return bool Success of caching view.
 	 */
 	protected function _writeFile($content, $duration) {
+		$folder = CACHE . 'views' . DS;
+                
+		$prefix = Configure::read('Cache.prefix');
+		if ($prefix) {
+			$folder .= $prefix . DS;
+		}
+                
 		//$cacheTime = date('Y-m-d H:i:s', $timestamp);
 		$now = time();
 		if (!$duration) {
@@ -90,31 +94,25 @@ class CacheComponent extends Component {
 			$cacheTime = strtotime($duration, $now);
 		}
 
-		$url = $this->getController()->getRequest()->getRequestTarget();
-		$url = str_replace($this->getController()->getRequest()->getAttribute('base'), '', $url);
-		if ($url === '/') {
-			$url = '_root';
+		$url = $this->request->getRequestTarget();
+		$url = str_replace($this->request->getAttribute('base'), '', $url);
+                
+                $urlParts = parse_url($url);
+		if ($urlParts['path'] === '/') {
+			$cache = '_root';
+		} else {
+			$cache = Inflector::slug($urlParts['path']);
 		}
-
-		$cache = $url;
-		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$cache = $prefix . '_' . $url;
-		}
-		if ($url !== '_root') {
-			$cache = Inflector::slug($cache);
-		}
-		if (empty($cache)) {
-			return false;
-		}
-
+                $v = '';
+                if (!empty($urlParts['query'])){
+                    $v .= '-' . substr(hash('sha256', $urlParts['query']), 0, 8);
+                }
+                $cache .= $v;
 		$ext = $this->response->mapType($this->response->getType());
 		$content = $this->_compress($content, $ext);
-
 		$cache = $cache . '.html';
 		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;
 
-		$folder = CACHE . 'views' . DS;
 		if (Configure::read('debug') && !is_dir($folder)) {
 			mkdir($folder, 0770, true);
 		}

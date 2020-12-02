@@ -4,8 +4,8 @@ namespace Cache\Routing\Middleware;
 
 use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\Response;
-use Cake\Http\ServerRequest as Request;
+use Cake\Network\Request;
+use Cake\Network\Response;
 use Cake\Utility\Inflector;
 
 /**
@@ -49,12 +49,12 @@ class CacheMiddleware {
 	 * @return \Psr\Http\Message\ResponseInterface A response.
 	 */
 	public function __invoke(Request $request, Response $response, $next) {
-		if (Configure::read('Cache.check') === false || !$request->is('get')) {
+		if (Configure::read('Cache.check') === false) {
 			return $next($request, $response);
 		}
 		/** @var callable $when */
 		$when = $this->getConfig('when');
-		if ($when !== null && $when($request, $response) !== true) {
+		if ($when !== null && $when($request, $request) !== true) {
 			return $next($request, $response);
 		}
 
@@ -97,22 +97,26 @@ class CacheMiddleware {
 	 * @return string|null
 	 */
 	public function getFile($url, $mustExist = true) {
-		if ($url === '/') {
-			$url = '_root';
-		}
-
-		$path = $url;
+		$folder = CACHE . 'views' . DS;
+                
 		$prefix = Configure::read('Cache.prefix');
 		if ($prefix) {
-			$path = $prefix . '_' . $path;
+			$folder .= $prefix . DS;
 		}
-
-		if ($url !== '_root') {
-			$path = Inflector::slug($path);
+                
+                $urlParts = parse_url($url);
+		if ($urlParts['path'] === '/') {
+			$cache = '_root';
+		} else {
+			$cache = Inflector::slug($urlParts['path']);
 		}
-
-		$folder = CACHE . 'views' . DS;
-		$file = $folder . $path . '.html';
+                $v = '';
+                if (!empty($urlParts['query'])){
+                    $v .= '-' . substr(hash('sha256', $urlParts['query']), 0, 8);
+                }
+                $cache .= $v;
+		$cache = $cache . '.html';
+		$file = $folder . $cache;
 		if ($mustExist && !file_exists($file)) {
 			return null;
 		}
