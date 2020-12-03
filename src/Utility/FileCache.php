@@ -41,7 +41,7 @@ class FileCache {
 	 *
 	 * @return string|null
 	 */
-	public function getContent($url) {
+	public function getContent(string $url) {
 		$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
 
 		$engine = Configure::read('CacheConfig.engine');

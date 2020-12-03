@@ -11,6 +11,21 @@ use Shim\TestSuite\TestCase;
 class CacheShellTest extends TestCase {
 
 	/**
+	 * @var \Shim\TestSuite\ConsoleOutput
+	 */
+	protected $out;
+
+	/**
+	 * @var \Shim\TestSuite\ConsoleOutput
+	 */
+	protected $err;
+
+	/**
+	 * @var string
+	 */
+	protected $testCacheFile;
+
+	/**
 	 * @var \Cache\Shell\CacheShell|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected $Shell;

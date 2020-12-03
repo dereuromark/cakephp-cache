@@ -1,12 +1,13 @@
 parameters:
-	level: 1
+	level: 8
 	paths:
-		- TestCase/
+		- src/
 
 	checkMissingIterableValueType: false
 
 	bootstrapFiles:
 		- %rootDir%/../../../tests/bootstrap.php
-		- %rootDir%/../../../phpunit.phar
 		- %rootDir%/../../../tests/shim.php
 	ignoreErrors:
+		- '#Parameter \#1 \$function of function call_user_func expects callable\(\): mixed, mixed given.#'
+		- '#Cannot cast array\|string\|null to string#'

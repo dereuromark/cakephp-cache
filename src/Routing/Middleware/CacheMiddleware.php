@@ -166,7 +166,7 @@ class CacheMiddleware implements MiddlewareInterface {
 			$cacheExt = $matches[3];
 
 			return '';
-		}, $this->_cacheContent);
+		}, (string)$this->_cacheContent);
 
 		if (!$cacheStart) {
 			return [];
@@ -222,7 +222,8 @@ class CacheMiddleware implements MiddlewareInterface {
 			$response = $response->withHeader('Content-Length', (string)strlen($content));
 		}
 
-		$cacheContent = $this->_cacheContent;
+		$cacheContent = (string)$this->_cacheContent;
+		/** @var array $cacheInfo */
 		$cacheInfo = $this->_cacheInfo;
 		$cacheStart = $cacheInfo['start'];
 		$cacheEnd = $cacheInfo['end'];

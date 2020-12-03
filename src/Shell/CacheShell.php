@@ -65,7 +65,7 @@ class CacheShell extends Shell {
 	}
 
 	/**
-	 * @param string|null $url
+	 * @param string $url
 	 * @param string|null $engine
 	 *
 	 * @return void
