@@ -3,7 +3,6 @@
 namespace Cache\Utility;
 
 use Cake\Utility\Text;
-use RuntimeException;
 
 class CacheKey {
 
@@ -19,23 +18,22 @@ class CacheKey {
 			return $keyGenerator($url, $prefix);
 		}
 
-		$urlParams = parse_url($url);
-		if (!$urlParams) {
-			throw new RuntimeException('Invalid URL');
-		}
-
-		if ($urlParams['path'] === '/') {
+		if ($url === '/') {
 			$url = '_root';
+		} else {
+			$url = substr($url, 1);
 		}
 
 		$cacheKey = $url;
 
 		if ($url !== '_root') {
-			$cacheKey = Text::slug($urlParams['path']);
-		}
+			$cacheKey = Text::slug($cacheKey);
 
-		if (!empty($urlParams['query'])) {
-			$cacheKey .= '_' . hash('sha1', $urlParams['query']);
+			$maxLength = 255 - ($prefix ? mb_strlen($prefix) + 1 : 0);
+			if (mb_strlen($cacheKey) > $maxLength) {
+				$key = mb_substr($cacheKey, 0, $maxLength - 41);
+				$cacheKey = $key . '_' . sha1(mb_substr($cacheKey, $maxLength - 41));
+			}
 		}
 
 		if (!empty($prefix)) {
