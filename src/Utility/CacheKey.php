@@ -13,18 +13,31 @@ class CacheKey {
 	 * @return string
 	 */
 	public static function generate(string $url, ?string $prefix) {
-		if ($url === '/') {
+        $urlParams = parse_url($url);
+		if ($urlParams['path'] === '/') {
 			$url = '_root';
+        } elseif (substr($url, 0, 1)=='/') {
+            $url = substr($url, 1);
 		}
-
+        
+        // Implement Prefix if Needed
+		$folder = CACHE . 'views' . DS;
+        if (!empty($prefix)){
+            $folder .= $prefix . DS;
+            $url = $prefix . DS . $url;
+        }
+		if (Configure::read('debug') && !is_dir($folder)) {
+			mkdir($folder, 0770, true);
+		}
+        
+        if (substr($url, -1)=='/') {
+            $url = substr($url, 0, (strlen($url)-1));
+        }
+		if (!empty($urlParams['query'])) {
+			$url .= '-v' . substr(hash('sha256', $urlParams['query']), 0, 8);
+		}
 		$cacheKey = $url;
-		if ($prefix) {
-			$cacheKey = $prefix . '_' . $url;
-		}
-		if ($url !== '_root') {
-			$cacheKey = Text::slug($cacheKey);
-		}
-
+        
 		return $cacheKey;
 	}
 

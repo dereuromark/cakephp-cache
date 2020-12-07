@@ -135,7 +135,10 @@ class CacheComponent extends Component {
 		if (Configure::read('debug') && !is_dir($folder)) {
 			mkdir($folder, 0770, true);
 		}
-
+        $basefolder = $folder . dirname($cache);
+		if (Configure::read('debug') && !is_dir($basefolder)) {
+			mkdir($basefolder, 0770, true);
+		}
 		$cache .= '.cache';
 		$file = $folder . $cache;
 
