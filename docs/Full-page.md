@@ -103,6 +103,16 @@ With debug mode being on the cache is by default not enabled. You can force this
 Note: If you use engine based caching, the duration (if used) cannot exceed the engine defined frame.
 So you can only shorten some durations, never make them longer.
 
+#### Custom keys
+Depending on the engine you use, you might have the need to create custom cache keys.
+You can use any custom generator using a callable:
+```php
+'keyGenerator' => function ($url, $prefix) { ... },
+```
+For file based storage for example, it can make sense to nest your files in subfolders.
+This way you can retrieve them faster for many files stored and also don't run into
+max file per folder limitation.
+
 ### Clear the Cache
 The Cache shell shipped with this plugin should make it easy to clear the cache manually:
 ```

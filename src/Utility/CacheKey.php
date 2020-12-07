@@ -3,41 +3,45 @@
 namespace Cache\Utility;
 
 use Cake\Utility\Text;
+use RuntimeException;
 
 class CacheKey {
 
 	/**
 	 * @param string $url
 	 * @param string|null $prefix
+	 * @param callable|null $keyGenerator
 	 *
 	 * @return string
 	 */
-	public static function generate(string $url, ?string $prefix) {
-        $urlParams = parse_url($url);
+	public static function generate(string $url, ?string $prefix, $keyGenerator = null) {
+		if ($keyGenerator) {
+			return $keyGenerator($url, $prefix);
+		}
+
+		$urlParams = parse_url($url);
+		if (!$urlParams) {
+			throw new RuntimeException('Invalid URL');
+		}
+
 		if ($urlParams['path'] === '/') {
 			$url = '_root';
-        } elseif (substr($url, 0, 1)=='/') {
-            $url = substr($url, 1);
 		}
-        
-        // Implement Prefix if Needed
-		$folder = CACHE . 'views' . DS;
-        if (!empty($prefix)){
-            $folder .= $prefix . DS;
-            $url = $prefix . DS . $url;
-        }
-		if (Configure::read('debug') && !is_dir($folder)) {
-			mkdir($folder, 0770, true);
-		}
-        
-        if (substr($url, -1)=='/') {
-            $url = substr($url, 0, (strlen($url)-1));
-        }
-		if (!empty($urlParams['query'])) {
-			$url .= '-v' . substr(hash('sha256', $urlParams['query']), 0, 8);
-		}
+
 		$cacheKey = $url;
-        
+
+		if ($url !== '_root') {
+			$cacheKey = Text::slug($urlParams['path']);
+		}
+
+		if (!empty($urlParams['query'])) {
+			$cacheKey .= '_' . hash('sha1', $urlParams['query']);
+		}
+
+		if (!empty($prefix)) {
+			$cacheKey = $prefix . '_' . $cacheKey;
+		}
+
 		return $cacheKey;
 	}
 
