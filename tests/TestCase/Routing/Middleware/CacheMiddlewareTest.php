@@ -13,15 +13,6 @@ use TestApp\Http\TestRequestHandler;
 class CacheMiddlewareTest extends TestCase {
 
 	/**
-	 * Teardown
-	 *
-	 * @return void
-	 */
-	public function tearDown(): void {
-		parent::tearDown();
-	}
-
-	/**
 	 * @return void
 	 */
 	public function testBasicRequest() {

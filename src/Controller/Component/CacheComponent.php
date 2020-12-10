@@ -28,6 +28,7 @@ class CacheComponent extends Component {
 		'force' => false,
 		'prefix' => false,
 		'when' => null,
+		'keyGenerator' => null,
 	];
 
 	/**
@@ -109,7 +110,7 @@ class CacheComponent extends Component {
 
 		$url = $this->getController()->getRequest()->getRequestTarget();
 		$url = str_replace($this->getController()->getRequest()->getAttribute('base'), '', $url);
-		$cacheKey = CacheKey::generate($url, $this->getConfig('prefix'));
+		$cacheKey = CacheKey::generate($url, $this->getConfig('prefix'), $this->getConfig('keyGenerator'));
 
 		$ext = (string)$this->getController()->getResponse()->mapType($this->getController()->getResponse()->getType());
 		$content = $this->_compress($content, $ext);
