@@ -112,7 +112,7 @@ class CacheFilter extends DispatcherFilter {
 			$url = '_root';
 		}
 
-		if($keyGenerator){
+		if ($keyGenerator) {
 			$url = $keyGenerator($url);
 		}
 
@@ -122,7 +122,9 @@ class CacheFilter extends DispatcherFilter {
 			$path = $prefix . '_' . $path;
 		}
 
-		$path = Inflector::slug($path);
+		if ($url !== '_root') {
+			$path = Inflector::slug($path);
+		}
 
 		$folder = CACHE . 'views' . DS;
 		$file = $folder . $path . '.html';

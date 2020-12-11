@@ -108,7 +108,9 @@ class CacheComponent extends Component {
 			$cache = $prefix . '_' . $url;
 		}
 
-		$cache = Inflector::slug($cache);
+		if ($url !== '_root') {
+			$path = Inflector::slug($path);
+		}
 
 		if (empty($cache)) {
 			return false;
