@@ -72,7 +72,7 @@ class CacheMiddleware implements MiddlewareInterface {
 		$url = $request->getRequestTarget();
 		$url = str_replace($request->getAttribute('base'), '', $url);
 
-		$cacheKey = CacheKey::generate($url, $this->getConfig('prefix'));
+		$cacheKey = CacheKey::generate($url, $this->getConfig('prefix'), $this->getConfig('CacheConfig.keyGenerator'));
 		$fileContent = $this->getContent($url, $cacheKey);
 
 		if ($fileContent === null) {

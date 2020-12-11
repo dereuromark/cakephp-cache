@@ -90,7 +90,7 @@ class CacheShell extends Shell {
 		}
 
 		if (!$engine) {
-			$file = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
+			$file = CacheKey::generate($url, Configure::read('CacheConfig.prefix'), Configure::read('CacheConfig.keyGenerator'));
 			$file .= '.cache';
 			$this->out('Cache File: ' . basename($file));
 		}
@@ -112,7 +112,7 @@ class CacheShell extends Shell {
 				$this->abort('No cache file found');
 			}
 
-			$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'));
+			$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'), Configure::read('CacheConfig.keyGenerator'));
 			$this->removeContent($cacheKey);
 
 			$this->out('File ' . $file . ' deleted');
