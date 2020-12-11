@@ -64,8 +64,7 @@ class CacheMiddleware {
 		/** @var \Cake\Http\ServerRequest $request */
 		$url = $request->getRequestTarget();
 		$url = str_replace($request->getAttribute('base'), '', $url);
-		$keyGenerator = $this->getConfig('keyGenerator');
-		$file = $this->getFile($url, $keyGenerator);
+		$file = $this->getFile($url);
 
 		if ($file === null) {
 			return $next($request, $response);
@@ -100,28 +99,30 @@ class CacheMiddleware {
 	 *
 	 * @return string|null
 	 */
-	public function getFile($url, $keyGenerator) {
+	public function getFile($url, $mustExist = true) {
 		if ($url === '/') {
 			$url = '_root';
 		}
 
-		if($keyGenerator){
-			$url = $keyGenerator($url);
-		}
-
-		$path = $url;
 		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$path = $prefix . '_' . $path;
-		}
+		$keyGenerator = $this->getConfig('keyGenerator');
 
-		if ($url !== '_root') {
-			$path = Inflector::slug($path);
+		if ($keyGenerator){
+			$path = $keyGenerator($url, $prefix);
+		} else {
+			$path = $url;
+			if ($prefix) {
+				$path = $prefix . '_' . $path;
+			}
+
+			if ($url !== '_root') {
+				$path = Inflector::slug($path);
+			}
 		}
 
 		$folder = CACHE . 'views' . DS;
 		$file = $folder . $path . '.html';
-		if (!file_exists($file)) {
+		if ($mustExist && !file_exists($file)) {
 			return null;
 		}
 		return $file;

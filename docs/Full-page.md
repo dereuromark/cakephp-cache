@@ -21,8 +21,8 @@ public function middleware($middlewareQueue) {
             'when' => function (ServerRequest $request, Response $response) {
                 return $request->is('get');
             },
-            'keyGenerator' => function ($key) {
-                return $key; 
+            'keyGenerator' => function ($key, $prefix) {
+                // Implement
             }
         ]))
 
@@ -33,7 +33,7 @@ public function middleware($middlewareQueue) {
 ```
 By adding the `'when'` part, we make sure it only get's invoked for GET requests which is a performance increase.
 
-If you want to create the key used to save the cached file yourself then pass a `'keyGenerator'` callable. This is usefull to remove query keys wich don't affect the page's content.
+If you want to create the key used to save the cached file yourself then pass a `'keyGenerator'` callable. This is useful to e.g. remove query keys which don't affect the page's content.
 
 ### DispatcherFilter
 Your bootstrap needs to enable the Cache dispatcher filter:
