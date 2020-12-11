@@ -109,7 +109,7 @@ class CacheComponent extends Component {
 		}
 
 		if ($url !== '_root') {
-			$path = Inflector::slug($path);
+			$cache = Inflector::slug($cache);
 		}
 
 		if (empty($cache)) {
