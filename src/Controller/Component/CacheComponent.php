@@ -96,14 +96,20 @@ class CacheComponent extends Component {
 			$url = '_root';
 		}
 
-		$cache = $url;
+		$keyGenerator = Configure::read('Cache.keyGenerator');
+        if ($keyGenerator) {
+            $url = $keyGenerator($url);
+        }
+
+        $cache = $url;
+
 		$prefix = Configure::read('Cache.prefix');
 		if ($prefix) {
 			$cache = $prefix . '_' . $url;
 		}
-		if ($url !== '_root') {
-			$cache = Inflector::slug($cache);
-		}
+
+		$cache = Inflector::slug($cache);
+
 		if (empty($cache)) {
 			return false;
 		}

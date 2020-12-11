@@ -69,7 +69,8 @@ class CacheFilter extends DispatcherFilter {
 
 		$url = $request->here();
 		$url = str_replace($request->base, '', $url);
-		$file = $this->getFile($url);
+		$keyGenerator = Configure::read('Cache.keyGenerator');
+		$file = $this->getFile($url, $keyGenerator);
 
 		if ($file === null) {
 			return null;
@@ -106,9 +107,13 @@ class CacheFilter extends DispatcherFilter {
 	 *
 	 * @return string|null
 	 */
-	public function getFile($url, $mustExist = true) {
+	public function getFile($url, $keyGenerator) {
 		if ($url === '/') {
 			$url = '_root';
+		}
+
+		if($keyGenerator){
+			$url = $keyGenerator($url);
 		}
 
 		$path = $url;
@@ -117,13 +122,11 @@ class CacheFilter extends DispatcherFilter {
 			$path = $prefix . '_' . $path;
 		}
 
-		if ($url !== '_root') {
-			$path = Inflector::slug($path);
-		}
+		$path = Inflector::slug($path);
 
 		$folder = CACHE . 'views' . DS;
 		$file = $folder . $path . '.html';
-		if ($mustExist && !file_exists($file)) {
+		if (!file_exists($file)) {
 			return null;
 		}
 		return $file;

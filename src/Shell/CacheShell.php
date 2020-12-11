@@ -33,8 +33,9 @@ class CacheShell extends Shell {
 			return;
 		}
 
+		$keyGenerator = Configure::read('Cache.keyGenerator');
 		$cache = new CacheFilter();
-		$file = $cache->getFile($url);
+		$file = $cache->getFile($url, $keyGenerator);
 		if (!$file) {
 			$this->abort('No cache file found');
 		}
@@ -59,8 +60,9 @@ class CacheShell extends Shell {
 	 */
 	public function clear($url = null) {
 		if ($url) {
+			$keyGenerator = Configure::read('Cache.keyGenerator');
 			$cache = new CacheFilter();
-			$file = $cache->getFile($url);
+			$file = $cache->getFile($url, $keyGenerator);
 			if (!$file) {
 				$this->abort('No cache file found');
 			}
