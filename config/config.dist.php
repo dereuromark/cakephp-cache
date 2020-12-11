@@ -8,5 +8,6 @@ return [
 		'when' => null, // Defaults to GET only
 		'cacheTime' => null, // Only for non-engine (file only) cache
 		'prefix' => null, // Only for non-engine (file only) cache
+		'keyGenerator' => null, // a callable which must return a key for the given url
 	],
 ];
