@@ -4,6 +4,7 @@ namespace Cache\Test\TestCase\Controller\Component;
 
 use App\Controller\CacheComponentTestController;
 use Cake\Event\Event;
+use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -285,8 +286,6 @@ class CacheComponentTest extends TestCase {
 			],
 		]);
 
-		$this->assertTrue($request->is('POST'));
-
 		$this->Controller->setRequest($request);
 		$this->Controller->response = $this->getResponseMock(['getBody']);
 
@@ -300,6 +299,76 @@ class CacheComponentTest extends TestCase {
 		$file = CACHE . 'views' . DS . '_root.html';
 
 		$this->assertFileNotExists($file, 'POST should not cache request');
+
+		@unlink($file);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testActionWithKeyGenerator() {
+		
+		$request = new ServerRequest([
+			'url' => '/pages/view/1',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+		Configure::write('Cache.keyGenerator', function ($url, $prefix) {
+			return 'customKey';
+		});
+
+		$this->Controller->setRequest($request);
+		$this->Controller->response = $this->getResponseMock(['getBody']);
+
+		$this->Controller->response->expects($this->once())
+			->method('getBody')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		Configure::write('Cache.keyGenerator', null);
+
+		$file = CACHE . 'views' . DS . 'customKey.html';
+		$this->assertFileExists($file);
+
+		$file = CACHE . 'views' . DS . 'pages-view-1.html';
+		$this->assertFileNotExists($file);
+
+		@unlink($file);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testActionWithPrefix() {
+		
+		$request = new ServerRequest([
+			'url' => '/pages/view/1',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+		Configure::write('Cache.prefix', 'custom');
+
+		$this->Controller->setRequest($request);
+		$this->Controller->response = $this->getResponseMock(['getBody']);
+
+		$this->Controller->response->expects($this->once())
+			->method('getBody')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		Configure::write('Cache.prefix', null);
+
+		$file = CACHE . 'views' . DS . 'custom-pages-view-1.html';
+		$this->assertFileExists($file);
+
+		$file = CACHE . 'views' . DS . 'pages-view-1.html';
+		$this->assertFileNotExists($file);
 
 		@unlink($file);
 	}
