@@ -3,8 +3,8 @@
 namespace Cache\Test\TestCase\Controller\Component;
 
 use App\Controller\CacheComponentTestController;
-use Cake\Event\Event;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -46,9 +46,9 @@ class CacheComponentTest extends TestCase {
 	 */
 	public function testAction() {
 		$request = new ServerRequest([
-			'environment' =>[
+			'environment' => [
 				'REQUEST_METHOD' => 'GET',
-			]
+			],
 		]);
 
 		$this->Controller->setRequest($request);
@@ -74,7 +74,7 @@ class CacheComponentTest extends TestCase {
 	 */
 	public function testActionWithCacheTime() {
 		$request = new ServerRequest([
-			'environment' =>[
+			'environment' => [
 				'REQUEST_METHOD' => 'GET',
 			],
 		]);
@@ -187,7 +187,7 @@ class CacheComponentTest extends TestCase {
 	 */
 	public function testActionWithCompress() {
 		$request = new ServerRequest([
-			'environment' =>[
+			'environment' => [
 				'REQUEST_METHOD' => 'GET',
 			],
 		]);
@@ -219,7 +219,7 @@ class CacheComponentTest extends TestCase {
 	 */
 	public function testActionWithCompressCallback() {
 		$request = new ServerRequest([
-			'environment' =>[
+			'environment' => [
 				'REQUEST_METHOD' => 'GET',
 			],
 		]);
@@ -254,9 +254,9 @@ class CacheComponentTest extends TestCase {
 		$request = new ServerRequest([
 			'url' => '/myapp/pages/view/1',
 			'base' => '/myapp',
-			'environment' =>[
+			'environment' => [
 				'REQUEST_METHOD' => 'GET',
-			]
+			],
 		]);
 
 		$this->Controller->setRequest($request);
@@ -279,7 +279,6 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithNonGet() {
-		
 		$request = new ServerRequest([
 			'environment' => [
 				'REQUEST_METHOD' => 'POST',
@@ -307,7 +306,6 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithKeyGenerator() {
-		
 		$request = new ServerRequest([
 			'url' => '/pages/view/1',
 			'environment' => [
@@ -343,7 +341,6 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithPrefix() {
-		
 		$request = new ServerRequest([
 			'url' => '/pages/view/1',
 			'environment' => [
