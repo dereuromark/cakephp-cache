@@ -298,8 +298,6 @@ class CacheComponentTest extends TestCase {
 		$file = CACHE . 'views' . DS . '_root.html';
 
 		$this->assertFileNotExists($file, 'POST should not cache request');
-
-		@unlink($file);
 	}
 
 	/**
@@ -331,10 +329,10 @@ class CacheComponentTest extends TestCase {
 		$file = CACHE . 'views' . DS . 'customKey.html';
 		$this->assertFileExists($file);
 
+		unlink($file);
+
 		$file = CACHE . 'views' . DS . 'pages-view-1.html';
 		$this->assertFileNotExists($file);
-
-		@unlink($file);
 	}
 
 	/**
@@ -364,10 +362,11 @@ class CacheComponentTest extends TestCase {
 		$file = CACHE . 'views' . DS . 'custom-pages-view-1.html';
 		$this->assertFileExists($file);
 
+		unlink($file);
+
 		$file = CACHE . 'views' . DS . 'pages-view-1.html';
 		$this->assertFileNotExists($file);
 
-		@unlink($file);
 	}
 
 	/**
