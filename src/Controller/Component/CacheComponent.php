@@ -54,12 +54,13 @@ class CacheComponent extends Component {
 	 * @return bool|int|string
 	 */
 	protected function _isActionCachable() {
+		if (!$this->getController()->getRequest()->is('get')) {
+			return false;
+		}
+
 		$actions = $this->getConfig('actions');
 		if (!$actions) {
 			return true;
-		}
-		if (!$this->getController()->getRequest()->is('get')) {
-			return false;
 		}
 
 		$action = $this->getController()->getRequest()->getParam('action');
@@ -99,9 +100,9 @@ class CacheComponent extends Component {
 		$keyGenerator = Configure::read('Cache.keyGenerator');
 		$prefix = Configure::read('Cache.prefix');
 
-        if ($keyGenerator) {
-            $cache = $keyGenerator($url, $prefix);
-        } else {
+		if ($keyGenerator) {
+			$cache = $keyGenerator($url, $prefix);
+		} else {
 			$cache = $url;
 
 			if ($prefix) {
