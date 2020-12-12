@@ -40,7 +40,11 @@ class CacheMiddleware {
 	public function __construct(array $config = []) {
 		$this->setConfig($config);
 
-		Configure::write('Cache.keyGenerator', $this->getConfig('keyGenerator'));
+		if (!Configure::read('Cache.keyGenerator')) {
+			Configure::write('Cache.keyGenerator', $this->getConfig('keyGenerator'));
+		} elseif (!$this->getConfig('keyGenerator')) {
+			$this->setConfig('keyGenerator', Configure::read('Cache.keyGenerator'));
+		}
 	}
 
 	/**
