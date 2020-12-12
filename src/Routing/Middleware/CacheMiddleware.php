@@ -21,7 +21,7 @@ class CacheMiddleware {
 	protected $_defaultConfig = [
 		'when' => null,
 		'cacheTime' => '+1 day',
-		'keyGenerator' => null
+		'keyGenerator' => null,
 	];
 
 	/**
@@ -39,8 +39,8 @@ class CacheMiddleware {
 	 */
 	public function __construct(array $config = []) {
 		$this->setConfig($config);
-		
-		Configure::write('Cache.keyGenerator', $config['keyGenerator']);
+
+		Configure::write('Cache.keyGenerator', $this->getConfig('keyGenerator'));
 	}
 
 	/**
@@ -107,7 +107,7 @@ class CacheMiddleware {
 		$prefix = Configure::read('Cache.prefix');
 		$keyGenerator = $this->getConfig('keyGenerator');
 
-		if ($keyGenerator){
+		if ($keyGenerator) {
 			$path = $keyGenerator($url, $prefix);
 		} else {
 			$path = $url;

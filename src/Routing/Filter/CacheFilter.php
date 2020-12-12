@@ -114,7 +114,7 @@ class CacheFilter extends DispatcherFilter {
 		$prefix = Configure::read('Cache.prefix');
 		$keyGenerator = Configure::read('Cache.keyGenerator');
 
-		if ($keyGenerator){
+		if ($keyGenerator) {
 			$path = $keyGenerator($url, $prefix);
 		} else {
 			$path = $url;
