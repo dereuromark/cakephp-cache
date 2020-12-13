@@ -21,6 +21,7 @@ class CacheMiddleware {
 	protected $_defaultConfig = [
 		'when' => null,
 		'cacheTime' => '+1 day',
+		'keyGenerator' => null,
 	];
 
 	/**
@@ -38,6 +39,12 @@ class CacheMiddleware {
 	 */
 	public function __construct(array $config = []) {
 		$this->setConfig($config);
+
+		if (!Configure::read('Cache.keyGenerator')) {
+			Configure::write('Cache.keyGenerator', $this->getConfig('keyGenerator'));
+		} elseif (!$this->getConfig('keyGenerator')) {
+			$this->setConfig('keyGenerator', Configure::read('Cache.keyGenerator'));
+		}
 	}
 
 	/**
@@ -101,14 +108,20 @@ class CacheMiddleware {
 			$url = '_root';
 		}
 
-		$path = $url;
 		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$path = $prefix . '_' . $path;
-		}
+		$keyGenerator = $this->getConfig('keyGenerator');
 
-		if ($url !== '_root') {
-			$path = Inflector::slug($path);
+		if ($keyGenerator) {
+			$path = $keyGenerator($url, $prefix);
+		} else {
+			$path = $url;
+			if ($prefix) {
+				$path = $prefix . '_' . $path;
+			}
+
+			if ($url !== '_root') {
+				$path = Inflector::slug($path);
+			}
 		}
 
 		$folder = CACHE . 'views' . DS;

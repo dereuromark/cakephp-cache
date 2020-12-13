@@ -3,6 +3,7 @@
 namespace Cache\Test\TestCase\Routing\Middleware;
 
 use Cache\Routing\Middleware\CacheMiddleware;
+use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest as Request;
 use Cake\Http\ServerRequestFactory;
@@ -160,4 +161,75 @@ class CacheMiddlewareTest extends TestCase {
 		unlink($file);
 	}
 
+	/**
+	 * Tests key generator
+	 *
+	 * @return void
+	 */
+	public function testWithKeygenerator() {
+		$file = CACHE . 'views' . DS . 'customKey.html';
+		$content = '<!--cachetime:0;ext:html-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/testcontroller/testaction',
+			'REQUEST_METHOD' => 'GET',
+		]);
+		$this->assertTrue($request->is('get'));
+		$response = new Response();
+
+		Configure::write('Cache.keyGenerator', function ($url, $prefix) {
+			return 'customKey';
+		});
+
+		$middleware = new CacheMiddleware();
+		$next = function (Request $req, Response $res) {
+			return $res;
+		};
+		/** @var \Cake\Http\Response $newResponse */
+		$newResponse = $middleware($request, $response, $next);
+
+		Configure::write('Cache.keyGenerator', null);
+
+		$result = (string)$newResponse->getBody();
+		$expected = 'Foo bar';
+		$this->assertTextEndsWith($expected, $result);
+
+		unlink($file);
+	}
+
+	/**
+	 * Tests prefixing
+	 *
+	 * @return void
+	 */
+	public function testWithPrefix() {
+		$file = CACHE . 'views' . DS . 'custom-pages-view-2.html';
+		$content = '<!--cachetime:0;ext:html-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/pages/view/2',
+			'REQUEST_METHOD' => 'GET',
+		]);
+		$this->assertTrue($request->is('get'));
+		$response = new Response();
+
+		Configure::write('Cache.prefix', 'custom');
+
+		$middleware = new CacheMiddleware();
+		$next = function (Request $req, Response $res) {
+			return $res;
+		};
+		/** @var \Cake\Http\Response $newResponse */
+		$newResponse = $middleware($request, $response, $next);
+
+		Configure::write('Cache.prefix', null);
+
+		$result = (string)$newResponse->getBody();
+		$expected = 'Foo bar';
+		$this->assertTextEndsWith($expected, $result);
+
+		unlink($file);
+	}
 }

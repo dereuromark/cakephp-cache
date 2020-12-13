@@ -111,14 +111,20 @@ class CacheFilter extends DispatcherFilter {
 			$url = '_root';
 		}
 
-		$path = $url;
 		$prefix = Configure::read('Cache.prefix');
-		if ($prefix) {
-			$path = $prefix . '_' . $path;
-		}
+		$keyGenerator = Configure::read('Cache.keyGenerator');
 
-		if ($url !== '_root') {
-			$path = Inflector::slug($path);
+		if ($keyGenerator) {
+			$path = $keyGenerator($url, $prefix);
+		} else {
+			$path = $url;
+			if ($prefix) {
+				$path = $prefix . '_' . $path;
+			}
+
+			if ($url !== '_root') {
+				$path = Inflector::slug($path);
+			}
 		}
 
 		$folder = CACHE . 'views' . DS;

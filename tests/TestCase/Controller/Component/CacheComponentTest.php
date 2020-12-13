@@ -3,6 +3,7 @@
 namespace Cache\Test\TestCase\Controller\Component;
 
 use App\Controller\CacheComponentTestController;
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
 use Cake\Network\Response;
@@ -44,6 +45,13 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testAction() {
+		$request = new ServerRequest([
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+
+		$this->Controller->setRequest($request);
 		$this->Controller->response = $this->getResponseMock(['getBody']);
 
 		$this->Controller->response->expects($this->once())
@@ -65,6 +73,13 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithCacheTime() {
+		$request = new ServerRequest([
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+
+		$this->Controller->setRequest($request);
 		$this->Controller->Cache->setConfig('duration', DAY);
 		$this->Controller->response = $this->getResponseMock(['getBody']);
 
@@ -90,6 +105,9 @@ class CacheComponentTest extends TestCase {
 	public function testActionWithExt() {
 		$request = new ServerRequest([
 			'url' => '/foo/bar/baz.json?x=y',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
 		]);
 		$this->Controller->setRequest($request);
 		$this->Controller->response = $this->getResponseMock(['getBody', 'getType']);
@@ -168,6 +186,13 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithCompress() {
+		$request = new ServerRequest([
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+
+		$this->Controller->setRequest($request);
 		$this->Controller->Cache->setConfig('compress', true);
 
 		$this->Controller->response = $this->getResponseMock(['getBody']);
@@ -193,6 +218,13 @@ class CacheComponentTest extends TestCase {
 	 * @return void
 	 */
 	public function testActionWithCompressCallback() {
+		$request = new ServerRequest([
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+
+		$this->Controller->setRequest($request);
 		$this->Controller->Cache->setConfig('compress', function ($content) {
 			$content = str_replace('bar', 'b', $content);
 			return $content;
@@ -222,6 +254,9 @@ class CacheComponentTest extends TestCase {
 		$request = new ServerRequest([
 			'url' => '/myapp/pages/view/1',
 			'base' => '/myapp',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
 		]);
 
 		$this->Controller->setRequest($request);
@@ -238,6 +273,100 @@ class CacheComponentTest extends TestCase {
 		$file = CACHE . 'views' . DS . 'pages-view-1.html';
 		$this->assertFileExists($file);
 		unlink($file);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testActionWithNonGet() {
+		$request = new ServerRequest([
+			'environment' => [
+				'REQUEST_METHOD' => 'POST',
+			],
+		]);
+
+		$this->Controller->setRequest($request);
+		$this->Controller->response = $this->getResponseMock(['getBody']);
+
+		$this->Controller->response->expects($this->once())
+			->method('getBody')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		$file = CACHE . 'views' . DS . '_root.html';
+
+		$this->assertFileNotExists($file, 'POST should not cache request');
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testActionWithKeyGenerator() {
+		$request = new ServerRequest([
+			'url' => '/pages/view/1',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+		Configure::write('Cache.keyGenerator', function ($url, $prefix) {
+			return 'customKey';
+		});
+
+		$this->Controller->setRequest($request);
+		$this->Controller->response = $this->getResponseMock(['getBody']);
+
+		$this->Controller->response->expects($this->once())
+			->method('getBody')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		Configure::write('Cache.keyGenerator', null);
+
+		$file = CACHE . 'views' . DS . 'customKey.html';
+		$this->assertFileExists($file);
+
+		unlink($file);
+
+		$file = CACHE . 'views' . DS . 'pages-view-1.html';
+		$this->assertFileNotExists($file);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testActionWithPrefix() {
+		$request = new ServerRequest([
+			'url' => '/pages/view/1',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+			],
+		]);
+		Configure::write('Cache.prefix', 'custom');
+
+		$this->Controller->setRequest($request);
+		$this->Controller->response = $this->getResponseMock(['getBody']);
+
+		$this->Controller->response->expects($this->once())
+			->method('getBody')
+			->will($this->returnValue('Foo bar'));
+
+		$event = new Event('Controller.shutdown', $this->Controller);
+		$this->Controller->Cache->shutdown($event);
+
+		Configure::write('Cache.prefix', null);
+
+		$file = CACHE . 'views' . DS . 'custom-pages-view-1.html';
+		$this->assertFileExists($file);
+
+		unlink($file);
+
+		$file = CACHE . 'views' . DS . 'pages-view-1.html';
+		$this->assertFileNotExists($file);
+
 	}
 
 	/**
