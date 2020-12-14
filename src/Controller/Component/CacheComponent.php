@@ -79,12 +79,13 @@ class CacheComponent extends Component {
 	 * @return bool|int|string
 	 */
 	protected function _isActionCachable() {
-		$actions = $this->getConfig('actions');
-		if (!$actions) {
-			return true;
-		}
 		if (!$this->getController()->getRequest()->is('get')) {
 			return false;
+		}
+
+		$actions = (array)$this->getConfig('actions');
+		if (!$actions) {
+			return true;
 		}
 
 		$action = $this->getController()->getRequest()->getParam('action');

@@ -6,6 +6,8 @@ use Cake\Controller\Controller;
 
 /**
  * Use Controller instead of AppController to avoid conflicts
+ *
+ * @property \Cache\Controller\Component\CacheComponent $Cache
  */
 class CacheComponentTestController extends Controller {
 

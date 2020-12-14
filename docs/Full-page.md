@@ -12,13 +12,20 @@ In your `/src/Application.php` add the Cache middleware right after the the asse
  * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to setup.
  * @return \Cake\Http\MiddlewareQueue The updated middleware.
  */
-public function middleware($middlewareQueue) {
+public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue {
     $middlewareQueue
         ...
         ->add(new AssetMiddleware())
 
         // Handle cached files
-        ->add(new CacheMiddleware())
+        ->add(new CacheMiddleware([
+            'when' => function (ServerRequest $request, Response $response) {
+                // Implement
+            },
+            'keyGenerator' => function ($key, $prefix) {
+                // Implement
+            },
+        ]))
 
         ...
 
@@ -35,7 +42,7 @@ Once the Middleware is loaded, you need to add the component to the controllers 
 /**
  * @return void
  */
-public function initialize() {
+public function initialize(): void {
     $this->loadComponent('Cache.Cache', [
         'actions' => [
             ...
@@ -54,7 +61,7 @@ Once the file gets too old it will be cleaned out, a real action will be called 
         'when' => function (ServerRequest $request) {
              return !$request->is('ajax');
         },
-    ])
+    ]);
 }
 ```
 In this case we also exlude AJAX requests.

@@ -195,4 +195,70 @@ class CacheMiddlewareTest extends TestCase {
 		unlink($file);
 	}
 
+	/**
+	 * Tests key generator
+	 *
+	 * @return void
+	 */
+	public function testWithKeyGenerator() {
+		$file = CACHE . 'views' . DS . 'customKey.cache';
+		$content = '<!--cachetime:' . time() . '/' . (time() + WEEK) . ';ext:html-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/testcontroller/testaction',
+			'REQUEST_METHOD' => 'GET',
+		]);
+		$this->assertTrue($request->is('get'));
+		$response = new Response();
+
+		$middleware = new CacheMiddleware([
+			'keyGenerator' => function ($url, $prefix) {
+				return 'customKey';
+			},
+		]);
+
+		$handler = new TestRequestHandler(null, $response);
+		/** @var \Cake\Http\Response $newResponse */
+		$newResponse = $middleware->process($request, $handler);
+
+		$result = (string)$newResponse->getBody();
+		$expected = 'Foo bar';
+		$this->assertTextEndsWith($expected, $result);
+
+		unlink($file);
+	}
+
+	/**
+	 * Tests prefixing
+	 *
+	 * @return void
+	 */
+	public function testWithPrefix() {
+		$file = CACHE . 'views' . DS . 'custom_pages-view-2.cache';
+		$content = '<!--cachetime:' . time() . '/' . (time() + WEEK) . ';ext:html-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/pages/view/2',
+			'REQUEST_METHOD' => 'GET',
+		]);
+		$this->assertTrue($request->is('get'));
+		$response = new Response();
+
+		$middleware = new CacheMiddleware([
+			'prefix' => 'custom',
+		]);
+
+		$handler = new TestRequestHandler(null, $response);
+		/** @var \Cake\Http\Response $newResponse */
+		$newResponse = $middleware->process($request, $handler);
+
+		$result = (string)$newResponse->getBody();
+		$expected = 'Foo bar';
+		$this->assertTextEndsWith($expected, $result);
+
+		unlink($file);
+	}
+
 }

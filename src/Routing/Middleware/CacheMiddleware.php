@@ -27,6 +27,7 @@ class CacheMiddleware implements MiddlewareInterface {
 		'engine' => null,
 		'when' => null,
 		'cacheTime' => null,
+		'keyGenerator' => null,
 	];
 
 	/**
@@ -59,7 +60,7 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		if (Configure::read('CacheConfig.check') === false || !$request->is('get')) {
+		if ($this->getConfig('check') === false || !$request->is('get')) {
 			return $handler->handle($request);
 		}
 		/** @var callable $when */
