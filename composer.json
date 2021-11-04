@@ -10,6 +10,7 @@
 	"require-dev": {
 		"dereuromark/cakephp-tools": "^2.0.0",
 		"dereuromark/cakephp-shim": "^2.0.0",
+		"phpunit/phpunit": "^9.5",
 		"fig-r/psr2r-sniffer": "dev-master"
 	},
 	"autoload": {
