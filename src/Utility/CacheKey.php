@@ -44,7 +44,7 @@ class CacheKey {
 	}
 
 	/**
-	 * @param int|string $duration
+	 * @param string|int $duration
 	 * @return string now/until as int UNIX timestamps.
 	 */
 	public static function cacheTime($duration): string {

@@ -18,7 +18,7 @@ class CacheComponent extends Component {
 	/**
 	 * Default config
 	 *
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected $_defaultConfig = [
 		'duration' => null,
@@ -76,7 +76,7 @@ class CacheComponent extends Component {
 	}
 
 	/**
-	 * @return bool|int|string
+	 * @return string|int|bool
 	 */
 	protected function _isActionCachable() {
 		if (!$this->getController()->getRequest()->is('get')) {
@@ -103,7 +103,7 @@ class CacheComponent extends Component {
 	 * Write a cached version of the file
 	 *
 	 * @param string $content view content to write to a cache file.
-	 * @param int|string $duration Duration to set for cache file.
+	 * @param string|int $duration Duration to set for cache file.
 	 * @return bool Success of caching view.
 	 */
 	protected function _writeContent(string $content, $duration) {
