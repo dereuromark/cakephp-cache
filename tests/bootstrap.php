@@ -4,7 +4,7 @@
  */
 
 if (!defined('DS')) {
- define('DS', DIRECTORY_SEPARATOR);
+	define('DS', DIRECTORY_SEPARATOR);
 }
 
 define('ROOT', dirname(__DIR__));
