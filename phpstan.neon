@@ -9,5 +9,5 @@ parameters:
 		- %rootDir%/../../../tests/bootstrap.php
 		- %rootDir%/../../../tests/shim.php
 	ignoreErrors:
-		- '#Parameter \#1 \$function of function call_user_func expects callable\(\): mixed, mixed given.#'
+		- '#Parameter \#1 \$\w+ of function call_user_func expects callable\(\): mixed, mixed given.#'
 		- '#Cannot cast array\|string\|null to string#'
