@@ -6,7 +6,7 @@ use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest as Request;
-use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 /**
  * Note that this middleware is only expected to work for CakePHP 3.4+
@@ -120,7 +120,7 @@ class CacheMiddleware {
 			}
 
 			if ($url !== '_root') {
-				$path = Inflector::slug($path);
+				$path = Text::slug($path);
 			}
 		}
 
