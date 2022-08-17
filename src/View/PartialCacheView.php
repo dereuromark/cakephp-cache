@@ -8,7 +8,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest as Request;
-use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 /**
  * A view class that is used for caching partial view templates.
@@ -106,7 +106,7 @@ class PartialCacheView extends AppView {
 			mkdir($cacheFolder, 0770, true);
 		}
 
-		$cacheFile = $cacheFolder . Inflector::slug($path);
+		$cacheFile = $cacheFolder . Text::slug($path);
 
 		if (file_exists($cacheFile)) {
 			$cacheContent = $this->extractCacheContent($cacheFile);

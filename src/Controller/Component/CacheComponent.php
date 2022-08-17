@@ -6,7 +6,7 @@ use Cache\Utility\Compressor;
 use Cake\Controller\Component;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 
 class CacheComponent extends Component {
 
@@ -110,7 +110,7 @@ class CacheComponent extends Component {
 			}
 
 			if ($url !== '_root') {
-				$cache = Inflector::slug($cache);
+				$cache = Text::slug($cache);
 			}
 		}
 
