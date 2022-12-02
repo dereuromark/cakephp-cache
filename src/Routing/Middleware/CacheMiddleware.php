@@ -109,6 +109,9 @@ class CacheMiddleware {
 		}
 
 		$prefix = Configure::read('Cache.prefix');
+        if ($this->getConfig('prefix')) {
+            $prefix = $this->getConfig('prefix');
+        }
 		$keyGenerator = $this->getConfig('keyGenerator');
 
 		if ($keyGenerator) {
