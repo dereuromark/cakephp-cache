@@ -130,7 +130,7 @@ class CacheShell extends Shell {
 				$this->abort('Aborted!');
 			}
 
-			/** @var array<\SplFileInfo> $files */
+			/** @var \FilesystemIterator<\SplFileInfo> $files */
 			$files = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
 			foreach ($files as $file) {
 				$path = $file->getPathname();
