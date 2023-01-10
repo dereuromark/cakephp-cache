@@ -20,7 +20,7 @@ class CacheComponent extends Component {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'duration' => null,
 		'engine' => null,
 		'actions' => [],

@@ -11,10 +11,7 @@ use TestApp\Controller\CacheComponentTestController;
 
 class CacheComponentTest extends TestCase {
 
-	/**
-	 * @var \TestApp\Controller\CacheComponentTestController
-	 */
-	protected $Controller;
+	protected CacheComponentTestController $Controller;
 
 	/**
 	 * @return void

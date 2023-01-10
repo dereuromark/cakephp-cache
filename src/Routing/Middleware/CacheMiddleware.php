@@ -23,17 +23,14 @@ class CacheMiddleware implements MiddlewareInterface {
 	/**
 	 * @var array
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'engine' => null,
 		'when' => null,
 		'cacheTime' => null,
 		'keyGenerator' => null,
 	];
 
-	/**
-	 * @var string|null
-	 */
-	protected $_cacheContent;
+	protected ?string $_cacheContent = null;
 
 	/**
 	 * @var array|null

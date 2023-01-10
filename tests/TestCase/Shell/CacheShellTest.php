@@ -4,31 +4,20 @@ namespace Cache\Test\TestCase\Shell;
 
 use Cache\Shell\CacheShell;
 use Cake\Console\ConsoleIo;
-use Cake\Filesystem\Folder;
+use PHPUnit\Framework\MockObject\MockObject;
+use Shim\Filesystem\Folder;
 use Shim\TestSuite\ConsoleOutput;
 use Shim\TestSuite\TestCase;
 
 class CacheShellTest extends TestCase {
 
-	/**
-	 * @var \Shim\TestSuite\ConsoleOutput
-	 */
-	protected $out;
+	protected ConsoleOutput $out;
 
-	/**
-	 * @var \Shim\TestSuite\ConsoleOutput
-	 */
-	protected $err;
+	protected ConsoleOutput $err;
 
-	/**
-	 * @var string
-	 */
-	protected $testCacheFile;
+	protected string $testCacheFile;
 
-	/**
-	 * @var \Cache\Shell\CacheShell|\PHPUnit\Framework\MockObject\MockObject
-	 */
-	protected $Shell;
+	protected CacheShell|MockObject $Shell;
 
 	/**
 	 * @return void

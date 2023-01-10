@@ -13,10 +13,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['7.4', '8.2']
+        php-version: ['8.1', '8.2']
         prefer-lowest: ['']
         include:
-          - php-version: '7.4'
+          - php-version: '8.1'
             prefer-lowest: 'prefer-lowest'
 
     steps:
@@ -53,7 +53,7 @@ jobs:
 
     - name: Run PHPUnit
       run: |
-        if [[ ${{ matrix.php-version }} == '7.4' ]]
+        if [[ ${{ matrix.php-version }} == '8.1' ]]
         then
           vendor/bin/phpunit --coverage-clover=coverage.xml
         else
@@ -64,7 +64,7 @@ jobs:
       run: if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then vendor/bin/validate-prefer-lowest -m; fi
 
     - name: Code Coverage Report
-      if: success() && matrix.php-version == '7.4'
+      if: success() && matrix.php-version == '8.1'
       uses: codecov/codecov-action@v3
 
   validation:
@@ -77,7 +77,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'
+        php-version: '8.1'
         extensions: mbstring, intl
         coverage: none
 
