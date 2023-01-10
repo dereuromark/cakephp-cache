@@ -98,7 +98,7 @@ class CacheMiddleware implements MiddlewareInterface {
 		$modified = $cacheStart ?: time();
 		/** @var \Cake\Http\Response $response */
 		$response = $response->withModified($modified);
-		if ($response->checkNotModified($request)) {
+		if ($response->isNotModified($request)) {
 			return $response;
 		}
 

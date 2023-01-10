@@ -6,6 +6,7 @@ use Cache\Routing\Middleware\CacheMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest as Request;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Http\TestRequestHandler;
@@ -159,9 +160,9 @@ class CacheMiddlewareTest extends TestCase {
 		file_put_contents($file, $content);
 
 		Router::reload();
-		Router::connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
-		Router::connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
-		Router::connect('/:controller/:action/*');
+		$builder = Router::createRouteBuilder('/');
+		$builder->fallbacks(DashedRoute::class);
+		$builder->connect('/{controller}/{action}/*');
 
 		$query = [
 			'coffee' => 'life',

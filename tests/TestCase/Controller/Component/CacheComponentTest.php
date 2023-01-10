@@ -19,7 +19,7 @@ class CacheComponentTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->Controller = new CacheComponentTestController();
+		$this->Controller = new CacheComponentTestController(new ServerRequest());
 		$this->Controller->startupProcess();
 
 		$this->Controller->getRequest()->getSession()->delete('CacheMessage');
