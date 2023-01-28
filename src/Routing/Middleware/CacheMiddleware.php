@@ -208,6 +208,21 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @return \Cake\Http\Response
 	 */
 	protected function _deliverCacheFile(ServerRequest $request, Response $response, $content, $ext) {
+		$compressionEnabled = $response->compress();
+		if ($response->getType() === $ext) {
+			$contentType = 'application/octet-stream';
+			$agent = $request->getEnv('HTTP_USER_AGENT');
+			if ($agent && (preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent))) {
+				$contentType = 'application/octetstream';
+			}
+
+			$response = $response->withType($contentType);
+		}
+
+		if (!$compressionEnabled) {
+			$response = $response->withHeader('Content-Length', (string)strlen($content));
+		}
+
 		$cacheContent = (string)$this->_cacheContent;
 		/** @var array $cacheInfo */
 		$cacheInfo = $this->_cacheInfo;
