@@ -6,7 +6,7 @@
 [![License](https://poser.pugx.org/dereuromark/cakephp-cache/license.svg)](https://packagist.org/packages/dereuromark/cakephp-cache)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-yellow.svg)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-This branch is for use with **CakePHP 4.2+**.
+This branch is for use with **CakePHP 4.4+**.
 
 ## What is it for?
 It is the successor of the 2.x CacheHelper and allows you to cache your complete views as HTML.
