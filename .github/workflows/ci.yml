@@ -2,26 +2,25 @@ name: CI
 
 on:
   push:
+    branches:
+      - master
   pull_request:
-  schedule:
-  - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   testsuite:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['7.2', '7.4']
+        php-version: ['7.4', '8.2']
         prefer-lowest: ['']
         include:
-          - php-version: '7.2'
+          - php-version: '7.4'
             prefer-lowest: 'prefer-lowest'
 
     steps:
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
+    - uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -32,19 +31,18 @@ jobs:
 
     - name: Get composer cache directory
       id: composercache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Cache dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ steps.composercache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
         restore-keys: ${{ runner.os }}-composer-
 
-    - name: Composer install --no-progress --prefer-dist --optimize-autoloader
+    - name: Composer install
       run: |
         composer --version
-        composer require --dev phpunit/phpunit:"^8.5"
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}
         then
           composer update --prefer-lowest --prefer-stable
@@ -67,16 +65,14 @@ jobs:
 
     - name: Code Coverage Report
       if: success() && matrix.php-version == '7.4'
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
 
   validation:
     name: Coding Standard & Static Analysis
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 1
+    - uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -87,10 +83,10 @@ jobs:
 
     - name: Get composer cache directory
       id: composercache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Cache dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ steps.composercache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
