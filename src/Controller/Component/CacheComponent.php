@@ -46,7 +46,7 @@ class CacheComponent extends Component {
 	 * @param \Cake\Event\EventInterface $event
 	 * @return void
 	 */
-	public function shutdown(EventInterface $event): void {
+	public function afterFilter(EventInterface $event): void {
 		if (Configure::read('debug') && !$this->getConfig('force')) {
 			return;
 		}
