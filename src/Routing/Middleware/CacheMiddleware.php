@@ -102,7 +102,7 @@ class CacheMiddleware implements MiddlewareInterface {
 		/** @var \Cake\Http\Response $response */
 		$response = $response->withModified($modified);
 		if ($response->isNotModified($request)) {
-			return $response;
+			return $response->withNotModified();
 		}
 
 		$response = $this->_deliverCacheFile($request, $response, $fileContent, $cacheExt);
