@@ -1,7 +1,8 @@
 <?php
-/**
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
- */
+
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use TestApp\View\AppView;
 
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
@@ -31,13 +32,13 @@ define('CAKE', CORE_PATH . APP_DIR . DS);
 require dirname(__DIR__) . '/vendor/autoload.php';
 require CORE_PATH . 'config/bootstrap.php';
 
-Cake\Core\Configure::write('App', [
+Configure::write('App', [
 	'namespace' => 'App',
 	'encoding' => 'UTF-8',
 ]);
-Cake\Core\Configure::write('debug', true);
+Configure::write('debug', true);
 
-class_alias(TestApp\View\AppView::class, 'App\View\AppView');
+class_alias(AppView::class, 'App\View\AppView');
 
 $cache = [
 	'default' => [
@@ -59,4 +60,4 @@ $cache = [
 	],
 ];
 
-Cake\Cache\Cache::setConfig($cache);
+Cache::setConfig($cache);
