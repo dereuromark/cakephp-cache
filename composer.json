@@ -5,12 +5,12 @@
 	"license": "MIT",
 	"require": {
 		"php": ">=8.1",
-		"cakephp/cakephp": "5.x-dev"
+		"cakephp/cakephp": "^5.0.0"
 	},
 	"require-dev": {
 		"dereuromark/cakephp-tools": "dev-cake5",
 		"dereuromark/cakephp-shim": "dev-cake5",
-		"phpunit/phpunit": "^9.5.16",
+		"phpunit/phpunit": "^10.2",
 		"fig-r/psr2r-sniffer": "dev-next"
 	},
 	"autoload": {
@@ -29,6 +29,7 @@
 		"issues": "https://github.com/dereuromark/cakephp-cache/issues"
 	},
 	"prefer-stable": true,
+	"minimum-stability": "dev",
 	"scripts": {
 		"test": "phpunit",
 		"test-coverage": "phpunit --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
@@ -42,6 +43,5 @@
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
-	},
-	"minimum-stability": "dev"
+	}
 }
