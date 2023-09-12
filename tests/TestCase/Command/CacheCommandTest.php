@@ -1,15 +1,18 @@
 <?php
 
-namespace Cache\Test\TestCase\Shell;
+namespace Cache\Test\TestCase\Command;
 
-use Cache\Shell\CacheShell;
+use Cache\Command\CacheCommand;
 use Cake\Console\ConsoleIo;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use Shim\Filesystem\Folder;
 use Shim\TestSuite\ConsoleOutput;
 use Shim\TestSuite\TestCase;
 
-class CacheShellTest extends TestCase {
+class CacheCommandTest extends TestCase {
+
+	use ConsoleIntegrationTestTrait;
 
 	protected ConsoleOutput $out;
 
@@ -17,7 +20,7 @@ class CacheShellTest extends TestCase {
 
 	protected string $testCacheFile;
 
-	protected CacheShell|MockObject $Shell;
+	protected CacheCommand|MockObject $Shell;
 
 	/**
 	 * @return void
@@ -29,8 +32,8 @@ class CacheShellTest extends TestCase {
 		$this->err = new ConsoleOutput();
 		$io = new ConsoleIo($this->out, $this->err);
 
-		$this->Shell = $this->getMockBuilder(CacheShell::class)
-			->setMethods(['in', '_stop'])
+		$this->Shell = $this->getMockBuilder(CacheCommand::class)
+			->onlyMethods(['in', '_stop'])
 			->setConstructorArgs([$io])
 			->getMock();
 
@@ -55,7 +58,8 @@ class CacheShellTest extends TestCase {
 	 * @return void
 	 */
 	public function testStatus() {
-		$this->Shell->runCommand(['status', '-v']);
+		$io = new ConsoleIo($this->out, $this->err);
+		$this->Shell->run(['status', '-v'], $io);
 		$output = $this->out->output();
 		$expected = '0 cache files found';
 		$this->assertStringContainsString($expected, $output);
@@ -74,7 +78,8 @@ class CacheShellTest extends TestCase {
 	public function testStatusWithUrl() {
 		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.cache');
 
-		$this->Shell->runCommand(['status', '/test']);
+		$io = new ConsoleIo($this->out, $this->err);
+		$this->Shell->run(['status', '/test'], $io);
 		$output = $this->out->output();
 
 		$expected = 'Cached until: (unlimited)';
@@ -88,7 +93,8 @@ class CacheShellTest extends TestCase {
 		$this->Shell->expects($this->any())->method('in')
 			->will($this->returnValue('y'));
 
-		$this->Shell->runCommand(['delete']);
+		$io = new ConsoleIo($this->out, $this->err);
+		$this->Shell->run(['delete'], $io);
 		$output = $this->out->output();
 		$expected = 'Done!';
 		$this->assertStringContainsString($expected, $output);

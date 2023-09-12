@@ -1,19 +1,19 @@
 <?php
 
-namespace Cache\Shell;
+namespace Cache\Command;
 
 use Cache\Utility\CacheKey;
 use Cache\Utility\FileCache;
 use Cake\Cache\Cache;
+use Cake\Command\Command;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Shell;
 use Cake\Core\Configure;
 use FilesystemIterator;
 
 /**
  * Shell for tasks related to plugins.
  */
-class CacheShell extends Shell {
+class CacheCommand extends Command {
 
 	/**
 	 * @param string|null $url
