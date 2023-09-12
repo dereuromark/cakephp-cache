@@ -66,7 +66,7 @@ class CacheCommandTest extends TestCase {
 
 		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.cache');
 
-		$this->Shell->runCommand(['status']);
+		$this->Shell->run(['status'], $io);
 		$output = $this->out->output();
 		$expected = '1 cache files found';
 		$this->assertStringContainsString($expected, $output);
