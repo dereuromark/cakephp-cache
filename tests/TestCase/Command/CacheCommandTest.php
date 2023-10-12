@@ -32,9 +32,10 @@ class CacheCommandTest extends TestCase {
 		$this->err = new ConsoleOutput();
 		$io = new ConsoleIo($this->out, $this->err);
 
+		//FIXME: Use exec()
 		$this->Shell = $this->getMockBuilder(CacheCommand::class)
-			->onlyMethods(['in', '_stop'])
-			->setConstructorArgs([$io])
+			//->onlyMethods(['in', '_stop'])
+			//->setConstructorArgs([$io])
 			->getMock();
 
 		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'test.cache';

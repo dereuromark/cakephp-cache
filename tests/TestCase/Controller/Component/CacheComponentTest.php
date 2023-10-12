@@ -304,7 +304,7 @@ class CacheComponentTest extends TestCase {
 
 		$file = CACHE . 'views' . DS . '_root.html';
 
-		$this->assertFileNotExists($file, 'POST should not cache request');
+		$this->assertFileDoesNotExist($file, 'POST should not cache request');
 	}
 
 	/**
@@ -338,7 +338,7 @@ class CacheComponentTest extends TestCase {
 		unlink($file);
 
 		$file = CACHE . 'views' . DS . 'pages-view-1.cache';
-		$this->assertFileNotExists($file);
+		$this->assertFileDoesNotExist($file);
 	}
 
 	/**
@@ -371,7 +371,7 @@ class CacheComponentTest extends TestCase {
 		unlink($file);
 
 		$file = CACHE . 'views' . DS . 'pages-view-1.cache';
-		$this->assertFileNotExists($file);
+		$this->assertFileDoesNotExist($file);
 	}
 
 	/**
@@ -380,7 +380,7 @@ class CacheComponentTest extends TestCase {
 	 * @return \Cake\Http\Response|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected function getResponseMock(array $methods) {
-		return $this->getMockBuilder(Response::class)->setMethods($methods)->getMock();
+		return $this->getMockBuilder(Response::class)->onlyMethods($methods)->getMock();
 	}
 
 }
