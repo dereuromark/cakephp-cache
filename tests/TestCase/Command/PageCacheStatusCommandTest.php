@@ -5,16 +5,11 @@ namespace Cache\Test\TestCase\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Shim\Filesystem\Folder;
-use Shim\TestSuite\ConsoleOutput;
 use Shim\TestSuite\TestCase;
 
 class PageCacheStatusCommandTest extends TestCase {
 
 	use ConsoleIntegrationTestTrait;
-
-	protected ConsoleOutput $out;
-
-	protected ConsoleOutput $err;
 
 	protected string $testCacheFile;
 
