@@ -123,19 +123,19 @@ max file per folder limitation.
 ### Clear the Cache
 The Cache shell shipped with this plugin should make it easy to clear the cache manually:
 ```
-cake cache clear [optional/url]
+cake page_cache clear [/optional/url]
 ```
 
 #### Further Cache Shell Goodies
 Using
 ```
-cake cache status [optional/url/]
+cake page_cache status [/optional/url]
 ```
 you get the amount of currently cached files.
 
 Using
 ```
-cake cache status /some-controller/some-action?maybe=query-strings
+cake page_cache status /some-controller/some-action?maybe=query-strings
 ```
 You can get information on the cache status of this particular URL, e.g.
 - when the cache for it was created.

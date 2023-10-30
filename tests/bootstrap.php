@@ -1,7 +1,9 @@
 <?php
 
+use Cache\CachePlugin;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use TestApp\View\AppView;
 
 if (!defined('DS')) {
@@ -56,7 +58,7 @@ require CORE_PATH . 'config/bootstrap.php';
 require CAKE . 'functions.php';
 
 Configure::write('App', [
-	'namespace' => 'App',
+	'namespace' => 'TestApp',
 	'encoding' => 'UTF-8',
 ]);
 Configure::write('debug', true);
@@ -84,3 +86,5 @@ $cache = [
 ];
 
 Cache::setConfig($cache);
+
+Plugin::getCollection()->add(new CachePlugin());

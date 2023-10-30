@@ -22,7 +22,7 @@ class FileCache {
 	/**
 	 * @param array $config Array of config.
 	 */
-	public function __construct($config = []) {
+	public function __construct(array $config = []) {
 		if (!empty($config['cacheTime'])) {
 			$this->_cacheTime = $config['cacheTime'];
 		}

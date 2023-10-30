@@ -29,7 +29,7 @@
 		"issues": "https://github.com/dereuromark/cakephp-cache/issues"
 	},
 	"prefer-stable": true,
-	"minimum-stability": "RC",
+	"minimum-stability": "stable",
 	"scripts": {
 		"test": "phpunit",
 		"test-coverage": "phpunit --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
