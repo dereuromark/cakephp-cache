@@ -1,17 +1,23 @@
 {
 	"name": "dereuromark/cakephp-cache",
 	"description": "Cache plugin for CakePHP",
-	"type": "cakephp-plugin",
 	"license": "MIT",
+	"type": "cakephp-plugin",
+	"support": {
+		"issues": "https://github.com/dereuromark/cakephp-cache/issues",
+		"source": "https://github.com/dereuromark/cakephp-cache"
+	},
 	"require": {
 		"php": ">=8.1",
 		"cakephp/cakephp": "^5.0.0"
 	},
 	"require-dev": {
 		"dereuromark/cakephp-shim": "^3.0.0",
-		"phpunit/phpunit": "^10.2",
-		"fig-r/psr2r-sniffer": "dev-next"
+		"fig-r/psr2r-sniffer": "dev-next",
+		"phpunit/phpunit": "^10.2"
 	},
+	"minimum-stability": "stable",
+	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
 			"Cache\\": "src/"
@@ -23,24 +29,18 @@
 			"TestApp\\": "tests/test_app/src/"
 		}
 	},
-	"support": {
-		"source": "https://github.com/dereuromark/cakephp-cache",
-		"issues": "https://github.com/dereuromark/cakephp-cache/issues"
-	},
-	"prefer-stable": true,
-	"minimum-stability": "stable",
-	"scripts": {
-		"test": "phpunit",
-		"test-coverage": "phpunit --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml",
-		"stan": "phpstan analyse",
-		"stan-tests": "phpstan analyse -c tests/phpstan.neon",
-		"stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^1.0.0 && mv composer.backup composer.json",
-		"cs-check": "phpcs --extensions=php",
-		"cs-fix": "phpcbf --extensions=php"
-	},
 	"config": {
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
+	},
+	"scripts": {
+		"cs-check": "phpcs --extensions=php",
+		"cs-fix": "phpcbf --extensions=php",
+		"stan": "phpstan analyse",
+		"stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^1.0.0 && mv composer.backup composer.json",
+		"stan-tests": "phpstan analyse -c tests/phpstan.neon",
+		"test": "phpunit",
+		"test-coverage": "phpunit --log-junit tmp/coverage/unitreport.xml --coverage-html tmp/coverage --coverage-clover tmp/coverage/coverage.xml"
 	}
 }
