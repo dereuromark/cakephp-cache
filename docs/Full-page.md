@@ -19,7 +19,7 @@ public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue {
 
         // Handle cached files
         ->add(new CacheMiddleware([
-            'when' => function (ServerRequest $request, Response $response) {
+            'when' => function (ServerRequest $request) {
                 // Implement
             },
             'keyGenerator' => function ($key, $prefix) {
