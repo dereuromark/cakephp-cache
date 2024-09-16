@@ -26,6 +26,8 @@ class PageCacheStatusCommandTest extends TestCase {
 		if (!is_dir(CACHE . 'views' . DS)) {
 			mkdir(CACHE . 'views' . DS, 0770, true);
 		}
+
+		$this->loadPlugins(['Cache']);
 	}
 
 	/**
