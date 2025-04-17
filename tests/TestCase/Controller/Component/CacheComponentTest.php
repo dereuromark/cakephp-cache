@@ -53,7 +53,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -84,7 +84,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -114,10 +114,10 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getType')
-			->will($this->returnValue('application/json'));
+			->willReturn('application/json');
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -152,7 +152,7 @@ class CacheComponentTest extends TestCase {
 		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -173,7 +173,7 @@ class CacheComponentTest extends TestCase {
 		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -204,7 +204,7 @@ class CacheComponentTest extends TestCase {
 			more text.');
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue($text));
+			->willReturn($text);
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -240,7 +240,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -271,10 +271,10 @@ class CacheComponentTest extends TestCase {
 		$this->Controller->setResponse($this->getResponseMock(['getBody', 'getType']));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar')));
+			->willReturn((new StreamFactory())->createStream('Foo bar'));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getType')
-			->will($this->returnValue('text/html'));
+			->willReturn('text/html');
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -297,7 +297,7 @@ class CacheComponentTest extends TestCase {
 		$this->Controller->setResponse($this->getResponseMock(['getBody']));
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -327,7 +327,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
@@ -360,7 +360,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->getResponse()->expects($this->once())
 			->method('getBody')
-			->will($this->returnValue((new StreamFactory())->createStream('Foo bar.')));
+			->willReturn((new StreamFactory())->createStream('Foo bar.'));
 
 		$event = new Event('Controller.afterFilter', $this->Controller);
 		$this->Controller->Cache->afterFilter($event);
