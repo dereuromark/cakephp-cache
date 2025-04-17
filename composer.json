@@ -14,7 +14,7 @@
 	"require-dev": {
 		"dereuromark/cakephp-shim": "^3.0.0",
 		"fig-r/psr2r-sniffer": "dev-master",
-		"phpunit/phpunit": "^10.2"
+		"phpunit/phpunit": "^10.2 || ^11.5"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,
