@@ -50,7 +50,7 @@ class CacheComponent extends Component {
 		if (Configure::read('debug') && !$this->getConfig('force')) {
 			return;
 		}
-		/** @var callable $when */
+		/** @var callable|null $when */
 		$when = $this->getConfig('when');
 		/** @var \Cake\Controller\Controller $controller */
 		$controller = $event->getSubject();

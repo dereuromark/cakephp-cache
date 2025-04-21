@@ -60,7 +60,7 @@ class CacheMiddleware implements MiddlewareInterface {
 		if ($this->getConfig('check') === false || !$request->is('get')) {
 			return $handler->handle($request);
 		}
-		/** @var callable $when */
+		/** @var callable|null $when */
 		$when = $this->getConfig('when');
 		if ($when !== null && $when($request) !== true) {
 			return $handler->handle($request);

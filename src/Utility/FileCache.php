@@ -65,7 +65,7 @@ class FileCache {
 
 		$cacheStart = $cacheEnd = 0;
 		$cacheExt = 'html';
-		$content = preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:(\w+)-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
+		$content = (string)preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:(\w+)-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
 			$cacheStart = (int)$matches[1];
 			$cacheEnd = (int)$matches[2];
 			$cacheExt = $matches[3];
