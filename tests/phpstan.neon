@@ -3,10 +3,9 @@ parameters:
 	paths:
 		- TestCase/
 
-	checkMissingIterableValueType: false
-
 	bootstrapFiles:
 		- %rootDir%/../../../tests/bootstrap.php
 		- %rootDir%/../../../phpunit.phar
 		- %rootDir%/../../../tests/shim.php
 	ignoreErrors:
+		- identifier: missingType.iterableValue
