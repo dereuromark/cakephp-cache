@@ -18,7 +18,7 @@ class PageCacheClearCommandTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->testCacheFile = dirname(dirname(__DIR__)) . DS . 'test_files' . DS . 'test.cache';
+		$this->testCacheFile = dirname(__DIR__, 2) . DS . 'test_files' . DS . 'test.cache';
 
 		$Folder = new Folder(CACHE . 'views' . DS);
 		$Folder->delete();
