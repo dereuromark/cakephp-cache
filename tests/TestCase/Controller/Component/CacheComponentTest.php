@@ -379,7 +379,7 @@ class CacheComponentTest extends TestCase {
 	 *
 	 * @return \Cake\Http\Response|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	protected function getResponseMock(array $methods) {
+	protected function getResponseMock(array $methods): Response {
 		return $this->getMockBuilder(Response::class)->onlyMethods($methods)->getMock();
 	}
 
