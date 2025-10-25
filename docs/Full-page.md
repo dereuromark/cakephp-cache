@@ -120,6 +120,54 @@ For file based storage for example, it can make sense to nest your files in subf
 This way you can retrieve them faster for many files stored and also don't run into
 max file per folder limitation.
 
+### Middleware Configuration
+The CacheMiddleware accepts several configuration options:
+
+#### engine
+Specify which cache engine to use for reading cached files:
+```php
+'engine' => 'default',
+```
+Both the Component and Middleware should use the same engine for consistency.
+
+#### when
+A callable to determine if caching should be applied for a request:
+```php
+'when' => function (ServerRequest $request) {
+    return !$request->is('ajax');
+},
+```
+
+#### keyGenerator
+A callable to customize cache key generation:
+```php
+'keyGenerator' => function ($key, $prefix) {
+    return md5($prefix . $key);
+},
+```
+
+#### check
+Controls whether to check if the request is a GET request before serving cache:
+```php
+'check' => null, // Auto (default) - automatically checks for GET requests
+'check' => false, // Disable the GET check (not recommended)
+```
+By default (null or not set), the middleware only serves cached files for GET requests as per HTTP specs. Setting to `false` will disable this check, but this is generally not recommended.
+
+#### cacheTime
+Fallback cache expiration time when serving cached files:
+```php
+'cacheTime' => '+1 hour', // Default
+```
+This is used by the Middleware when reading cache files. Note this is different from the Component's `duration` parameter which controls when writing cache files.
+
+#### debug
+Enable debug mode to add timestamp comments to cached files:
+```php
+'debug' => true,
+```
+This will add a comment to the beginning of cached files showing when they were created, even when not in debug mode.
+
 ### Clear the Cache
 The Cache shell shipped with this plugin should make it easy to clear the cache manually:
 ```
