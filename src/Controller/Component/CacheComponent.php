@@ -29,6 +29,7 @@ class CacheComponent extends Component {
 		'prefix' => false,
 		'when' => null,
 		'keyGenerator' => null,
+		'timestamp' => null,
 	];
 
 	/**
@@ -119,8 +120,9 @@ class CacheComponent extends Component {
 		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;
 
 		// Add timestamp comment at the end for debugging
-		$timestamp = date('Y-m-d H:i:s');
-		if ($ext === 'html') {
+		$timestampConfig = $this->getConfig('timestamp');
+		if ($timestampConfig !== false && $ext === 'html') {
+			$timestamp = date('Y-m-d H:i:s');
 			$content .= '<!-- ' . $timestamp . ' -->';
 		}
 

@@ -6,6 +6,7 @@ return [
 		'check' => null, // Auto
 		'engine' => null, // File
 		'when' => null, // Defaults to GET only
+		'timestamp' => null, // Disable to hide timestamp in cache files
 		'cacheTime' => null, // Only for non-engine (file only) cache
 		'prefix' => null, // Only for non-engine (file only) cache
 		'keyGenerator' => null, // a callable which must return a key for the given url
