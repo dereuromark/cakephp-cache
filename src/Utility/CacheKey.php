@@ -15,7 +15,14 @@ class CacheKey {
 	 */
 	public static function generate(string $url, ?string $prefix, $keyGenerator = null) {
 		if ($keyGenerator) {
-			return $keyGenerator($url, $prefix);
+			$cacheKey = $keyGenerator($url, $prefix);
+			// Validate key length for filesystem compatibility (most filesystems have 255 char limit)
+			if (mb_strlen($cacheKey) > 200) {
+				$key = mb_substr($cacheKey, 0, 159);
+				$cacheKey = $key . '_' . sha1(mb_substr($cacheKey, 159));
+			}
+
+			return $cacheKey;
 		}
 
 		if ($url === '/') {
@@ -36,7 +43,7 @@ class CacheKey {
 			}
 		}
 
-		if (!empty($prefix)) {
+		if ($prefix) {
 			$cacheKey = $prefix . '_' . $cacheKey;
 		}
 
@@ -55,6 +62,9 @@ class CacheKey {
 			$cacheTime = $now + $duration;
 		} else {
 			$cacheTime = strtotime($duration, $now);
+			if ($cacheTime === false) {
+				$cacheTime = 0;
+			}
 		}
 
 		return $now . '/' . $cacheTime;

@@ -21,7 +21,7 @@ class CacheMiddleware implements MiddlewareInterface {
 	use InstanceConfigTrait;
 
 	/**
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
 		'engine' => null,
@@ -33,7 +33,7 @@ class CacheMiddleware implements MiddlewareInterface {
 	protected ?string $_cacheContent = null;
 
 	/**
-	 * @var array|null
+	 * @var array<string, mixed>|null
 	 */
 	protected $_cacheInfo;
 
@@ -138,7 +138,9 @@ class CacheMiddleware implements MiddlewareInterface {
 		if (!$engine) {
 			$folder = CACHE . 'views' . DS;
 			$file = $folder . $cacheKey . '.cache';
-			unlink($file);
+			if (file_exists($file)) {
+				@unlink($file);
+			}
 
 			return;
 		}

@@ -23,7 +23,7 @@ class PageCacheClearCommand extends Command {
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 *
-	 * @return null|void
+	 * @return int|null
 	 */
 	public function execute(Arguments $args, ConsoleIo $io) {
 		$this->io = $io;
@@ -61,7 +61,9 @@ class PageCacheClearCommand extends Command {
 				if ($args->getOption('verbose')) {
 					$this->io->out('Deleting ' . $path);
 				}
-				unlink($path);
+				if (file_exists($path)) {
+					@unlink($path);
+				}
 			}
 			$this->io->out('Done!');
 
@@ -88,7 +90,9 @@ class PageCacheClearCommand extends Command {
 		if (!$engine) {
 			$folder = CACHE . 'views' . DS;
 			$file = $folder . $cacheKey . '.cache';
-			unlink($file);
+			if (file_exists($file)) {
+				@unlink($file);
+			}
 
 			return;
 		}

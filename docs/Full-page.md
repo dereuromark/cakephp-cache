@@ -64,7 +64,7 @@ Once the file gets too old it will be cleaned out, a real action will be called 
     ]);
 }
 ```
-In this case we also exlude AJAX requests.
+In this case we also exclude AJAX requests.
 
 
 ### Global Configuration

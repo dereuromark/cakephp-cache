@@ -118,6 +118,12 @@ class CacheComponent extends Component {
 
 		$content = '<!--cachetime:' . $cacheTime . ';ext:' . $ext . '-->' . $content;
 
+		// Add timestamp comment at the end for debugging
+		$timestamp = date('Y-m-d H:i:s');
+		if ($ext === 'html') {
+			$content .= '<!-- ' . $timestamp . ' -->';
+		}
+
 		$engine = $this->getConfig('engine');
 		if (!$engine) {
 			return $this->_writeFile($content, $cacheKey);
@@ -134,14 +140,14 @@ class CacheComponent extends Component {
 	 */
 	protected function _writeFile(string $content, string $cache) {
 		$folder = CACHE . 'views' . DS;
-		if (Configure::read('debug') && !is_dir($folder)) {
-			mkdir($folder, 0770, true);
+		if (Configure::read('debug')) {
+			@mkdir($folder, 0770, true);
 		}
 
 		$cache .= '.cache';
 		$file = $folder . $cache;
 
-		return (bool)file_put_contents($file, $content);
+		return (bool)@file_put_contents($file, $content);
 	}
 
 	/**
@@ -161,8 +167,6 @@ class CacheComponent extends Component {
 			}
 		} elseif (is_callable($compress)) {
 			$content = $compress($content, $ext);
-		} elseif ($compress) {
-			$content = call_user_func($compress, $content, $ext);
 		}
 
 		return $content;

@@ -9,5 +9,4 @@ parameters:
 	ignoreErrors:
 		- identifier: missingType.iterableValue
 		- identifier: missingType.generics
-		- '#Parameter \#1 \$\w+ of function call_user_func expects callable\(\): mixed, mixed given.#'
 		- '#Cannot cast array\|string\|null to string#'

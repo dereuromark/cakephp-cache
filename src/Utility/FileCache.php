@@ -15,7 +15,7 @@ class FileCache {
 	protected ?string $_cacheContent = null;
 
 	/**
-	 * @var array|null
+	 * @var array<string, mixed>|null
 	 */
 	protected $_cacheInfo;
 

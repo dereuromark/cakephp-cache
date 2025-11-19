@@ -52,9 +52,7 @@ class PageCacheStatusCommand extends Command {
 	 */
 	protected function fileStatus(?string $url, bool $verbose = false) {
 		$folder = CACHE . 'views' . DS;
-		if (!is_dir($folder)) {
-			mkdir($folder, 0770, true);
-		}
+		@mkdir($folder, 0770, true);
 
 		if (!$url) {
 			$fi = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
