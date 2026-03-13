@@ -1,8 +1,24 @@
 {
 	"name": "dereuromark/cakephp-cache",
-	"description": "Cache plugin for CakePHP",
+	"description": "A CakePHP plugin for view caching with configurable strategies",
 	"license": "MIT",
 	"type": "cakephp-plugin",
+	"keywords": [
+		"cakephp",
+		"plugin",
+		"cache",
+		"caching",
+		"performance",
+		"view-cache"
+	],
+	"authors": [
+		{
+			"name": "Mark Scherer",
+			"homepage": "https://www.dereuromark.de",
+			"role": "Maintainer"
+		}
+	],
+	"homepage": "https://github.com/dereuromark/cakephp-cache",
 	"support": {
 		"issues": "https://github.com/dereuromark/cakephp-cache/issues",
 		"source": "https://github.com/dereuromark/cakephp-cache"
