@@ -13,10 +13,7 @@ use FilesystemIterator;
 
 class PageCacheStatusCommand extends Command {
 
-	/**
-	 * @var \Cake\Console\ConsoleIo
-	 */
-	protected $io;
+	protected ConsoleIo $io;
 
 	/**
 	 * @param \Cake\Console\Arguments $args
