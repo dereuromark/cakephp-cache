@@ -14,10 +14,7 @@ use FilesystemIterator;
 
 class PageCacheClearCommand extends Command {
 
-	/**
-	 * @var \Cake\Console\ConsoleIo
-	 */
-	protected $io;
+	protected ConsoleIo $io;
 
 	/**
 	 * @param \Cake\Console\Arguments $args
