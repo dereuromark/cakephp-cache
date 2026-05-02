@@ -21,6 +21,28 @@ class CacheMiddleware implements MiddlewareInterface {
 	use InstanceConfigTrait;
 
 	/**
+	 * Allow-list of cache extensions accepted from the on-disk header.
+	 *
+	 * The cache file header is parsed straight into `Response::withType()`,
+	 * so an attacker (or buggy writer) able to control the `ext` token could
+	 * otherwise force an arbitrary `Content-Type`. Only well-known view
+	 * extensions are honored; anything else falls through to the handler.
+	 *
+	 * @var array<int, string>
+	 */
+	protected const ALLOWED_EXTENSIONS = [
+		'html',
+		'json',
+		'xml',
+		'csv',
+		'txt',
+		'rss',
+		'atom',
+		'js',
+		'css',
+	];
+
+	/**
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
@@ -57,6 +79,11 @@ class CacheMiddleware implements MiddlewareInterface {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+		// Reset per-instance state so long-lived workers (Swoole, RoadRunner,
+		// FrankenPHP, ReactPHP) don't leak cache content from a prior request.
+		$this->_cacheContent = null;
+		$this->_cacheInfo = null;
+
 		if ($this->getConfig('check') === false || !$request->is('get')) {
 			return $handler->handle($request);
 		}
@@ -160,7 +187,7 @@ class CacheMiddleware implements MiddlewareInterface {
 
 		$cacheStart = $cacheEnd = 0;
 		$cacheExt = 'html';
-		$this->_cacheContent = preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:(\w+)-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
+		$this->_cacheContent = preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:([a-z0-9]{1,8})-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
 			$cacheStart = (int)$matches[1];
 			$cacheEnd = (int)$matches[2];
 			$cacheExt = $matches[3];
@@ -169,6 +196,13 @@ class CacheMiddleware implements MiddlewareInterface {
 		}, (string)$this->_cacheContent);
 
 		if (!$cacheStart) {
+			return [];
+		}
+
+		// Reject anything outside the allow-list — prevents an attacker who
+		// can write to the cache directory from forcing an arbitrary
+		// Content-Type via the on-disk header (MIME confusion / XSS).
+		if (!in_array($cacheExt, static::ALLOWED_EXTENSIONS, true)) {
 			return [];
 		}
 

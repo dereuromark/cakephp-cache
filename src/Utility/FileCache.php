@@ -8,6 +8,23 @@ use Cake\Core\Configure;
 class FileCache {
 
 	/**
+	 * Allow-list of cache extensions accepted from the on-disk header.
+	 *
+	 * @var array<int, string>
+	 */
+	protected const ALLOWED_EXTENSIONS = [
+		'html',
+		'json',
+		'xml',
+		'csv',
+		'txt',
+		'rss',
+		'atom',
+		'js',
+		'css',
+	];
+
+	/**
   * The amount of time to browser cache files (which are unlimited).
   */
 	protected string $_cacheTime = '';
@@ -65,7 +82,7 @@ class FileCache {
 
 		$cacheStart = $cacheEnd = 0;
 		$cacheExt = 'html';
-		$content = (string)preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:(\w+)-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
+		$content = (string)preg_replace_callback('/^<!--cachetime:(\d+)\/(\d+);ext:([a-z0-9]{1,8})-->/', function ($matches) use (&$cacheStart, &$cacheEnd, &$cacheExt) {
 			$cacheStart = (int)$matches[1];
 			$cacheEnd = (int)$matches[2];
 			$cacheExt = $matches[3];
@@ -74,6 +91,10 @@ class FileCache {
 		}, $content);
 
 		if (!$cacheStart) {
+			return [];
+		}
+
+		if (!in_array($cacheExt, static::ALLOWED_EXTENSIONS, true)) {
 			return [];
 		}
 

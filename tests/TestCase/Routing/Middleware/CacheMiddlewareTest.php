@@ -92,6 +92,38 @@ class CacheMiddlewareTest extends TestCase {
 	}
 
 	/**
+	 * Cache headers with an `ext` outside the allow-list must NOT be honored.
+	 *
+	 * Prevents an attacker (or buggy writer) able to control the cache file
+	 * content from forcing an arbitrary Content-Type via the on-disk header.
+	 *
+	 * @return void
+	 */
+	public function testBasicUrlWithDisallowedExt() {
+		$folder = CACHE . 'views' . DS;
+		$file = $folder . 'testcontroller-testaction-params1-params2-json.cache';
+		// `php` is not in the allow-list — must fall through to the handler.
+		$content = '<!--cachetime:' . (time() - HOUR) . '/0;ext:php-->Foo bar';
+		file_put_contents($file, $content);
+
+		$request = ServerRequestFactory::fromGlobals([
+			'REQUEST_URI' => '/testcontroller/testaction/params1/params2.json',
+			'REQUEST_METHOD' => 'GET',
+		]);
+		$response = new Response();
+
+		$handler = new TestRequestHandler(null, $response);
+		$middleware = new CacheMiddleware();
+		$newResponse = $middleware->process($request, $handler);
+
+		// Falls through to handler → no body, default text/html type.
+		$this->assertSame('text/html', $newResponse->getType());
+		$this->assertSame('', (string)$newResponse->getBody());
+
+		unlink($file);
+	}
+
+	/**
 	 * Tests that post skips
 	 *
 	 * @return void
