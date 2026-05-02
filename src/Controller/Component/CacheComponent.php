@@ -135,6 +135,13 @@ class CacheComponent extends Component {
 	}
 
 	/**
+	 * Writes the cache file atomically.
+	 *
+	 * Uses a temp file in the same directory plus `rename()` so concurrent
+	 * readers never observe a torn header (which previously could fall
+	 * through the regex check, return `[]` from `extractCacheInfo()`, and
+	 * result in `cacheTime` parsing to `0` so the file would never expire).
+	 *
 	 * @param string $content
 	 * @param string $cache
 	 *
@@ -149,7 +156,28 @@ class CacheComponent extends Component {
 		$cache .= '.cache';
 		$file = $folder . $cache;
 
-		return (bool)@file_put_contents($file, $content);
+		$tmp = @tempnam($folder, '.cache-tmp-');
+		if ($tmp === false) {
+			return false;
+		}
+
+		$bytes = @file_put_contents($tmp, $content, LOCK_EX);
+		if ($bytes === false || $bytes !== strlen($content)) {
+			@unlink($tmp);
+
+			return false;
+		}
+
+		// Match the permissions file_put_contents would have produced.
+		@chmod($tmp, 0664 & ~umask());
+
+		if (!@rename($tmp, $file)) {
+			@unlink($tmp);
+
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
