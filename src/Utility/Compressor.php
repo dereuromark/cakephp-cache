@@ -26,7 +26,7 @@ class Compressor {
 	 * @return string
 	 */
 	protected function _commentIgnore(array $m) {
-		return (str_starts_with((string) $m[1], '[') || str_contains((string) $m[1], '<![')) ? $m[0] : '';
+		return (str_starts_with((string)$m[1], '[') || str_contains((string)$m[1], '<![')) ? $m[0] : '';
 	}
 
 }
