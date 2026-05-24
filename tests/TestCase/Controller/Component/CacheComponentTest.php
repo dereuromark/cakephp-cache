@@ -230,7 +230,7 @@ class CacheComponentTest extends TestCase {
 		]);
 
 		$this->Controller->setRequest($request);
-		$this->Controller->Cache->setConfig('compress', function ($content) {
+		$this->Controller->Cache->setConfig('compress', function ($content, $ext) {
 			return str_replace('bar', 'b', $content);
 		});
 
