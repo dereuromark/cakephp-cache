@@ -17,9 +17,9 @@ class CacheKey {
 		if ($keyGenerator) {
 			$cacheKey = (string)$keyGenerator($url, $prefix);
 			// Validate key length for filesystem compatibility (most filesystems have 255 char limit)
-			if (mb_strlen((string) $cacheKey) > 200) {
-				$key = mb_substr((string) $cacheKey, 0, 159);
-				$cacheKey = $key . '_' . sha1(mb_substr((string) $cacheKey, 159));
+			if (mb_strlen((string)$cacheKey) > 200) {
+				$key = mb_substr((string)$cacheKey, 0, 159);
+				$cacheKey = $key . '_' . sha1(mb_substr((string)$cacheKey, 159));
 			}
 
 			return $cacheKey;
