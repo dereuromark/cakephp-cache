@@ -231,9 +231,7 @@ class CacheComponentTest extends TestCase {
 
 		$this->Controller->setRequest($request);
 		$this->Controller->Cache->setConfig('compress', function ($content) {
-			$content = str_replace('bar', 'b', $content);
-
-			return $content;
+			return str_replace('bar', 'b', $content);
 		});
 
 		$this->Controller->setResponse($this->getResponseMock(['getBody']));

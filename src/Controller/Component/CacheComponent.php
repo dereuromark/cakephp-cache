@@ -93,11 +93,7 @@ class CacheComponent extends Component {
 		if (array_key_exists($action, $actions)) {
 			return $actions[$action];
 		}
-		if (in_array($action, $actions, true)) {
-			return true;
-		}
-
-		return false;
+        return in_array($action, $actions, true);
 	}
 
 	/**
