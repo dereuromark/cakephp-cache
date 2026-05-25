@@ -10,7 +10,7 @@ class Compressor {
 	 */
 	public function compress($content) {
 		// Removes HTML comments (not containing IE conditional comments).
-		$content = (string)preg_replace_callback('/<!--([\\s\\S]*?)-->/', [$this, '_commentIgnore'], $content);
+		$content = (string)preg_replace_callback('/<!--([\\s\\S]*?)-->/', $this->_commentIgnore(...), $content);
 
 		// Remove whitespace
 		$content = (string)preg_replace('/[\s]+/mu', ' ', $content);
@@ -26,7 +26,7 @@ class Compressor {
 	 * @return string
 	 */
 	protected function _commentIgnore(array $m) {
-		return (strpos($m[1], '[') === 0 || strpos($m[1], '<![') !== false) ? $m[0] : '';
+		return (str_starts_with((string)$m[1], '[') || str_contains((string)$m[1], '<![')) ? $m[0] : '';
 	}
 
 }

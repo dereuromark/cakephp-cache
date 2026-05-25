@@ -15,7 +15,7 @@ class CacheKey {
 	 */
 	public static function generate(string $url, ?string $prefix, $keyGenerator = null) {
 		if ($keyGenerator) {
-			$cacheKey = $keyGenerator($url, $prefix);
+			$cacheKey = (string)$keyGenerator($url, $prefix);
 			// Validate key length for filesystem compatibility (most filesystems have 255 char limit)
 			if (mb_strlen($cacheKey) > 200) {
 				$key = mb_substr($cacheKey, 0, 159);
@@ -25,11 +25,7 @@ class CacheKey {
 			return $cacheKey;
 		}
 
-		if ($url === '/') {
-			$url = '_root';
-		} else {
-			$url = substr($url, 1);
-		}
+		$url = $url === '/' ? '_root' : substr($url, 1);
 
 		$cacheKey = $url;
 

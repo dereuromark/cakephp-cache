@@ -129,9 +129,7 @@ class CacheMiddleware implements MiddlewareInterface {
 			return $response->withNotModified();
 		}
 
-		$response = $this->_deliverCacheFile($request, $response, $fileContent, $cacheExt);
-
-		return $response;
+		return $this->_deliverCacheFile($request, $response, $fileContent, $cacheExt);
 	}
 
 	/**
@@ -245,7 +243,7 @@ class CacheMiddleware implements MiddlewareInterface {
 		if ($response->getType() === $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = $request->getEnv('HTTP_USER_AGENT');
-			if ($agent && (preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent))) {
+			if ($agent && (preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE (\d.\d{1,2})/', $agent))) {
 				$contentType = 'application/octetstream';
 			}
 
@@ -270,10 +268,8 @@ class CacheMiddleware implements MiddlewareInterface {
 		$response = $response->withCache($modifiedTime, $cacheEnd);
 		$response = $response->withType($cacheInfo['ext']);
 
-		if (Configure::read('debug') || $this->getConfig('debug')) {
-			if ($cacheInfo['ext'] === 'html') {
-				$cacheContent = '<!--created:' . date('Y-m-d H:i:s', $modifiedTime) . '-->' . $cacheContent;
-			}
+		if ((Configure::read('debug') || $this->getConfig('debug')) && $cacheInfo['ext'] === 'html') {
+			$cacheContent = '<!--created:' . date('Y-m-d H:i:s', $modifiedTime) . '-->' . $cacheContent;
 		}
 
 		$body = $response->getBody();

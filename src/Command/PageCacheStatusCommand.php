@@ -87,11 +87,7 @@ class PageCacheStatusCommand extends Command {
 		}
 
 		$time = $cacheInfo['end'];
-		if ($time) {
-			$time = date('Y-m-d H:i:s', $time);
-		} else {
-			$time = '(unlimited)';
-		}
+		$time = $time ? date('Y-m-d H:i:s', $time) : '(unlimited)';
 
 		if (!$engine) {
 			$file = CacheKey::generate($url, Configure::read('CacheConfig.prefix'), Configure::read('CacheConfig.keyGenerator'));
