@@ -3,6 +3,7 @@
 namespace Cache\Utility;
 
 use Cake\Utility\Text;
+use InvalidArgumentException;
 
 class CacheKey {
 
