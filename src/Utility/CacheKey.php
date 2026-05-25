@@ -15,7 +15,10 @@ class CacheKey {
 	 */
 	public static function generate(string $url, ?string $prefix, $keyGenerator = null) {
 		if ($keyGenerator) {
-			$cacheKey = (string)$keyGenerator($url, $prefix);
+			$cacheKey = $keyGenerator($url, $prefix);
+			if (!is_string($cacheKey) || $cacheKey === '') {
+				throw new InvalidArgumentException('Custom key generator must return a non-empty string');
+			}
 			// Validate key length for filesystem compatibility (most filesystems have 255 char limit)
 			if (mb_strlen($cacheKey) > 200) {
 				$key = mb_substr($cacheKey, 0, 159);
