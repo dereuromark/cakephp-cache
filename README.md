@@ -8,7 +8,7 @@
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-cache/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-cache)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-purple.svg?style=flat-square)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-This branch is for use with **CakePHP 5.1+**. For details see [version map](https://github.com/dereuromark/cakephp-cache/wiki#cakephp-version-map).
+This branch is for use with **CakePHP 5**. For details see [version map](https://github.com/dereuromark/cakephp-cache/wiki#cakephp-version-map).
 
 ## What is it for?
 It is the successor of the 2.x CacheHelper and allows you to cache your complete views as HTML.
@@ -23,22 +23,12 @@ not be able to cache serialized views, e.g. JSON, CSV, RSS content which have be
 ## Demo
 [sandbox.dereuromark.de/sandbox/cache-examples/](https://sandbox.dereuromark.de/sandbox/cache-examples/)
 
-## Installation
+## Documentation
 
-You can install this plugin into your CakePHP application using [composer](https://getcomposer.org).
+[Read the documentation](https://dereuromark.github.io/cakephp-cache/), starting
+with [Installation](https://dereuromark.github.io/cakephp-cache/guide/installation)
+and [Getting started](https://dereuromark.github.io/cakephp-cache/guide/getting-started).
 
-The recommended way to install composer packages is:
-```
-composer require dereuromark/cakephp-cache
-```
-
-Also don't forget to load the plugin in your `Application` class or by running:
-```
-bin/cake plugin load Cache
-```
-
-## Usage
-This plugin contains a full-page view cache solution for your controller actions.
-You can use file-based (default) or any engine based (e.g. Memcache, Redis, ...) cache strategy.
-
-For details see [/docs](/docs).
+The plugin caches complete public response bodies. Read the
+[limitations](https://dereuromark.github.io/cakephp-cache/reference/limitations)
+before selecting actions to cache.

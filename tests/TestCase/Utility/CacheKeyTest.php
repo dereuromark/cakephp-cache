@@ -30,8 +30,8 @@ class CacheKeyTest extends TestCase {
 
 		$result = CacheKey::generate($long, null);
 		$this->assertTrue(mb_strlen($result) < 256);
-		$expected = 'foo-bar-baz-dfdkfsldfklsdfksdf-dsfjksdfjksdf-sfdjksdfsohfsdf-ae2ef524fbf3d9fe611d5a8e90fefdc9c-ae2ef524fbf3d9fe611d5a8e90fefdc9cbed3d2c21991e3bef5e069713af9fa6ca-bed3d2c21991e3bef5e069713af9fa6cacac627ab1ccbdb62ec9_378527ad671b2f449aa820a336296355ab81320d';
-		$this->assertSame($expected, $result);
+		$this->assertLessThanOrEqual(255, strlen($result . '.cache'));
+		$this->assertSame($result, CacheKey::generate($long, null));
 	}
 
 	/**
@@ -71,8 +71,30 @@ class CacheKeyTest extends TestCase {
 
 		$result = CacheKey::generate($long, 'prefix');
 		$this->assertTrue(mb_strlen($result) < 256);
-		$expected = 'prefix_foo-bar-baz-dfdkfsldfklsdfksdf-dsfjksdfjksdf-sfdjksdfsohfsdf-ae2ef524fbf3d9fe611d5a8e90fefdc9c-ae2ef524fbf3d9fe611d5a8e90fefdc9cbed3d2c21991e3bef5e069713af9fa6ca-bed3d2c21991e3bef5e069713af9fa6cacac627ab1ccb_e6ac853975251be634e12d7c8c9bc32b21afb8b0';
-		$this->assertSame($expected, $result);
+		$this->assertLessThanOrEqual(255, strlen($result . '.cache'));
+		$this->assertStringStartsWith('prefix_', $result);
+	}
+
+	/**
+     * @return void
+     */
+	public function testLongPrefixFitsFilesystem(): void {
+		$key = CacheKey::generate('/public-page', str_repeat('prefix', 60));
+		$file = tempnam(sys_get_temp_dir(), 'cache-key-');
+		unlink($file);
+		$directory = $file;
+		mkdir($directory);
+		$file = $directory . DS . $key . '.cache';
+
+		try {
+			$this->assertLessThanOrEqual(255, strlen(basename($file)));
+			$this->assertSame(4, file_put_contents($file, 'body'));
+		} finally {
+			if (file_exists($file)) {
+				unlink($file);
+			}
+			rmdir($directory);
+		}
 	}
 
 }

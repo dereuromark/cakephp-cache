@@ -250,10 +250,6 @@ class CacheMiddleware implements MiddlewareInterface {
 			$response = $response->withType($contentType);
 		}
 
-		if (!$compressionEnabled) {
-			$response = $response->withHeader('Content-Length', (string)strlen($content));
-		}
-
 		$cacheContent = (string)$this->_cacheContent;
 		/** @var array $cacheInfo */
 		$cacheInfo = $this->_cacheInfo;
@@ -270,6 +266,10 @@ class CacheMiddleware implements MiddlewareInterface {
 
 		if ((Configure::read('debug') || $this->getConfig('debug')) && $cacheInfo['ext'] === 'html') {
 			$cacheContent = '<!--created:' . date('Y-m-d H:i:s', $modifiedTime) . '-->' . $cacheContent;
+		}
+
+		if (!$compressionEnabled) {
+			$response = $response->withHeader('Content-Length', (string)strlen($cacheContent));
 		}
 
 		$body = $response->getBody();

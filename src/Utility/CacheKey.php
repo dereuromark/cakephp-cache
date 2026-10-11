@@ -17,9 +17,9 @@ class CacheKey {
 		if ($keyGenerator) {
 			$cacheKey = (string)$keyGenerator($url, $prefix);
 			// Validate key length for filesystem compatibility (most filesystems have 255 char limit)
-			if (mb_strlen($cacheKey) > 200) {
-				$key = mb_substr($cacheKey, 0, 159);
-				$cacheKey = $key . '_' . sha1(mb_substr($cacheKey, 159));
+			if (strlen($cacheKey) > 200) {
+				$key = mb_strcut($cacheKey, 0, 159, 'UTF-8');
+				$cacheKey = $key . '_' . sha1(substr($cacheKey, strlen($key)));
 			}
 
 			return $cacheKey;
@@ -32,15 +32,14 @@ class CacheKey {
 		if ($url !== '_root') {
 			$cacheKey = Text::slug($cacheKey);
 
-			$maxLength = 255 - ($prefix ? mb_strlen($prefix) + 1 : 0);
-			if (mb_strlen($cacheKey) > $maxLength) {
-				$key = mb_substr($cacheKey, 0, $maxLength - 41);
-				$cacheKey = $key . '_' . sha1(mb_substr($cacheKey, $maxLength - 41));
-			}
 		}
 
 		if ($prefix) {
 			$cacheKey = $prefix . '_' . $cacheKey;
+		}
+
+		if (strlen($cacheKey) > 200) {
+			$cacheKey = mb_strcut($cacheKey, 0, 159, 'UTF-8') . '_' . sha1($cacheKey);
 		}
 
 		return $cacheKey;
