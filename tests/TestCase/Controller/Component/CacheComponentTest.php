@@ -2,6 +2,8 @@
 
 namespace Cache\Test\TestCase\Controller\Component;
 
+use Cache\Utility\CacheKey;
+use Cake\Cache\Cache;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -379,6 +381,35 @@ class CacheComponentTest extends TestCase {
 	 */
 	protected function getResponseMock(array $methods): Response {
 		return $this->getMockBuilder(Response::class)->onlyMethods($methods)->getMock();
+	}
+
+	/**
+     * @return void
+     */
+	public function testLongUrlWithFileEnginePrefix(): void {
+		Cache::setConfig('page_views_test', [
+			'className' => 'File',
+			'path' => CACHE . 'page_views_test' . DS,
+			'prefix' => 'page_views_',
+			'duration' => '+1 hour',
+		]);
+		$url = '/public-page?query=' . str_repeat('x', 400);
+		$this->Controller->setRequest(new ServerRequest([
+			'url' => $url,
+			'environment' => ['REQUEST_METHOD' => 'GET'],
+		]));
+		$this->Controller->setResponse((new Response())->withStringBody('Engine body'));
+		$this->Controller->Cache->setConfig('engine', 'page_views_test');
+
+		try {
+			$this->Controller->Cache->afterFilter(new Event('Controller.afterFilter', $this->Controller));
+			$body = Cache::read(CacheKey::generate($url, null), 'page_views_test');
+			$this->assertIsString($body);
+			$this->assertStringContainsString('Engine body', $body);
+		} finally {
+			Cache::clear('page_views_test');
+			Cache::drop('page_views_test');
+		}
 	}
 
 }

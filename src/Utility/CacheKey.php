@@ -38,8 +38,8 @@ class CacheKey {
 			$cacheKey = $prefix . '_' . $cacheKey;
 		}
 
-		if (strlen($cacheKey) > 249) {
-			$cacheKey = mb_strcut($cacheKey, 0, 208, 'UTF-8') . '_' . sha1($cacheKey);
+		if (strlen($cacheKey) > 200) {
+			$cacheKey = mb_strcut($cacheKey, 0, 159, 'UTF-8') . '_' . sha1($cacheKey);
 		}
 
 		return $cacheKey;

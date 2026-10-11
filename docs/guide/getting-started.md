@@ -30,7 +30,7 @@ In your existing `middleware()` method, add this immediately after AssetMiddlewa
 before RoutingMiddleware:
 
 ```php
-$middlewareQueue->insertAfter(\Cake\Http\Middleware\AssetMiddleware::class, new CacheMiddleware());
+$middlewareQueue->insertAfter(\Cake\Routing\Middleware\AssetMiddleware::class, new CacheMiddleware());
 ```
 
 Keep the application's other middleware. A cache hit skips everything after
