@@ -2,7 +2,6 @@
 
 namespace Cache\Test\TestCase\Command;
 
-use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Shim\Filesystem\Folder;
 use Shim\TestSuite\TestCase;
@@ -58,15 +57,13 @@ class PageCacheStatusCommandTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function _testStatusWithUrl() {
+	public function testStatusWithUrl(): void {
 		copy($this->testCacheFile, CACHE . 'views' . DS . 'test.cache');
 
-		$io = new ConsoleIo($this->out, $this->err);
-		$this->Shell->run(['status', '/test'], $io);
-		$output = $this->out->output();
+		$this->exec('page_cache status /test');
 
-		$expected = 'Cached until: (unlimited)';
-		$this->assertStringContainsString($expected, $output);
+		$this->assertExitSuccess();
+		$this->assertOutputContains('Cached until: (unlimited)');
 	}
 
 }
