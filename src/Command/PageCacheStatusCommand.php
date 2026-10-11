@@ -5,24 +5,19 @@ namespace Cache\Command;
 use Cache\Utility\CacheKey;
 use Cache\Utility\FileCache;
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use FilesystemIterator;
 
 class PageCacheStatusCommand extends Command {
 
-	protected ConsoleIo $io;
-
 	/**
-	 * @param \Cake\Console\Arguments $args
-	 * @param \Cake\Console\ConsoleIo $io
 	 *
 	 * @return void
 	 */
-	public function execute(Arguments $args, ConsoleIo $io) {
-		$this->io = $io;
+	public function execute() {
+		$args = $this->args;
+		$io = $this->io;
 
 		$url = $args->getArgument('url');
 		$engine = Configure::read('CacheConfig.engine');

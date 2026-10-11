@@ -6,24 +6,19 @@ use Cache\Utility\CacheKey;
 use Cache\Utility\FileCache;
 use Cake\Cache\Cache;
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use FilesystemIterator;
 
 class PageCacheClearCommand extends Command {
 
-	protected ConsoleIo $io;
-
 	/**
-	 * @param \Cake\Console\Arguments $args
-	 * @param \Cake\Console\ConsoleIo $io
 	 *
 	 * @return int|null
 	 */
-	public function execute(Arguments $args, ConsoleIo $io) {
-		$this->io = $io;
+	public function execute() {
+		$args = $this->args;
+		$io = $this->io;
 
 		$url = $args->getArgument('url');
 		if ($url) {

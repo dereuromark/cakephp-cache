@@ -1,14 +1,14 @@
 # Cache plugin for CakePHP
-[![CI](https://github.com/dereuromark/cakephp-cache/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/dereuromark/cakephp-cache/actions/workflows/ci.yml?query=branch%3Amaster)
-[![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-cache/master.svg)](https://codecov.io/github/dereuromark/cakephp-cache/branch/master)
+[![CI](https://github.com/dereuromark/cakephp-cache/actions/workflows/ci.yml/badge.svg?branch=cake6)](https://github.com/dereuromark/cakephp-cache/actions/workflows/ci.yml?query=branch%3Acake6)
+[![Coverage Status](https://img.shields.io/codecov/c/github/dereuromark/cakephp-cache/cake6.svg)](https://codecov.io/github/dereuromark/cakephp-cache/branch/cake6)
 [![PHPStan](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat)](https://phpstan.org/)
 [![Latest Stable Version](https://poser.pugx.org/dereuromark/cakephp-cache/v/stable.svg)](https://packagist.org/packages/dereuromark/cakephp-cache)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.2-8892BF.svg)](https://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.5-8892BF.svg)](https://php.net/)
 [![License](https://poser.pugx.org/dereuromark/cakephp-cache/license.svg)](LICENSE)
 [![Total Downloads](https://poser.pugx.org/dereuromark/cakephp-cache/d/total.svg)](https://packagist.org/packages/dereuromark/cakephp-cache)
 [![Coding Standards](https://img.shields.io/badge/cs-PSR--2--R-purple.svg?style=flat-square)](https://github.com/php-fig-rectified/fig-rectified-standards)
 
-This branch is for use with **CakePHP 5**. For details see [version map](https://github.com/dereuromark/cakephp-cache/wiki#cakephp-version-map).
+This branch is for use with **CakePHP 6**. For details see [version map](https://github.com/dereuromark/cakephp-cache/wiki#cakephp-version-map).
 
 ## What is it for?
 It is the successor of the 2.x CacheHelper and allows you to cache your complete views as HTML.
@@ -25,10 +25,9 @@ not be able to cache serialized views, e.g. JSON, CSV, RSS content which have be
 
 ## Documentation
 
-[Read the documentation](https://dereuromark.github.io/cakephp-cache/), starting
-with [Installation](https://dereuromark.github.io/cakephp-cache/guide/installation)
-and [Getting started](https://dereuromark.github.io/cakephp-cache/guide/getting-started).
+Read the [CakePHP 6 branch documentation](docs/guide/index.md), starting with
+[Installation](docs/guide/installation.md) and [Getting started](docs/guide/getting-started.md).
+The [published website](https://dereuromark.github.io/cakephp-cache/) covers CakePHP 5.
 
 The plugin caches complete public response bodies. Read the
-[limitations](https://dereuromark.github.io/cakephp-cache/reference/limitations)
-before selecting actions to cache.
+[limitations](docs/reference/limitations.md) before selecting actions to cache.
