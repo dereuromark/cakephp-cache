@@ -36,7 +36,7 @@ class PageCacheClearCommand extends Command {
 			$cacheKey = CacheKey::generate($url, Configure::read('CacheConfig.prefix'), Configure::read('CacheConfig.keyGenerator'));
 			$this->removeContent($cacheKey);
 
-			$this->io->out('File ' . $file . ' deleted');
+			$this->io->out('Cache key ' . $cacheKey . ' deleted');
 
 			return null;
 		}

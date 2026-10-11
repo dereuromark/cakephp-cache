@@ -87,7 +87,7 @@ Configure::write('CacheConfig.keyGenerator', function (string $url, ?string $pre
 
 Use the same generator on reader and writer. Return a safe filename for file
 storage, without directory separators. The plugin does not create nested folders
-for custom keys. Configure a string prefix when the generator declares a nullable
+for custom keys. Configure a string prefix when the generator declares a non-nullable
 string parameter.
 
 ## Compression and timestamps

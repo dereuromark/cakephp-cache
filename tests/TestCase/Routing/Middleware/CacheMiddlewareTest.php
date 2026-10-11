@@ -218,6 +218,7 @@ class CacheMiddlewareTest extends TestCase {
 		$this->assertTextStartsWith($expected, $result);
 		$expected = '-->Foo bar';
 		$this->assertTextEndsWith($expected, $result);
+		$this->assertSame((string)strlen((string)$newResponse->getBody()), $newResponse->getHeaderLine('Content-Length'));
 
 		$result = $newResponse->getType();
 		$expected = 'text/html';

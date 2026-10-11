@@ -23,7 +23,7 @@ fresh cache headers.
 
 Updating application data does not automatically invalidate cached pages.
 Use short durations or [clear the relevant URL](commands.md) after changes.
-Changing a key prefix leaves old entries on disk until cleared or expired.
+Changing a key prefix leaves old entries on disk until cleared.
 
 For engine storage, the engine's own expiry can remove an entry before the
 plugin's embedded duration. Configure the engine to retain entries for at least

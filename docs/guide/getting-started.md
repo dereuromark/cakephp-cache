@@ -5,11 +5,9 @@ Complete [Installation](installation.md) first.
 
 ## Configure a short duration
 
-Add this to `config/bootstrap.php`:
+Add this to `config/bootstrap.php`. Reuse its existing Configure import:
 
 ```php
-use Cake\Core\Configure;
-
 Configure::write('CacheConfig', [
     'duration' => '+5 minutes',
     'prefix' => 'public_pages',
@@ -32,7 +30,7 @@ In your existing `middleware()` method, add this immediately after AssetMiddlewa
 before RoutingMiddleware:
 
 ```php
-$middlewareQueue->add(new CacheMiddleware());
+$middlewareQueue->insertAfter(\Cake\Http\Middleware\AssetMiddleware::class, new CacheMiddleware());
 ```
 
 Keep the application's other middleware. A cache hit skips everything after

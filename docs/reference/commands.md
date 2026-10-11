@@ -18,3 +18,6 @@ settings globally.
 it reports that entry's metadata when present. `clear` without a URL clears the
 view-cache directory, or calls clear on the configured engine. Use a dedicated
 engine configuration if clearing unrelated cache entries would be a problem.
+
+Clear-all asks for confirmation, with `y` as the default. Answer the prompt when
+running interactively or supply input explicitly in an automation.
